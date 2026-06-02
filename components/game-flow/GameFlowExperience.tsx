@@ -1,14 +1,33 @@
 "use client";
 
 import Image from "next/image";
-import { useGameScreenFlow } from "@/hooks/useGameScreenFlow";
+import {
+  type GameRoundResult,
+  useGameScreenFlow,
+} from "@/hooks/useGameScreenFlow";
+import {
+  type SynchronizedRhythmStyle,
+  useSynchronizedRhythm,
+} from "@/hooks/useSynchronizedRhythm";
 
 const ELEVATOR_IMAGES = [
   "/images/main-elevator-1.png",
   "/images/main-elevator-2.png",
 ];
+const ELEVATOR_RESULT_IMAGES = {
+  failure: [
+    "/images/main-elevator-fail-1.png",
+    "/images/main-elevator-fail-2.png",
+  ],
+  idle: ELEVATOR_IMAGES,
+  success: [
+    "/images/main-elevator-success-1.png",
+    "/images/main-elevator-success-2.png",
+  ],
+} satisfies Record<GameRoundResult, string[]>;
 
 const FLOW_STEPS = ["Lobby", "Loading", "Mission", "Game Over"];
+const LIFE_LABELS = ["Life 1", "Life 2", "Life 3", "Life 4"];
 
 function NeonButton({
   children,
@@ -35,7 +54,11 @@ function NeonButton({
   );
 }
 
-function ElevatorBackdrop() {
+function ElevatorBackdrop({
+  roundResult = "idle",
+}: Readonly<{ roundResult?: GameRoundResult }>) {
+  const elevatorImages = ELEVATOR_RESULT_IMAGES[roundResult];
+
   return (
     <div
       className="absolute inset-0 overflow-hidden"
@@ -43,7 +66,7 @@ function ElevatorBackdrop() {
     >
       <Image
         className="absolute inset-0 size-full object-cover opacity-100"
-        src={ELEVATOR_IMAGES[0]}
+        src={elevatorImages[0]}
         alt=""
         fill
         priority
@@ -51,7 +74,7 @@ function ElevatorBackdrop() {
       />
       <Image
         className="neon-elevator-flicker absolute inset-0 size-full object-cover"
-        src={ELEVATOR_IMAGES[1]}
+        src={elevatorImages[1]}
         alt=""
         fill
         priority
@@ -63,10 +86,21 @@ function ElevatorBackdrop() {
   );
 }
 
-function NeonShell({ children }: Readonly<{ children: React.ReactNode }>) {
+function NeonShell({
+  children,
+  roundResult = "idle",
+  rhythmStyle,
+}: Readonly<{
+  children: React.ReactNode;
+  rhythmStyle?: SynchronizedRhythmStyle;
+  roundResult?: GameRoundResult;
+}>) {
   return (
-    <main className="relative min-h-screen overflow-hidden bg-black text-white">
-      <ElevatorBackdrop />
+    <main
+      className="relative min-h-screen overflow-hidden bg-black text-white"
+      style={rhythmStyle}
+    >
+      <ElevatorBackdrop roundResult={roundResult} />
       <section className="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-col justify-center px-5 py-8 sm:px-8 lg:px-10">
         {children}
       </section>
@@ -94,6 +128,104 @@ function FlowPanel({ currentStep }: Readonly<{ currentStep: string }>) {
         );
       })}
     </div>
+  );
+}
+
+function LivesMeter({
+  getStaggeredRhythmStyle,
+  lives,
+  maxLives,
+}: Readonly<{
+  getStaggeredRhythmStyle: (index: number) => SynchronizedRhythmStyle;
+  lives: number;
+  maxLives: number;
+}>) {
+  return (
+    <div
+      className="mt-6 flex justify-center"
+      aria-label={`${lives} of ${maxLives} lives remaining`}
+    >
+      <div className="flex w-full max-w-4xl items-end justify-center gap-1 px-3 py-2 sm:gap-4 sm:px-6 sm:py-3">
+        {LIFE_LABELS.map((label, index) => {
+          const isActive = index < lives;
+
+          return (
+            <div
+              className="life-fish-motion relative h-20 w-24 sm:h-24 sm:w-36 lg:h-28 lg:w-44"
+              key={label}
+              style={getStaggeredRhythmStyle(index)}
+            >
+              <Image
+                src="/images/life-deactive.png"
+                alt=""
+                fill
+                sizes="(min-width: 1024px) 176px, (min-width: 640px) 144px, 96px"
+                className={`object-contain transition-opacity duration-300 ${
+                  isActive ? "opacity-0" : "opacity-100"
+                }`}
+              />
+              <Image
+                src="/images/life-active.png"
+                alt={isActive ? `${label} active` : ""}
+                fill
+                sizes="(min-width: 1024px) 176px, (min-width: 640px) 144px, 96px"
+                className={`object-contain transition-opacity duration-300 ${
+                  isActive
+                    ? "opacity-100 drop-shadow-[0_0_18px_#67e8f9]"
+                    : "opacity-0"
+                }`}
+              />
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function ResultPanel({
+  roundResult,
+}: Readonly<{ roundResult: GameRoundResult }>) {
+  const resultTone = {
+    failure: {
+      label: "Failure",
+      message: "실패했습니다. 라이프가 1개 줄어듭니다.",
+      state: "실패",
+      tone: "border-rose-300/80 bg-rose-950/55 text-rose-100",
+    },
+    idle: {
+      label: "Ready",
+      message: "아직 판정이 없습니다. 게임 화면에서 액션을 실행하세요.",
+      state: "대기 중",
+      tone: "border-white/35 bg-black/45 text-cyan-50/80",
+    },
+    success: {
+      label: "Success",
+      message: "성공했습니다. 다음 반응을 준비하세요.",
+      state: "성공",
+      tone: "border-emerald-200/80 bg-emerald-950/55 text-emerald-100",
+    },
+  }[roundResult];
+
+  return (
+    <aside className="flex min-h-[280px] flex-col justify-between rounded-lg border border-cyan-100/70 bg-black/65 p-5 shadow-[0_0_30px_rgba(103,232,249,0.18)] backdrop-blur-sm">
+      <div className="space-y-4">
+        <div>
+          <p className="text-sm font-black uppercase tracking-[0.28em] text-cyan-100">
+            Result
+          </p>
+          <h2 className="mt-2 text-4xl font-black text-white">성공/실패</h2>
+        </div>
+        <div className={`rounded-md border p-5 ${resultTone.tone}`}>
+          <p className="text-xs font-black uppercase tracking-[0.24em]">
+            {resultTone.label}
+          </p>
+          <p className="mt-3 text-4xl font-black">{resultTone.state}</p>
+          <p className="mt-4 leading-7">{resultTone.message}</p>
+        </div>
+      </div>
+      <FlowPanel currentStep="Mission" />
+    </aside>
   );
 }
 
@@ -154,16 +286,41 @@ function LoadingScreen() {
   );
 }
 
-function GameScreen({ onFinish }: Readonly<{ onFinish: () => void }>) {
+function GameScreen({
+  lives,
+  maxLives,
+  onFinish,
+  onLoseLife,
+  onSuccess,
+  roundResult,
+}: Readonly<{
+  lives: number;
+  maxLives: number;
+  onFinish: () => void;
+  onLoseLife: () => void;
+  onSuccess: () => void;
+  roundResult: GameRoundResult;
+}>) {
+  const { getStaggeredRhythmStyle, rhythmStyle } = useSynchronizedRhythm();
+
   return (
-    <NeonShell>
-      <div className="grid gap-6 lg:grid-cols-[0.72fr_1.28fr]">
+    <NeonShell roundResult={roundResult} rhythmStyle={rhythmStyle}>
+      <div className="grid gap-6 lg:grid-cols-[0.78fr_1.24fr_0.78fr]">
         <aside className="space-y-4 rounded-lg border border-cyan-100/70 bg-black/65 p-5 shadow-[0_0_30px_rgba(103,232,249,0.18)] backdrop-blur-sm">
           <div>
             <p className="text-sm font-black uppercase tracking-[0.28em] text-cyan-100">
               Floor 01
             </p>
-            <h1 className="mt-2 text-4xl font-black text-white">Mission</h1>
+            <h1 className="mt-2 text-4xl font-black text-white">조작법 안내</h1>
+          </div>
+          <div className="rounded-md border border-white/35 bg-black/45 p-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-white/60">
+              Rule
+            </p>
+            <p className="mt-3 leading-7 text-cyan-50/85">
+              박자에 맞춰 버튼을 누르세요. 실패하면 라이프가 1개
+              줄어듭니다.
+            </p>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-md border border-white/35 bg-black/45 p-4">
@@ -179,13 +336,20 @@ function GameScreen({ onFinish }: Readonly<{ onFinish: () => void }>) {
               <p className="mt-2 text-3xl font-black text-cyan-100">000</p>
             </div>
           </div>
-          <FlowPanel currentStep="Mission" />
+          <div className="rounded-md border border-white/35 bg-black/45 p-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-white/60">
+              Lives
+            </p>
+            <p className="mt-2 text-3xl font-black text-cyan-100">
+              {lives}/{maxLives}
+            </p>
+          </div>
         </aside>
 
         <section className="flex min-h-[420px] flex-col justify-between rounded-lg border border-cyan-100/70 bg-black/70 p-6 shadow-[0_0_36px_rgba(103,232,249,0.22)] backdrop-blur-sm">
           <div className="flex items-center justify-between gap-4 border-b border-cyan-100/50 pb-4">
             <p className="font-black uppercase tracking-[0.24em] text-cyan-100">
-              Door Open
+              실제 게임 화면
             </p>
             <p className="rounded border border-white/60 px-3 py-1 text-sm font-black">
               Time 08
@@ -194,7 +358,7 @@ function GameScreen({ onFinish }: Readonly<{ onFinish: () => void }>) {
           <div className="grid flex-1 place-items-center py-12 text-center">
             <div className="space-y-4">
               <p className="text-sm font-black uppercase tracking-[0.28em] text-cyan-100">
-                Basic Layout
+                Play Area
               </p>
               <h2 className="text-5xl font-black leading-tight drop-shadow-[0_0_18px_rgba(103,232,249,0.7)]">
                 Press at the beat
@@ -205,13 +369,26 @@ function GameScreen({ onFinish }: Readonly<{ onFinish: () => void }>) {
               </p>
             </div>
           </div>
-          <div className="flex justify-end">
+          <div className="flex flex-col justify-end gap-3 sm:flex-row">
+            <NeonButton onClick={onSuccess} variant="secondary">
+              성공 처리
+            </NeonButton>
+            <NeonButton onClick={onLoseLife} variant="secondary">
+              실패 처리
+            </NeonButton>
             <NeonButton onClick={onFinish} variant="secondary">
               게임 종료
             </NeonButton>
           </div>
         </section>
+
+        <ResultPanel roundResult={roundResult} />
       </div>
+      <LivesMeter
+        getStaggeredRhythmStyle={getStaggeredRhythmStyle}
+        lives={lives}
+        maxLives={maxLives}
+      />
     </NeonShell>
   );
 }
@@ -267,15 +444,34 @@ function GameOverScreen({
 }
 
 export function GameFlowExperience() {
-  const { finishGame, restartGame, returnToMain, screen, startGame } =
-    useGameScreenFlow();
+  const {
+    finishGame,
+    lives,
+    loseLife,
+    maxLives,
+    recordSuccess,
+    restartGame,
+    returnToMain,
+    roundResult,
+    screen,
+    startGame,
+  } = useGameScreenFlow();
 
   if (screen === "loading") {
     return <LoadingScreen />;
   }
 
   if (screen === "playing") {
-    return <GameScreen onFinish={finishGame} />;
+    return (
+      <GameScreen
+        lives={lives}
+        maxLives={maxLives}
+        onFinish={finishGame}
+        onLoseLife={loseLife}
+        onSuccess={recordSuccess}
+        roundResult={roundResult}
+      />
+    );
   }
 
   if (screen === "gameOver") {
