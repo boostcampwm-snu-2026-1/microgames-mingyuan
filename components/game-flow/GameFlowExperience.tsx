@@ -9,6 +9,7 @@ import {
 } from "@/hooks/useGameScreenFlow";
 import { useBeatGameRound } from "@/hooks/useBeatGameRound";
 import {
+  RHYTHM_DURATION_MS,
   type SynchronizedRhythmStyle,
   useSynchronizedRhythm,
 } from "@/hooks/useSynchronizedRhythm";
@@ -36,6 +37,11 @@ const ELEVATOR_RESULT_IMAGES = {
 } satisfies Record<GameRoundResult, string[]>;
 
 const LIFE_LABELS = ["Life 1", "Life 2", "Life 3", "Life 4"];
+const RESULT_BGM_TRACKS = {
+  failure: "fail",
+  idle: null,
+  success: "success",
+} satisfies Record<GameRoundResult, BgmTrack | null>;
 
 function NeonButton({
   children,
@@ -193,18 +199,29 @@ function CurrentFloorDisplay({
   roundNumber: number;
   rhythmStyle: SynchronizedRhythmStyle;
 }>) {
+  const previousRoundNumber = Math.max(roundNumber - 1, 0);
+  const floorRiseStyle = {
+    ...rhythmStyle,
+    "--floor-rise-duration": `${RHYTHM_DURATION_MS * 4}ms`,
+  } satisfies SynchronizedRhythmStyle & { "--floor-rise-duration": string };
+
   return (
     <div
-      className="life-fish-motion mx-auto grid size-56 place-items-center rounded-md border-2 border-cyan-100 bg-black/70 shadow-[0_0_38px_rgba(103,232,249,0.32)] sm:size-72"
-      style={rhythmStyle}
+      className="mx-auto grid size-56 place-items-center rounded-md border-2 border-cyan-100 bg-black/70 shadow-[0_0_38px_rgba(103,232,249,0.32)] sm:size-72"
+      style={floorRiseStyle}
     >
       <div className="text-center">
         <p className="text-sm font-black uppercase tracking-[0.32em] text-cyan-100">
           Current Floor
         </p>
-        <p className="mt-3 text-8xl font-black leading-none text-white drop-shadow-[0_0_18px_rgba(103,232,249,0.75)] sm:text-9xl">
-          {roundNumber.toString().padStart(2, "0")}
-        </p>
+        <div className="relative mt-3 h-28 overflow-hidden sm:h-36">
+          <p className="floor-number-rise-out absolute inset-0 text-8xl font-black leading-none text-white/55 drop-shadow-[0_0_18px_rgba(103,232,249,0.45)] sm:text-9xl">
+            {previousRoundNumber.toString().padStart(2, "0")}
+          </p>
+          <p className="floor-number-rise-in absolute inset-0 text-8xl font-black leading-none text-white drop-shadow-[0_0_18px_rgba(103,232,249,0.75)] sm:text-9xl">
+            {roundNumber.toString().padStart(2, "0")}
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -212,12 +229,14 @@ function CurrentFloorDisplay({
 
 function InstructionRoundScreen({
   getStaggeredRhythmStyle,
+  instructionStep,
   lives,
   maxLives,
   rhythmStyle,
   roundNumber,
 }: Readonly<{
   getStaggeredRhythmStyle: (index: number) => SynchronizedRhythmStyle;
+  instructionStep: "controls" | "floor";
   lives: number;
   maxLives: number;
   rhythmStyle: SynchronizedRhythmStyle;
@@ -225,30 +244,35 @@ function InstructionRoundScreen({
 }>) {
   return (
     <div className="mx-auto w-full max-w-5xl space-y-8 text-center">
-      <CurrentFloorDisplay rhythmStyle={rhythmStyle} roundNumber={roundNumber} />
-      <div className="mx-auto grid max-w-3xl gap-5 rounded-lg border border-cyan-100/70 bg-black/70 p-6 shadow-[0_0_36px_rgba(103,232,249,0.22)] backdrop-blur-sm sm:grid-cols-[220px_1fr] sm:text-left">
-        <div className="relative mx-auto aspect-square w-44 sm:w-full">
-          <Image
-            src="/images/forms/space.png"
-            alt="Space key control form"
-            fill
-            sizes="220px"
-            className="object-contain drop-shadow-[0_0_18px_rgba(103,232,249,0.55)]"
-          />
+      {instructionStep === "controls" ? (
+        <div className="mx-auto grid max-w-3xl gap-5 rounded-lg border border-cyan-100/70 bg-black/70 p-6 shadow-[0_0_36px_rgba(103,232,249,0.22)] backdrop-blur-sm sm:grid-cols-[220px_1fr] sm:text-left">
+          <div className="relative mx-auto aspect-square w-44 sm:w-full">
+            <Image
+              src="/images/forms/space.png"
+              alt="Space key control form"
+              fill
+              sizes="220px"
+              className="object-contain drop-shadow-[0_0_18px_rgba(103,232,249,0.55)]"
+            />
+          </div>
+          <div className="flex flex-col justify-center">
+            <p className="text-sm font-black uppercase tracking-[0.32em] text-cyan-100">
+              Form
+            </p>
+            <h1 className="mt-3 text-4xl font-black text-white sm:text-5xl">
+              스페이스로 박자에 맞춰 입력
+            </h1>
+            <p className="mt-4 leading-7 text-cyan-50/80">
+              조작법을 확인하면 현재 층이 올라갑니다.
+            </p>
+          </div>
         </div>
-        <div className="flex flex-col justify-center">
-          <p className="text-sm font-black uppercase tracking-[0.32em] text-cyan-100">
-            Form
-          </p>
-          <h1 className="mt-3 text-4xl font-black text-white sm:text-5xl">
-            스페이스로 박자에 맞춰 입력
-          </h1>
-          <p className="mt-4 leading-7 text-cyan-50/80">
-            현재 층을 확인하고, 안내 사운드가 끝나면 바로 본게임으로
-            전환됩니다.
-          </p>
-        </div>
-      </div>
+      ) : (
+        <CurrentFloorDisplay
+          rhythmStyle={rhythmStyle}
+          roundNumber={roundNumber}
+        />
+      )}
       <RoundLives
         getStaggeredRhythmStyle={getStaggeredRhythmStyle}
         lives={lives}
@@ -386,7 +410,7 @@ function ResultRoundScreen({
 }
 
 function MainScreen({ onStart }: Readonly<{ onStart: () => void }>) {
-  useBgmTrack("resultsAndMain", "loop");
+  useBgmTrack("resultsAndMain", "loop", "now");
 
   useEffect(() => {
     const unlockMainBgm = () => {
@@ -395,6 +419,7 @@ function MainScreen({ onStart }: Readonly<{ onStart: () => void }>) {
       });
     };
 
+    unlockMainBgm();
     window.addEventListener("pointerdown", unlockMainBgm, { once: true });
     window.addEventListener("keydown", unlockMainBgm, { once: true });
 
@@ -452,7 +477,7 @@ function MainScreen({ onStart }: Readonly<{ onStart: () => void }>) {
 }
 
 function LoadingScreen() {
-  useBgmTrack("resultsAndMain", "loop");
+  useBgmTrack("resultsAndMain", "loop", "now");
 
   return (
     <NeonShell>
@@ -489,6 +514,7 @@ function GameScreen({
   const { getStaggeredRhythmStyle, rhythmStyle } = useSynchronizedRhythm();
   const {
     gameBeatCount,
+    instructionStep,
     phase,
     recordFailure,
     recordSuccess,
@@ -502,24 +528,46 @@ function GameScreen({
     shouldFinishAfterResult: lives <= 0,
   });
   const canRecordResult = phase === "game";
-  const bgmTrack =
-    phase === "instruction"
-      ? "intermission"
-      : phase === "result"
-        ? ({
-            failure: "fail",
-            idle: null,
-            success: "success",
-          } satisfies Record<GameRoundResult, BgmTrack | null>)[roundResult]
-        : null;
+  useEffect(() => {
+    if (phase === "instruction") {
+      bgmLibrary.play("intermission", "once").catch((error: unknown) => {
+        console.error(error);
+      });
+      return;
+    }
 
-  useBgmTrack(bgmTrack, "once");
+    if (phase === "game") {
+      bgmLibrary.stop();
+      return;
+    }
+
+    const nextResultBgmTrack = RESULT_BGM_TRACKS[roundResult];
+    const shouldGoToGameOver = roundResult === "failure" && lives <= 0;
+
+    if (!nextResultBgmTrack) {
+      return;
+    }
+
+    if (shouldGoToGameOver) {
+      bgmLibrary.play(nextResultBgmTrack, "once").catch((error: unknown) => {
+        console.error(error);
+      });
+      return;
+    }
+
+    bgmLibrary
+      .playSequence(nextResultBgmTrack, "once", "intermission", "once")
+      .catch((error: unknown) => {
+        console.error(error);
+      });
+  }, [lives, phase, roundResult]);
 
   return (
     <NeonShell roundResult={roundResult} rhythmStyle={rhythmStyle}>
       {phase === "instruction" ? (
         <InstructionRoundScreen
           getStaggeredRhythmStyle={getStaggeredRhythmStyle}
+          instructionStep={instructionStep}
           lives={lives}
           maxLives={maxLives}
           rhythmStyle={rhythmStyle}

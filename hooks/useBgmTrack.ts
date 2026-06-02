@@ -4,12 +4,14 @@ import { useEffect } from "react";
 import {
   bgmLibrary,
   type BgmPlaybackMode,
+  type BgmStartPolicy,
   type BgmTrack,
 } from "@/lib/bgmLibrary";
 
 export function useBgmTrack(
   track: BgmTrack | null,
   mode: BgmPlaybackMode = "loop",
+  startPolicy?: BgmStartPolicy,
 ) {
   useEffect(() => {
     if (!track) {
@@ -17,8 +19,8 @@ export function useBgmTrack(
       return;
     }
 
-    bgmLibrary.play(track, mode).catch((error: unknown) => {
+    bgmLibrary.play(track, mode, startPolicy).catch((error: unknown) => {
       console.error(error);
     });
-  }, [mode, track]);
+  }, [mode, startPolicy, track]);
 }

@@ -23,19 +23,28 @@ const ATTACK_FADE_SECONDS = 0.012;
 const RELEASE_FADE_SECONDS = 0.045;
 
 const BGM_TRACK_BEATS = {
-  fail: 4,
-  gameOver: 9,
-  intermission: 8,
-  resultsAndMain: 72,
-  success: 4,
+  fail: 2,
+  gameOver: 5,
+  intermission: 4,
+  resultsAndMain: 42,
+  success: 2,
 } satisfies Record<BgmTrack, number>;
 
-export const GAME_OVER_DURATION_MS = 5208;
+export const GAME_OVER_DURATION_MS =
+  BGM_TRACK_BEATS.gameOver * RHYTHM_DURATION_MS;
 
 export type BgmPlaybackMode = "loop" | "once";
 export type BgmStartPolicy = "beat" | "now";
 
 type PlayingSource = Readonly<{
+  gainNode: GainNode;
+  mode: BgmPlaybackMode;
+  source: AudioBufferSourceNode;
+  stopAt: number;
+  track: BgmTrack;
+}>;
+
+type ScheduledSource = Readonly<{
   gainNode: GainNode;
   mode: BgmPlaybackMode;
   source: AudioBufferSourceNode;
@@ -56,6 +65,7 @@ class BgmLibrary {
   private currentSource: PlayingSource | null = null;
   private desiredPlayback: DesiredPlayback | null = null;
   private playRequestId = 0;
+  private scheduledSources: ScheduledSource[] = [];
   private timelineOriginSeconds = 0;
 
   async unlock() {
@@ -96,13 +106,15 @@ class BgmLibrary {
       return;
     }
 
-    if (
-      mode === "loop" &&
-      this.currentSource?.track === track &&
-      this.currentSource.mode === mode
-    ) {
+    if (this.isCurrentSource(track, mode, audioContext.currentTime)) {
       return;
     }
+
+    if (this.isScheduledSource(track, mode, audioContext.currentTime)) {
+      return;
+    }
+
+    this.clearScheduledSources();
 
     const startAt =
       startPolicy === "beat"
@@ -112,10 +124,14 @@ class BgmLibrary {
     const source = audioContext.createBufferSource();
     const targetDurationSeconds =
       BGM_TRACK_BEATS[track] * BEAT_DURATION_SECONDS;
+    const playbackRate =
+      mode === "once" && buffer.duration < targetDurationSeconds
+        ? buffer.duration / targetDurationSeconds
+        : 1;
 
     source.buffer = buffer;
     source.loop = mode === "loop";
-    source.playbackRate.value = 1;
+    source.playbackRate.value = playbackRate;
     source.connect(gainNode);
     gainNode.connect(audioContext.destination);
     gainNode.gain.setValueAtTime(0, startAt);
@@ -149,8 +165,65 @@ class BgmLibrary {
         if (this.currentSource?.source === source) {
           this.currentSource = null;
         }
-      }, targetDurationSeconds * 1000);
+      }, (buffer.duration / playbackRate) * 1000);
     }
+  }
+
+  async playSequence(
+    firstTrack: BgmTrack,
+    firstMode: BgmPlaybackMode,
+    nextTrack: BgmTrack,
+    nextMode: BgmPlaybackMode,
+  ) {
+    this.desiredPlayback = {
+      mode: firstMode,
+      startPolicy: "now",
+      track: firstTrack,
+    };
+    const requestId = this.playRequestId + 1;
+
+    this.playRequestId = requestId;
+
+    const audioContext = this.getAudioContext();
+    const [firstBuffer, nextBuffer] = await Promise.all([
+      this.loadTrack(firstTrack),
+      this.loadTrack(nextTrack),
+    ]);
+
+    if (requestId !== this.playRequestId) {
+      return;
+    }
+
+    this.clearScheduledSources();
+
+    const firstStartAt = audioContext.currentTime;
+    const firstTargetDurationSeconds =
+      BGM_TRACK_BEATS[firstTrack] * BEAT_DURATION_SECONDS;
+    const nextStartAt = firstStartAt + firstTargetDurationSeconds;
+
+    const firstSource = this.createSource(
+      firstTrack,
+      firstMode,
+      firstBuffer,
+      firstStartAt,
+    );
+    const nextSource = this.createSource(
+      nextTrack,
+      nextMode,
+      nextBuffer,
+      nextStartAt,
+    );
+
+    this.stopCurrentSource(firstStartAt);
+    this.currentSource = firstSource;
+    this.scheduledSources = [nextSource];
+
+    window.setTimeout(() => {
+      if (requestId === this.playRequestId) {
+        this.currentSource = nextSource;
+        this.scheduledSources = [];
+      }
+    }, firstTargetDurationSeconds * 1000);
   }
 
   stop() {
@@ -159,8 +232,54 @@ class BgmLibrary {
     }
 
     this.playRequestId += 1;
+    this.clearScheduledSources();
     this.stopCurrentSource(this.audioContext.currentTime);
     this.currentSource = null;
+  }
+
+  private createSource(
+    track: BgmTrack,
+    mode: BgmPlaybackMode,
+    buffer: AudioBuffer,
+    startAt: number,
+  ) {
+    const gainNode = this.getAudioContext().createGain();
+    const source = this.getAudioContext().createBufferSource();
+    const targetDurationSeconds =
+      BGM_TRACK_BEATS[track] * BEAT_DURATION_SECONDS;
+    const playbackRate =
+      mode === "once" && buffer.duration < targetDurationSeconds
+        ? buffer.duration / targetDurationSeconds
+        : 1;
+    const stopAt =
+      mode === "loop"
+        ? Number.POSITIVE_INFINITY
+        : startAt + targetDurationSeconds;
+
+    source.buffer = buffer;
+    source.loop = mode === "loop";
+    source.playbackRate.value = playbackRate;
+    source.connect(gainNode);
+    gainNode.connect(this.getAudioContext().destination);
+    gainNode.gain.setValueAtTime(0, startAt);
+    gainNode.gain.linearRampToValueAtTime(
+      BGM_GAIN,
+      startAt + ATTACK_FADE_SECONDS,
+    );
+    source.start(startAt);
+
+    if (mode === "once" && buffer.duration > targetDurationSeconds) {
+      this.fadeOutSource(gainNode, stopAt);
+      source.stop(stopAt);
+    }
+
+    return {
+      gainNode,
+      mode,
+      source,
+      stopAt,
+      track,
+    };
   }
 
   private getAudioContext() {
@@ -215,6 +334,47 @@ class BgmLibrary {
     const elapsedBeats = Math.ceil(elapsedSeconds / BEAT_DURATION_SECONDS);
 
     return this.timelineOriginSeconds + elapsedBeats * BEAT_DURATION_SECONDS;
+  }
+
+  private isCurrentSource(
+    track: BgmTrack,
+    mode: BgmPlaybackMode,
+    currentTime: number,
+  ) {
+    return (
+      this.currentSource?.track === track &&
+      this.currentSource.mode === mode &&
+      this.currentSource.stopAt > currentTime
+    );
+  }
+
+  private isScheduledSource(
+    track: BgmTrack,
+    mode: BgmPlaybackMode,
+    currentTime: number,
+  ) {
+    return this.scheduledSources.some(
+      (scheduledSource) =>
+        scheduledSource.track === track &&
+        scheduledSource.mode === mode &&
+        scheduledSource.stopAt > currentTime,
+    );
+  }
+
+  private clearScheduledSources() {
+    const audioContext = this.getAudioContext();
+
+    this.scheduledSources.forEach(({ gainNode, source }) => {
+      gainNode.gain.cancelScheduledValues(audioContext.currentTime);
+      gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+
+      try {
+        source.stop(audioContext.currentTime);
+      } catch {
+        // Scheduled sources may have already ended or been stopped by another request.
+      }
+    });
+    this.scheduledSources = [];
   }
 
   private stopCurrentSource(stopAt: number) {
