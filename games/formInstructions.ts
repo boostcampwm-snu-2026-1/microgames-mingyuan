@@ -19,10 +19,28 @@ export const FORM_INSTRUCTIONS = [
     title: "방향키",
   },
   {
+    alt: "WASD keys control form",
+    description: "WASD 입력을 화면 지시에 맞춰 빠르게 처리하세요.",
+    imageSrc: "/images/forms/wasd.png",
+    title: "WASD",
+  },
+  {
+    alt: "Arrow keys and space key control form",
+    description: "방향키와 스페이스 입력을 함께 처리하세요.",
+    imageSrc: "/images/forms/arrow-and-space.png",
+    title: "방향키 + 스페이스",
+  },
+  {
     alt: "Mouse control form",
     description: "마우스 조작을 박자 안에 정확히 완료하세요.",
     imageSrc: "/images/forms/mouse.png",
     title: "마우스",
+  },
+  {
+    alt: "Scroll control form",
+    description: "스크롤 조작을 제한 시간 안에 정확히 완료하세요.",
+    imageSrc: "/images/forms/scroll.png",
+    title: "스크롤",
   },
   {
     alt: "Number keys control form",

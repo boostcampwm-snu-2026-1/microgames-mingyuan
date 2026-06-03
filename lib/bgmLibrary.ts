@@ -3,18 +3,22 @@
 import { RHYTHM_DURATION_MS } from "@/hooks/useSynchronizedRhythm";
 
 export type BgmTrack =
+  | "bossStage"
   | "fail"
   | "gameOver"
   | "intermission"
+  | "oneUp"
   | "resultsAndMain"
   | "setup"
   | "speedUp"
   | "success";
 
 const BGM_TRACK_PATHS = {
+  bossStage: "/sounds/boss-stage.mp3",
   fail: "/sounds/fail.mp3",
   gameOver: "/sounds/game-over.mp3",
   intermission: "/sounds/intermission.mp3",
+  oneUp: "/sounds/1-up.mp3",
   resultsAndMain: "/sounds/results-and-main.mp3",
   setup: "/sounds/setup.mp3",
   speedUp: "/sounds/speed-up.mp3",
@@ -27,8 +31,10 @@ const ATTACK_FADE_SECONDS = 0.012;
 const RELEASE_FADE_SECONDS = 0.045;
 
 const BGM_TRACK_BEATS = {
+  bossStage: 8,
   fail: 4,
   intermission: 8,
+  oneUp: 8,
   resultsAndMain: 83,
   setup: 4,
   speedUp: 8,
@@ -97,6 +103,12 @@ class BgmLibrary {
 
   setBeatDurationMs(beatDurationMs: number) {
     this.beatDurationSeconds = beatDurationMs / 1000;
+  }
+
+  async getTrackDurationMs(track: BgmTrack) {
+    const buffer = await this.loadTrack(track);
+
+    return buffer.duration * 1000;
   }
 
   async play(
@@ -338,7 +350,7 @@ class BgmLibrary {
   }
 
   private getTargetDurationSeconds(track: BgmTrack, buffer: AudioBuffer) {
-    if (track === "gameOver") {
+    if (track === "gameOver" || track === "setup") {
       return buffer.duration;
     }
 

@@ -9,26 +9,38 @@ const INSTRUCTION_BEATS = 8;
 const PROGRESS_TICK_MS = 50;
 const RESULT_BEATS = 4;
 const SPEED_UP_BEATS = 8;
+const BOSS_STAGE_BEATS = 8;
+const ONE_UP_BEATS = 8;
 const SPEED_UP_INTERVAL_ROUNDS = 4;
-const SPEED_UP_BEAT_DURATION_MULTIPLIER = 0.96;
+const BOSS_STAGE_INTERVAL_ROUNDS = 12;
+const SPEED_UP_BEAT_DURATION_MULTIPLIER = 0.94;
 const MIN_SPEED_RATE = 0.65;
 
-export type GameRoundPhase = "instruction" | "game" | "result" | "speedUp";
-export type InstructionStep = "formPhoto" | "formDescription" | "floor";
+export type GameRoundPhase =
+  | "bossStage"
+  | "instruction"
+  | "game"
+  | "oneUp"
+  | "result"
+  | "speedUp";
+export type InstructionStep = "idle" | "formPhoto" | "floor";
 
 const PHASE_LABELS = {
   game: "본게임",
+  bossStage: "보스 스테이지",
   instruction: "조작법 안내",
+  oneUp: "목숨 회복",
   result: "성공/실패 안내",
   speedUp: "속도 증가",
 } satisfies Record<GameRoundPhase, string>;
 
 type UseBeatGameRoundParams = Readonly<{
   gameBeatCount?: number;
+  shouldPlayOneUp: boolean;
   onFailure: () => void;
   onFinish: () => void;
   onResetResult: () => void;
-  onSuccess: () => void;
+  onSuccess: (roundNumber: number) => void;
   shouldFinishAfterResult: boolean;
 }>;
 
@@ -45,16 +57,36 @@ function getPhaseBeatCount(phase: GameRoundPhase, gameBeatCount: number) {
     return SPEED_UP_BEATS;
   }
 
+  if (phase === "bossStage") {
+    return BOSS_STAGE_BEATS;
+  }
+
+  if (phase === "oneUp") {
+    return ONE_UP_BEATS;
+  }
+
   return gameBeatCount;
 }
 
-function getBeatDurationMs(speedLevel: number) {
-  const speedRate = Math.max(
+function getSpeedRate(speedLevel: number) {
+  return Math.max(
     Math.pow(SPEED_UP_BEAT_DURATION_MULTIPLIER, speedLevel),
     MIN_SPEED_RATE,
   );
+}
+
+function getBeatDurationMs(speedLevel: number) {
+  const speedRate = getSpeedRate(speedLevel);
 
   return RHYTHM_DURATION_MS * speedRate;
+}
+
+function getPhaseBeatDurationMs(phase: GameRoundPhase, speedLevel: number) {
+  if (phase === "oneUp") {
+    return RHYTHM_DURATION_MS;
+  }
+
+  return getBeatDurationMs(speedLevel);
 }
 
 export function useBeatGameRound({
@@ -63,6 +95,7 @@ export function useBeatGameRound({
   onFinish,
   onResetResult,
   onSuccess,
+  shouldPlayOneUp,
   shouldFinishAfterResult,
 }: UseBeatGameRoundParams) {
   const [phase, setPhase] = useState<GameRoundPhase>("instruction");
@@ -70,8 +103,9 @@ export function useBeatGameRound({
   const [roundNumber, setRoundNumber] = useState(1);
   const [roundResult, setRoundResult] = useState<GameRoundResult>("idle");
   const [speedLevel, setSpeedLevel] = useState(0);
+  const [shouldOneUpAfterResult, setShouldOneUpAfterResult] = useState(false);
   const phaseBeatCount = getPhaseBeatCount(phase, gameBeatCount);
-  const beatDurationMs = getBeatDurationMs(speedLevel);
+  const beatDurationMs = getPhaseBeatDurationMs(phase, speedLevel);
   const phaseDurationMs = phaseBeatCount * beatDurationMs;
 
   const beginInstruction = useCallback(() => {
@@ -92,12 +126,12 @@ export function useBeatGameRound({
       setPhase("result");
 
       if (result === "success") {
-        onSuccess();
+        onSuccess(roundNumber);
       } else {
         onFailure();
       }
     },
-    [onFailure, onSuccess, phase],
+    [onFailure, onSuccess, phase, roundNumber],
   );
 
   useEffect(() => {
@@ -125,6 +159,27 @@ export function useBeatGameRound({
         return;
       }
 
+      if (phase === "result" && shouldOneUpAfterResult && shouldPlayOneUp) {
+        setElapsedMs(0);
+        setShouldOneUpAfterResult(false);
+        setPhase("oneUp");
+        return;
+      }
+
+      if (phase === "result" && shouldOneUpAfterResult) {
+        setShouldOneUpAfterResult(false);
+        setRoundNumber((currentRoundNumber) => currentRoundNumber + 1);
+        beginInstruction();
+        return;
+      }
+
+      if (phase === "result" && roundNumber % BOSS_STAGE_INTERVAL_ROUNDS === 0) {
+        setElapsedMs(0);
+        setSpeedLevel(0);
+        setPhase("bossStage");
+        return;
+      }
+
       if (phase === "result" && roundNumber % SPEED_UP_INTERVAL_ROUNDS === 0) {
         setElapsedMs(0);
         setPhase("speedUp");
@@ -133,6 +188,19 @@ export function useBeatGameRound({
 
       if (phase === "speedUp") {
         setSpeedLevel((currentSpeedLevel) => currentSpeedLevel + 1);
+        setRoundNumber((currentRoundNumber) => currentRoundNumber + 1);
+        beginInstruction();
+        return;
+      }
+
+      if (phase === "bossStage") {
+        setShouldOneUpAfterResult(true);
+        setRoundNumber((currentRoundNumber) => currentRoundNumber + 1);
+        beginInstruction();
+        return;
+      }
+
+      if (phase === "oneUp") {
         setRoundNumber((currentRoundNumber) => currentRoundNumber + 1);
         beginInstruction();
         return;
@@ -152,7 +220,9 @@ export function useBeatGameRound({
     phase,
     phaseDurationMs,
     roundNumber,
+    shouldOneUpAfterResult,
     shouldFinishAfterResult,
+    shouldPlayOneUp,
     showResult,
   ]);
 
@@ -163,9 +233,9 @@ export function useBeatGameRound({
   const phaseLabel = PHASE_LABELS[phase];
   const instructionStep: InstructionStep =
     elapsedMs < 2 * beatDurationMs
-      ? "formPhoto"
-      : elapsedMs < (INSTRUCTION_BEATS / 2) * beatDurationMs
-        ? "formDescription"
+      ? "idle"
+      : elapsedMs < 4 * beatDurationMs
+        ? "formPhoto"
         : "floor";
 
   return useMemo(

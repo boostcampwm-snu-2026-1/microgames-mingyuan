@@ -1,0 +1,254 @@
+"use client";
+
+import Image from "next/image";
+import type { CSSProperties } from "react";
+import { useState } from "react";
+import { FORM_INSTRUCTIONS } from "@/games/formInstructions";
+import { useRandomFormInstruction } from "@/hooks/useRandomFormInstruction";
+import type { SynchronizedRhythmStyle } from "@/hooks/useSynchronizedRhythm";
+import {
+  getRandomBossStageMessage,
+  getRandomSpeedUpMessage,
+} from "./gameFlowConstants";
+import { NeonButton } from "./NeonShell";
+
+function CurrentFloorDisplay({
+  beatDurationMs,
+  roundNumber,
+  rhythmStyle,
+}: Readonly<{
+  beatDurationMs: number;
+  roundNumber: number;
+  rhythmStyle: SynchronizedRhythmStyle;
+}>) {
+  const previousRoundNumber = Math.max(roundNumber - 1, 0);
+  const floorElevatorStyle = {
+    ...rhythmStyle,
+    "--floor-elevator-duration": `${beatDurationMs * 4}ms`,
+  } satisfies SynchronizedRhythmStyle & {
+    "--floor-elevator-duration": string;
+  };
+
+  return (
+    <div
+      className="floor-display-card mx-auto grid size-56 place-items-center rounded-md border-2 border-cyan-100 bg-black/70 shadow-[0_0_38px_rgba(103,232,249,0.32)] sm:size-72"
+      style={floorElevatorStyle}
+    >
+      <div className="w-full text-center">
+        <p className="text-sm font-black uppercase tracking-[0.32em] text-cyan-100">
+          현재 층
+        </p>
+        <div className="relative mx-auto mt-3 h-28 w-full overflow-hidden sm:h-36">
+          <p className="floor-number-elevator-out absolute inset-0 grid place-items-center text-8xl font-black leading-none text-white/55 drop-shadow-[0_0_18px_rgba(103,232,249,0.45)] sm:text-9xl">
+            {previousRoundNumber.toString().padStart(2, "0")}
+          </p>
+          <p className="floor-number-elevator-in absolute inset-0 grid place-items-center text-8xl font-black leading-none text-white drop-shadow-[0_0_18px_rgba(103,232,249,0.75)] sm:text-9xl">
+            {roundNumber.toString().padStart(2, "0")}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function InstructionRoundScreen({
+  beatDurationMs,
+  instructionStep,
+  rhythmStyle,
+  roundNumber,
+}: Readonly<{
+  beatDurationMs: number;
+  instructionStep: "idle" | "formPhoto" | "floor";
+  rhythmStyle: SynchronizedRhythmStyle;
+  roundNumber: number;
+}>) {
+  const formInstruction = useRandomFormInstruction(roundNumber);
+  const selectedFormIndex = FORM_INSTRUCTIONS.findIndex(
+    (candidate) => candidate.imageSrc === formInstruction.imageSrc,
+  );
+  const shouldShowIdle = instructionStep === "idle";
+  const shouldShowFloor = instructionStep === "floor";
+  const shouldShowForm = instructionStep !== "floor";
+
+  return (
+    <div className="mx-auto w-full max-w-5xl space-y-8 text-center">
+      <div className="instruction-form-stage">
+        {shouldShowFloor ? (
+          <CurrentFloorDisplay
+            beatDurationMs={beatDurationMs}
+            rhythmStyle={rhythmStyle}
+            roundNumber={roundNumber}
+          />
+        ) : null}
+        {shouldShowForm ? (
+          <>
+            {shouldShowIdle ? (
+              <div className="instruction-idle-grid-card rounded-lg border border-cyan-100/45 bg-black/35 shadow-[0_0_22px_rgba(103,232,249,0.14)]">
+                <div className="instruction-selection-grid">
+                  {FORM_INSTRUCTIONS.map((candidate) => {
+                    const isSelected =
+                      candidate.imageSrc === formInstruction.imageSrc;
+
+                    return (
+                      <div
+                        className={`instruction-selection-tile ${
+                          isSelected ? "instruction-selection-tile-hidden" : ""
+                        }`}
+                        key={candidate.imageSrc}
+                      >
+                        <Image
+                          src={candidate.imageSrc}
+                          alt={isSelected ? formInstruction.alt : ""}
+                          fill
+                          sizes="96px"
+                          className="object-contain drop-shadow-[0_0_14px_rgba(103,232,249,0.5)]"
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : null}
+            <div
+              className={`instruction-photo-card rounded-lg border bg-black/70 p-3 ${
+                shouldShowIdle
+                  ? "instruction-photo-card-grid-selected border-cyan-100/70 shadow-[0_0_24px_rgba(103,232,249,0.34)]"
+                  : "instruction-photo-card-popup border-cyan-100/70 shadow-[0_0_28px_rgba(103,232,249,0.18)]"
+              }`}
+              style={
+                {
+                  "--instruction-selected-column": selectedFormIndex % 3,
+                  "--instruction-selected-row": Math.floor(
+                    selectedFormIndex / 3,
+                  ),
+                } as CSSProperties
+              }
+            >
+              <div className="relative aspect-[4/3] w-full">
+                <Image
+                  src={formInstruction.imageSrc}
+                  alt={formInstruction.alt}
+                  fill
+                  sizes="(min-width: 640px) 360px, 78vw"
+                  className="object-contain drop-shadow-[0_0_22px_rgba(103,232,249,0.62)]"
+                />
+              </div>
+            </div>
+          </>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+export function MicrogameRoundScreen({
+  canRecordResult,
+  gameBeatCount,
+  onFinish,
+  onRecordFailure,
+  onRecordSuccess,
+}: Readonly<{
+  canRecordResult: boolean;
+  gameBeatCount: number;
+  onFinish: () => void;
+  onRecordFailure: () => void;
+  onRecordSuccess: () => void;
+}>) {
+  return (
+    <div className="mx-auto w-full max-w-5xl space-y-8">
+      <section className="flex min-h-[520px] flex-col justify-between rounded-lg border border-cyan-200 bg-cyan-950/75 p-6 text-center shadow-[0_0_42px_rgba(103,232,249,0.25)] backdrop-blur-sm">
+        <div className="border-b border-cyan-100/50 pb-4">
+          <p className="font-black uppercase tracking-[0.24em] text-cyan-100">
+            Microgame
+          </p>
+        </div>
+        <div className="grid flex-1 place-items-center py-12">
+          <div className="space-y-4">
+            <h1 className="text-6xl font-black leading-tight drop-shadow-[0_0_18px_rgba(103,232,249,0.7)] sm:text-8xl">
+              Press at the beat
+            </h1>
+            <p className="mx-auto max-w-md text-cyan-50/75">
+              본게임은 소리 없이 {gameBeatCount}비트 동안 진행됩니다.
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-col justify-center gap-3 sm:flex-row">
+          <button
+            className="min-h-12 rounded-md border border-white/70 bg-black/50 px-6 py-3 text-base font-black uppercase tracking-[0.18em] text-white transition enabled:hover:border-cyan-200 enabled:hover:text-cyan-100 disabled:cursor-not-allowed disabled:opacity-40"
+            disabled={!canRecordResult}
+            onClick={onRecordSuccess}
+            type="button"
+          >
+            성공 처리
+          </button>
+          <button
+            className="min-h-12 rounded-md border border-white/70 bg-black/50 px-6 py-3 text-base font-black uppercase tracking-[0.18em] text-white transition enabled:hover:border-cyan-200 enabled:hover:text-cyan-100 disabled:cursor-not-allowed disabled:opacity-40"
+            disabled={!canRecordResult}
+            onClick={onRecordFailure}
+            type="button"
+          >
+            실패 처리
+          </button>
+          <NeonButton onClick={onFinish} variant="secondary">
+            게임 종료
+          </NeonButton>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+export function ResultRoundScreen() {
+  return (
+    <div className="mx-auto min-h-screen w-full max-w-5xl text-center" />
+  );
+}
+
+export function SpeedUpScreen() {
+  const [cheerMessage] = useState(getRandomSpeedUpMessage);
+
+  return (
+    <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col items-center justify-center gap-8 pb-24 text-center">
+      <div className="speed-up-typography">
+        <h1 className="phase-typography-title mt-4 text-6xl font-black leading-none text-white sm:text-8xl">
+          SPEED UP
+        </h1>
+        <p className="phase-typography-message mt-5 text-xl font-black tracking-[0.24em] text-cyan-50">
+          {cheerMessage}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export function BossStageScreen() {
+  const [cheerMessage] = useState(getRandomBossStageMessage);
+
+  return (
+    <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col items-center justify-center gap-8 pb-24 text-center">
+      <div className="speed-up-typography">
+        <h1 className="phase-typography-title mt-4 text-6xl font-black leading-none text-white sm:text-8xl">
+          BOSS STAGE
+        </h1>
+        <p className="phase-typography-message mt-5 text-xl font-black tracking-[0.24em] text-cyan-50">
+          {cheerMessage}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export function OneUpScreen() {
+  return (
+    <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col items-center justify-center gap-8 pb-24 text-center">
+      <div className="speed-up-typography">
+        <h1 className="phase-typography-title mt-4 text-6xl font-black leading-none text-white sm:text-8xl">
+          1-UP
+        </h1>
+        <p className="phase-typography-message mt-5 text-xl font-black tracking-[0.24em] text-cyan-50">
+          LIFE RESTORED
+        </p>
+      </div>
+    </div>
+  );
+}

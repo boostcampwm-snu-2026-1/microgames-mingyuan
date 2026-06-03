@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { ALL_GAME_PRELOAD_ASSETS } from "@/games/preloadAssets";
+import { useHighestClearedRound } from "@/hooks/useHighestClearedRound";
 import { bgmLibrary } from "@/lib/bgmLibrary";
 
 const MIN_LOADING_TIME_MS = 900;
@@ -40,6 +41,9 @@ export function useGameScreenFlow() {
   const [screen, setScreen] = useState<GameScreen>("loading");
   const [lives, setLives] = useState(MAX_LIVES);
   const [roundResult, setRoundResult] = useState<GameRoundResult>("idle");
+  const [finalClearedRound, setFinalClearedRound] = useState(0);
+  const { highestClearedRound, recordHighestClearedRound } =
+    useHighestClearedRound();
 
   useEffect(() => {
     if (screen !== "loading") {
@@ -60,6 +64,7 @@ export function useGameScreenFlow() {
   }, [screen]);
 
   const startGame = useCallback(() => {
+    setFinalClearedRound(0);
     setLives(MAX_LIVES);
     setRoundResult("idle");
     setScreen("setup");
@@ -75,20 +80,26 @@ export function useGameScreenFlow() {
   }, []);
 
   const restartGame = useCallback(() => {
+    setFinalClearedRound(0);
     setLives(MAX_LIVES);
     setRoundResult("idle");
     setScreen("setup");
   }, []);
 
   const returnToMain = useCallback(() => {
+    setFinalClearedRound(0);
     setLives(MAX_LIVES);
     setRoundResult("idle");
     setScreen("main");
   }, []);
 
-  const recordSuccess = useCallback(() => {
+  const recordSuccess = useCallback((roundNumber: number) => {
+    recordHighestClearedRound(roundNumber);
+    setFinalClearedRound((currentFinalClearedRound) =>
+      Math.max(currentFinalClearedRound, roundNumber),
+    );
     setRoundResult("success");
-  }, []);
+  }, [recordHighestClearedRound]);
 
   const resetRoundResult = useCallback(() => {
     setRoundResult("idle");
@@ -101,9 +112,22 @@ export function useGameScreenFlow() {
     });
   }, []);
 
+  const gainLife = useCallback(() => {
+    setLives((currentLives) => {
+      if (currentLives <= 0) {
+        return currentLives;
+      }
+
+      return Math.min(currentLives + 1, MAX_LIVES);
+    });
+  }, []);
+
   return {
     completeSetup,
+    finalClearedRound,
     finishGame,
+    gainLife,
+    highestClearedRound,
     lives,
     loseLife,
     maxLives: MAX_LIVES,

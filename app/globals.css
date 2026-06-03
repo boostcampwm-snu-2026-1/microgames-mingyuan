@@ -125,41 +125,42 @@ body {
   }
 }
 
-@keyframes floor-number-rise-out {
+@keyframes floor-number-elevator-out {
   0% {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 
-  45% {
+  32% {
     opacity: 1;
-    transform: translateY(-18px) scale(0.92);
+    transform: translateY(0);
   }
 
   100% {
     opacity: 0;
-    transform: translateY(-88px) scale(0.82);
+    transform: translateY(115%);
   }
 }
 
-@keyframes floor-number-rise-in {
+@keyframes floor-number-elevator-in {
   0% {
     opacity: 0;
-    transform: translateY(96px) scale(0.82);
+    transform: translateY(-115%);
   }
 
-  45% {
+  32% {
+    opacity: 0;
+    transform: translateY(-115%);
+  }
+
+  78% {
     opacity: 1;
-    transform: translateY(14px) scale(1.08);
-  }
-
-  70% {
-    transform: translateY(-8px) scale(0.98);
+    transform: translateY(0);
   }
 
   100% {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
@@ -263,12 +264,27 @@ body {
   0%,
   100% {
     filter: drop-shadow(0 0 12px rgb(103 232 249 / 0.45));
-    transform: translateY(0) scale(1);
   }
 
   50% {
     filter: drop-shadow(0 0 24px rgb(103 232 249 / 0.82));
-    transform: translateY(-6px) scale(1.018);
+  }
+}
+
+@keyframes instruction-selection-tile-selected {
+  0%,
+  100% {
+    box-shadow:
+      0 0 24px rgb(103 232 249 / 0.54),
+      inset 0 0 18px rgb(103 232 249 / 0.14);
+    filter: saturate(1.18);
+  }
+
+  50% {
+    box-shadow:
+      0 0 34px rgb(103 232 249 / 0.72),
+      inset 0 0 24px rgb(103 232 249 / 0.2);
+    filter: saturate(1.28);
   }
 }
 
@@ -340,14 +356,14 @@ body {
   transform-origin: top center;
 }
 
-.floor-number-rise-out {
-  animation: floor-number-rise-out var(--floor-rise-duration, 2.338s)
-    cubic-bezier(0.22, 0.76, 0.28, 1) both;
+.floor-number-elevator-out {
+  animation: floor-number-elevator-out var(--floor-elevator-duration, 2s)
+    cubic-bezier(0.28, 0.82, 0.24, 1) both;
 }
 
-.floor-number-rise-in {
-  animation: floor-number-rise-in var(--floor-rise-duration, 2.338s)
-    cubic-bezier(0.22, 0.76, 0.28, 1) both;
+.floor-number-elevator-in {
+  animation: floor-number-elevator-in var(--floor-elevator-duration, 2s)
+    cubic-bezier(0.28, 0.82, 0.24, 1) both;
 }
 
 .loading-spinner-vital {
@@ -390,7 +406,34 @@ body {
   will-change: transform, opacity, filter;
 }
 
+.phase-typography-title {
+  -webkit-text-stroke: 1px rgb(0 0 0 / 0.42);
+  text-shadow:
+    0 2px 10px rgb(0 0 0 / 0.72),
+    0 0 22px rgb(103 232 249 / 0.34);
+}
+
+.phase-typography-message {
+  text-shadow:
+    0 2px 8px rgb(0 0 0 / 0.7),
+    0 0 16px rgb(103 232 249 / 0.28);
+}
+
 .instruction-form-stage {
+  --instruction-grid-gap: 0.12rem;
+  --instruction-grid-inset: 0.12rem;
+  --instruction-grid-width: min(78vw, 22rem);
+  --instruction-tile-width: calc(
+    (
+        var(--instruction-grid-width) - var(--instruction-grid-inset) * 2 -
+          var(--instruction-grid-gap) * 2
+      ) / 3
+  );
+  --instruction-tile-height: calc(var(--instruction-tile-width) * 0.75);
+  --instruction-grid-height: calc(
+    var(--instruction-grid-inset) * 2 + var(--instruction-tile-height) * 3 +
+      var(--instruction-grid-gap) * 2
+  );
   animation: instruction-form-arrive 420ms cubic-bezier(0.2, 0.72, 0.24, 1)
     both;
   display: grid;
@@ -399,58 +442,105 @@ body {
   position: relative;
 }
 
-.instruction-photo-only-card {
-  animation: instruction-photo-selected var(--game-rhythm-duration, 1.2s)
-    ease-in-out infinite;
+.instruction-photo-card {
   backface-visibility: hidden;
-  grid-area: 1 / 1;
+  position: absolute;
   transform-origin: center;
   transition:
-    opacity 260ms ease-out,
-    transform 420ms cubic-bezier(0.2, 0.72, 0.24, 1);
-  width: min(62vw, 15rem);
+    border-color 180ms ease-out,
+    box-shadow 180ms ease-out,
+    height 360ms cubic-bezier(0.16, 0.92, 0.2, 1.12),
+    left 360ms cubic-bezier(0.16, 0.92, 0.2, 1.12),
+    opacity 180ms ease-out,
+    top 360ms cubic-bezier(0.16, 0.92, 0.2, 1.12),
+    transform 360ms cubic-bezier(0.16, 0.92, 0.2, 1.12),
+    width 360ms cubic-bezier(0.16, 0.92, 0.2, 1.12);
   will-change: transform, opacity, filter;
+  z-index: 2;
 }
 
-.instruction-description-card {
+.instruction-idle-grid-card {
   backface-visibility: hidden;
-  display: grid;
-  gap: 1.25rem;
   grid-area: 1 / 1;
-  grid-template-columns: minmax(0, 1fr);
-  max-width: min(92vw, 48rem);
-  opacity: 0;
-  pointer-events: none;
-  text-align: center;
-  transform: translateY(14px) scale(0.96);
+  height: var(--instruction-grid-height);
+  overflow: hidden;
+  position: relative;
   transform-origin: center;
-  transition:
-    opacity 320ms ease-out,
-    transform 480ms cubic-bezier(0.2, 0.72, 0.24, 1);
-  width: min(92vw, 28rem);
+  width: var(--instruction-grid-width);
   will-change: transform, opacity;
 }
 
-.instruction-form-stage-description .instruction-photo-only-card {
-  opacity: 0;
-  transform: translateY(-10px) scale(0.92);
+.instruction-selection-grid {
+  display: grid;
+  gap: var(--instruction-grid-gap);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(3, var(--instruction-tile-height));
+  inset: var(--instruction-grid-inset);
+  position: absolute;
 }
 
-.instruction-form-stage-description .instruction-description-card {
+.instruction-selection-tile {
+  aspect-ratio: 4 / 3;
+  background: rgb(0 0 0 / 0.52);
+  border: 1px solid rgb(207 250 254 / 0.22);
+  border-radius: 0.375rem;
+  box-shadow: 0 0 10px rgb(103 232 249 / 0.1);
+  filter: saturate(0.78);
+  height: var(--instruction-tile-height);
+  opacity: 0.48;
+  position: relative;
+  transform: scale(1);
+  transform-origin: center;
+  will-change: transform, opacity, filter;
+}
+
+.instruction-selection-tile-selected {
+  animation: instruction-selection-tile-selected
+    var(--game-rhythm-duration, 0.5s) ease-in-out infinite;
+  border-color: rgb(207 250 254 / 0.96);
   opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0) scale(1);
+  z-index: 1;
+}
+
+.instruction-selection-tile-hidden {
+  opacity: 0;
+}
+
+.instruction-photo-card-grid-selected {
+  animation: instruction-selection-tile-selected
+    var(--game-rhythm-duration, 0.5s) ease-in-out infinite;
+  border-radius: 0.375rem;
+  height: var(--instruction-tile-height);
+  left: calc(
+    50% - var(--instruction-grid-width) / 2 + var(--instruction-grid-inset) +
+      var(--instruction-selected-column) *
+      (var(--instruction-tile-width) + var(--instruction-grid-gap))
+  );
+  opacity: 1;
+  top: calc(
+    50% - var(--instruction-grid-height) / 2 + var(--instruction-grid-inset) +
+      var(--instruction-selected-row) *
+      (var(--instruction-tile-height) + var(--instruction-grid-gap))
+  );
+  padding: 0;
+  transform: none;
+  width: var(--instruction-tile-width);
+}
+
+.instruction-photo-card-popup {
+  animation: instruction-photo-selected var(--game-rhythm-duration, 1.2s)
+    ease-in-out infinite;
+  height: auto;
+  left: 50%;
+  opacity: 1;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  width: min(78vw, 22rem);
 }
 
 @media (min-width: 640px) {
   .instruction-form-stage {
     min-height: 20rem;
-  }
-
-  .instruction-description-card {
-    grid-template-columns: 14rem minmax(0, 1fr);
-    text-align: left;
-    width: min(92vw, 48rem);
   }
 }
 

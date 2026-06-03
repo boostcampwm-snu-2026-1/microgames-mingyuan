@@ -2,12 +2,10 @@
 
 import type { CSSProperties } from "react";
 
-const FAIL_DURATION_MS = 1985.275;
-const SUCCESS_DURATION_MS = 2089.775;
-const RESULT_BEATS = 4;
+const BASE_BGM_DURATION_MS = 4000;
+const BASE_BGM_BEATS = 8;
 
-export const RHYTHM_DURATION_MS =
-  (FAIL_DURATION_MS + SUCCESS_DURATION_MS) / 2 / RESULT_BEATS;
+export const RHYTHM_DURATION_MS = BASE_BGM_DURATION_MS / BASE_BGM_BEATS;
 const RHYTHM_STAGGER_MS = 120;
 
 export type SynchronizedRhythmStyle = CSSProperties & {
