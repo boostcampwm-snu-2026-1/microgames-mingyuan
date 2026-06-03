@@ -207,7 +207,7 @@ export function GameOverScreen({
     <NeonShell>
       <div className="game-over-comic-drop mx-auto w-full max-w-3xl rounded-lg border border-cyan-100/70 bg-black/70 p-6 text-center shadow-[0_0_38px_rgba(103,232,249,0.24)] backdrop-blur-sm sm:p-8">
         <p className="mb-4 text-sm font-black uppercase tracking-[0.32em] text-cyan-100">
-          Final Floor
+          게임 종료
         </p>
         <h1 className="text-5xl font-black leading-none text-white drop-shadow-[0_0_18px_rgba(103,232,249,0.7)] sm:text-7xl">
           Game Over

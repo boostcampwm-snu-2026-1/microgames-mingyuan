@@ -199,9 +199,7 @@ export function MicrogameRoundScreen({
 }
 
 export function ResultRoundScreen() {
-  return (
-    <div className="mx-auto min-h-screen w-full max-w-5xl text-center" />
-  );
+  return <div className="mx-auto min-h-screen w-full max-w-5xl text-center" />;
 }
 
 export function SpeedUpScreen() {
@@ -246,7 +244,7 @@ export function OneUpScreen() {
           1-UP
         </h1>
         <p className="phase-typography-message mt-5 text-xl font-black tracking-[0.24em] text-cyan-50">
-          LIFE RESTORED
+          목숨 하나 추가!
         </p>
       </div>
     </div>

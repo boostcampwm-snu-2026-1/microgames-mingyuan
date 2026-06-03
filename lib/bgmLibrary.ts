@@ -13,6 +13,13 @@ export type BgmTrack =
   | "speedUp"
   | "success";
 
+export type SoundEffectTrack =
+  | "clear1"
+  | "clear2"
+  | "clear3"
+  | "clear4"
+  | "clear5";
+
 const BGM_TRACK_PATHS = {
   bossStage: "/sounds/boss-stage.mp3",
   fail: "/sounds/fail.mp3",
@@ -25,8 +32,22 @@ const BGM_TRACK_PATHS = {
   success: "/sounds/success.mp3",
 } satisfies Record<BgmTrack, string>;
 
+const SOUND_EFFECT_TRACK_PATHS = {
+  clear1: "/sounds/clear-1.mp3",
+  clear2: "/sounds/clear-2.mp3",
+  clear3: "/sounds/clear-3.mp3",
+  clear4: "/sounds/clear-4.mp3",
+  clear5: "/sounds/clear-5.mp3",
+} satisfies Record<SoundEffectTrack, string>;
+
+const AUDIO_TRACK_PATHS = {
+  ...BGM_TRACK_PATHS,
+  ...SOUND_EFFECT_TRACK_PATHS,
+};
+
 const DEFAULT_BEAT_DURATION_SECONDS = RHYTHM_DURATION_MS / 1000;
 const BGM_GAIN = 0.72;
+const SOUND_EFFECT_GAIN = 0.86;
 const ATTACK_FADE_SECONDS = 0.012;
 const RELEASE_FADE_SECONDS = 0.045;
 
@@ -70,8 +91,11 @@ type DesiredPlayback = Readonly<{
 
 class BgmLibrary {
   private audioContext: AudioContext | null = null;
-  private buffers = new Map<BgmTrack, AudioBuffer>();
-  private loadingBuffers = new Map<BgmTrack, Promise<AudioBuffer>>();
+  private buffers = new Map<BgmTrack | SoundEffectTrack, AudioBuffer>();
+  private loadingBuffers = new Map<
+    BgmTrack | SoundEffectTrack,
+    Promise<AudioBuffer>
+  >();
   private currentSource: PlayingSource | null = null;
   private desiredPlayback: DesiredPlayback | null = null;
   private playRequestId = 0;
@@ -95,8 +119,8 @@ class BgmLibrary {
 
   preloadAll() {
     return Promise.all(
-      Object.keys(BGM_TRACK_PATHS).map((track) =>
-        this.loadTrack(track as BgmTrack),
+      Object.keys(AUDIO_TRACK_PATHS).map((track) =>
+        this.loadTrack(track as BgmTrack | SoundEffectTrack),
       ),
     );
   }
@@ -109,6 +133,19 @@ class BgmLibrary {
     const buffer = await this.loadTrack(track);
 
     return buffer.duration * 1000;
+  }
+
+  async playSoundEffect(track: SoundEffectTrack) {
+    const audioContext = this.getAudioContext();
+    const buffer = await this.loadTrack(track);
+    const gainNode = audioContext.createGain();
+    const source = audioContext.createBufferSource();
+
+    source.buffer = buffer;
+    source.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    gainNode.gain.setValueAtTime(SOUND_EFFECT_GAIN, audioContext.currentTime);
+    source.start(audioContext.currentTime);
   }
 
   async play(
@@ -306,7 +343,7 @@ class BgmLibrary {
     return this.audioContext;
   }
 
-  private async loadTrack(track: BgmTrack) {
+  private async loadTrack(track: BgmTrack | SoundEffectTrack) {
     const decodedBuffer = this.buffers.get(track);
 
     if (decodedBuffer) {
@@ -319,7 +356,7 @@ class BgmLibrary {
       return loadingBuffer;
     }
 
-    const nextLoadingBuffer = fetch(BGM_TRACK_PATHS[track])
+    const nextLoadingBuffer = fetch(AUDIO_TRACK_PATHS[track])
       .then((response) => {
         if (!response.ok) {
           throw new Error(`Failed to load BGM track: ${track}`);

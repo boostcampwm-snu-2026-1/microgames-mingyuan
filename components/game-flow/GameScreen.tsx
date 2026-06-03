@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useBeatGameRound } from "@/hooks/useBeatGameRound";
 import { useSynchronizedRhythm } from "@/hooks/useSynchronizedRhythm";
-import { bgmLibrary } from "@/lib/bgmLibrary";
+import { bgmLibrary, type SoundEffectTrack } from "@/lib/bgmLibrary";
 import { FixedLivesOverlay } from "./FixedLivesOverlay";
 import { RESULT_BGM_TRACKS } from "./gameFlowConstants";
 import { NeonShell } from "./NeonShell";
@@ -15,6 +15,20 @@ import {
   ResultRoundScreen,
   SpeedUpScreen,
 } from "./roundScreens";
+
+const CLEAR_SOUND_EFFECTS = [
+  "clear1",
+  "clear2",
+  "clear3",
+  "clear4",
+  "clear5",
+] satisfies SoundEffectTrack[];
+
+function getRandomClearSoundEffect() {
+  return CLEAR_SOUND_EFFECTS[
+    Math.floor(Math.random() * CLEAR_SOUND_EFFECTS.length)
+  ];
+}
 
 export function GameScreen({
   lives,
@@ -34,6 +48,7 @@ export function GameScreen({
   onSuccess: (roundNumber: number) => void;
 }>) {
   const oneUpAppliedRoundRef = useRef<number | null>(null);
+  const clearSoundPlayedRoundRef = useRef<number | null>(null);
 
   const {
     beatDurationMs,
@@ -55,6 +70,20 @@ export function GameScreen({
   const { getStaggeredRhythmStyle, rhythmStyle } =
     useSynchronizedRhythm(beatDurationMs);
   const canRecordResult = phase === "game";
+  const recordSuccessWithClearSound = () => {
+    recordSuccess();
+
+    if (clearSoundPlayedRoundRef.current === roundNumber) {
+      return;
+    }
+
+    clearSoundPlayedRoundRef.current = roundNumber;
+    bgmLibrary
+      .playSoundEffect(getRandomClearSoundEffect())
+      .catch((error: unknown) => {
+        console.error(error);
+      });
+  };
 
   useEffect(() => {
     bgmLibrary.setBeatDurationMs(beatDurationMs);
@@ -151,7 +180,7 @@ export function GameScreen({
           gameBeatCount={gameBeatCount}
           onFinish={onFinish}
           onRecordFailure={recordFailure}
-          onRecordSuccess={recordSuccess}
+          onRecordSuccess={recordSuccessWithClearSound}
         />
       ) : phase === "speedUp" ? (
         <SpeedUpScreen />

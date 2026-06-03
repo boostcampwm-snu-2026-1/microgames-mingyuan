@@ -103,6 +103,7 @@ export function useBeatGameRound({
   const [roundNumber, setRoundNumber] = useState(1);
   const [roundResult, setRoundResult] = useState<GameRoundResult>("idle");
   const [speedLevel, setSpeedLevel] = useState(0);
+  const [hasClearedCurrentGame, setHasClearedCurrentGame] = useState(false);
   const [shouldOneUpAfterResult, setShouldOneUpAfterResult] = useState(false);
   const phaseBeatCount = getPhaseBeatCount(phase, gameBeatCount);
   const beatDurationMs = getPhaseBeatDurationMs(phase, speedLevel);
@@ -112,6 +113,7 @@ export function useBeatGameRound({
     setElapsedMs(0);
     setPhase("instruction");
     setRoundResult("idle");
+    setHasClearedCurrentGame(false);
     onResetResult();
   }, [onResetResult]);
 
@@ -150,7 +152,7 @@ export function useBeatGameRound({
       }
 
       if (phase === "game") {
-        showResult("failure");
+        showResult(hasClearedCurrentGame ? "success" : "failure");
         return;
       }
 
@@ -219,6 +221,7 @@ export function useBeatGameRound({
     onFinish,
     phase,
     phaseDurationMs,
+    hasClearedCurrentGame,
     roundNumber,
     shouldOneUpAfterResult,
     shouldFinishAfterResult,
@@ -247,8 +250,8 @@ export function useBeatGameRound({
       phaseBeatCount,
       phaseLabel,
       progressBeats,
-      recordFailure: () => showResult("failure"),
-      recordSuccess: () => showResult("success"),
+      recordFailure: () => setHasClearedCurrentGame(false),
+      recordSuccess: () => setHasClearedCurrentGame(true),
       roundNumber,
       roundResult,
       speedLevel,
@@ -263,7 +266,6 @@ export function useBeatGameRound({
       progressBeats,
       roundNumber,
       roundResult,
-      showResult,
       speedLevel,
     ],
   );
