@@ -7,6 +7,8 @@ export const ALL_GAME_PRELOAD_ASSETS = [
   "/games/game-flow/images/main-elevator-fail-2.png",
   "/games/game-flow/images/main-elevator-success-1.png",
   "/games/game-flow/images/main-elevator-success-2.png",
+  "/games/game-flow/images/main-elevator-warning-1.png",
+  "/games/game-flow/images/main-elevator-warning-2.png",
   "/games/game-flow/images/game-main-logo.png",
   "/games/game-flow/images/life-active.png",
   "/games/game-flow/images/life-deactive.png",

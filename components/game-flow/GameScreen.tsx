@@ -137,6 +137,8 @@ export function GameScreen({
     [getRoundMicrogame, roundNumber],
   );
   const canRecordResult = phase === "game";
+  const backdropTone =
+    phase === "bossStage" || phase === "speedUp" ? "warning" : "default";
   const shouldShowCanvasTransition =
     phase === "instruction" && instructionStep === "promptTransition";
   const shouldShowStartPrompt =
@@ -252,6 +254,7 @@ export function GameScreen({
 
   return (
     <NeonShell
+      backdropTone={backdropTone}
       roundResult={roundResult}
       rhythmStyle={rhythmStyle}
       showBackdrop={phase !== "game"}

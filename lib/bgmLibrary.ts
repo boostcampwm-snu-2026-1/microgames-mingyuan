@@ -49,6 +49,9 @@ const AUDIO_TRACK_PATHS = {
 
 const DEFAULT_BEAT_DURATION_SECONDS = RHYTHM_DURATION_MS / 1000;
 const BGM_GAIN = 0.72;
+const BGM_TRACK_GAINS: Partial<Record<BgmTrack, number>> = {
+  undertale: 0.52,
+};
 const SOUND_EFFECT_GAIN = 0.86;
 const ATTACK_FADE_SECONDS = 0.012;
 const RELEASE_FADE_SECONDS = 0.045;
@@ -197,7 +200,7 @@ class BgmLibrary {
     gainNode.connect(audioContext.destination);
     gainNode.gain.setValueAtTime(0, startAt);
     gainNode.gain.linearRampToValueAtTime(
-      BGM_GAIN,
+      this.getTrackGain(track),
       startAt + ATTACK_FADE_SECONDS,
     );
     source.start(startAt);
@@ -321,7 +324,7 @@ class BgmLibrary {
     gainNode.connect(this.getAudioContext().destination);
     gainNode.gain.setValueAtTime(0, startAt);
     gainNode.gain.linearRampToValueAtTime(
-      BGM_GAIN,
+      this.getTrackGain(track),
       startAt + ATTACK_FADE_SECONDS,
     );
     source.start(startAt);
@@ -395,6 +398,10 @@ class BgmLibrary {
     }
 
     return BGM_TRACK_BEATS[track] * this.beatDurationSeconds;
+  }
+
+  private getTrackGain(track: BgmTrack) {
+    return BGM_TRACK_GAINS[track] ?? BGM_GAIN;
   }
 
   private isCurrentSource(

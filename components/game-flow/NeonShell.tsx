@@ -4,7 +4,12 @@ import Image from "next/image";
 import type { ReactNode } from "react";
 import type { GameRoundResult } from "@/hooks/useGameScreenFlow";
 import type { SynchronizedRhythmStyle } from "@/hooks/useSynchronizedRhythm";
-import { ELEVATOR_RESULT_IMAGES } from "./gameFlowConstants";
+import {
+  ELEVATOR_RESULT_IMAGES,
+  ELEVATOR_WARNING_IMAGES,
+} from "./gameFlowConstants";
+
+type ElevatorBackdropTone = "default" | "warning";
 
 export function NeonButton({
   children,
@@ -36,13 +41,18 @@ function ElevatorBackdrop({
   transition = "none",
   shouldDim = true,
   roundResult = "idle",
+  tone = "default",
 }: Readonly<{
   isVisible?: boolean;
   roundResult?: GameRoundResult;
   shouldDim?: boolean;
+  tone?: ElevatorBackdropTone;
   transition?: "none" | "toElevator";
 }>) {
-  const elevatorImages = ELEVATOR_RESULT_IMAGES[roundResult];
+  const elevatorImages =
+    tone === "warning"
+      ? ELEVATOR_WARNING_IMAGES
+      : ELEVATOR_RESULT_IMAGES[roundResult];
 
   return (
     <div
@@ -65,7 +75,11 @@ function ElevatorBackdrop({
         unoptimized
       />
       <Image
-        className="neon-elevator-flicker absolute inset-0 size-full object-cover object-center"
+        className={`absolute inset-0 size-full object-cover object-center ${
+          tone === "warning"
+            ? "warning-elevator-overlay"
+            : "neon-elevator-flicker"
+        }`}
         src={elevatorImages[1]}
         alt=""
         fill
@@ -89,8 +103,10 @@ export function NeonShell({
   roundResult = "idle",
   rhythmStyle,
   shouldDim = true,
+  backdropTone = "default",
   transition = "none",
 }: Readonly<{
+  backdropTone?: ElevatorBackdropTone;
   children: ReactNode;
   rhythmStyle?: SynchronizedRhythmStyle;
   roundResult?: GameRoundResult;
@@ -105,6 +121,7 @@ export function NeonShell({
     >
       <ElevatorBackdrop
         isVisible={showBackdrop}
+        tone={backdropTone}
         roundResult={roundResult}
         shouldDim={shouldDim}
         transition={transition}

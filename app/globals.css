@@ -38,6 +38,19 @@ body {
   }
 }
 
+@keyframes warning-elevator-overlay {
+  0%,
+  42%,
+  100% {
+    opacity: 0;
+  }
+
+  48%,
+  74% {
+    opacity: 1;
+  }
+}
+
 @keyframes neon-loading-bar {
   0% {
     transform: translateX(-100%);
@@ -417,6 +430,11 @@ body {
 
 .neon-elevator-flicker {
   animation: neon-elevator-flicker var(--game-rhythm-duration, 1.2s) linear
+    infinite;
+}
+
+.warning-elevator-overlay {
+  animation: warning-elevator-overlay var(--game-rhythm-duration, 1.2s) linear
     infinite;
 }
 
