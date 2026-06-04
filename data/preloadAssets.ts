@@ -18,4 +18,5 @@ export const ALL_GAME_PRELOAD_ASSETS = [
   "/games/game-flow/sounds/intermission.mp3",
   "/games/game-flow/sounds/results-and-main.mp3",
   "/games/game-flow/sounds/success.mp3",
+  "/games/undertale/sounds/undertale-bgm.mp3",
 ];

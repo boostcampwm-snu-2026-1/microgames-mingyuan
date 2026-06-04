@@ -11,7 +11,8 @@ export type BgmTrack =
   | "resultsAndMain"
   | "setup"
   | "speedUp"
-  | "success";
+  | "success"
+  | "undertale";
 
 export type SoundEffectTrack =
   | "clear1"
@@ -30,6 +31,7 @@ const BGM_TRACK_PATHS = {
   setup: "/games/game-flow/sounds/setup.mp3",
   speedUp: "/games/game-flow/sounds/speed-up.mp3",
   success: "/games/game-flow/sounds/success.mp3",
+  undertale: "/games/undertale/sounds/undertale-bgm.mp3",
 } satisfies Record<BgmTrack, string>;
 
 const SOUND_EFFECT_TRACK_PATHS = {
@@ -60,6 +62,7 @@ const BGM_TRACK_BEATS = {
   setup: 4,
   speedUp: 8,
   success: 4,
+  undertale: 8,
 } satisfies Record<Exclude<BgmTrack, "gameOver">, number>;
 
 export const GAME_OVER_DURATION_MS = 5208;

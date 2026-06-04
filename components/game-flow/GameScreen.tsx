@@ -175,6 +175,13 @@ export function GameScreen({
     }
 
     if (phase === "game") {
+      if (microgame.canvas === "undertaleMouse") {
+        bgmLibrary.play("undertale", "once", "now").catch((error: unknown) => {
+          console.error(error);
+        });
+        return;
+      }
+
       bgmLibrary.stop();
       return;
     }
@@ -233,7 +240,15 @@ export function GameScreen({
       .catch((error: unknown) => {
         console.error(error);
       });
-  }, [beatDurationMs, lives, onGainLife, phase, roundNumber, roundResult]);
+  }, [
+    beatDurationMs,
+    lives,
+    microgame.canvas,
+    onGainLife,
+    phase,
+    roundNumber,
+    roundResult,
+  ]);
 
   return (
     <NeonShell

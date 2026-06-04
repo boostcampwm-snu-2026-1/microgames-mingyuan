@@ -53,6 +53,16 @@ export const MICROGAMES = [
   },
 
   {
+    beatCount: 8,
+    canvas: "undertaleMouse",
+    control: "arrowKeys",
+    id: "undertale-bone-dodge",
+    startPrompt: "피해라!",
+    title: "언더테일",
+    type: "normal",
+  },
+
+  {
     beatCount: 12,
     canvas: "default",
     control: "scroll",

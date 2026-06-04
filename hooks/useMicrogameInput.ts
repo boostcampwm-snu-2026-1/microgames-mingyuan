@@ -4,6 +4,8 @@ import { useCallback, useEffect, useRef } from "react";
 import type { Microgame } from "@/data/microgames";
 import { isMicrogameClearKey } from "@/data/microgames";
 
+export const MICROGAME_CLEAR_EVENT = "microgame-clear";
+
 type UseMicrogameInputParams = Readonly<{
   isActive: boolean;
   microgame: Microgame;
@@ -42,6 +44,10 @@ export function useMicrogameInput({
     }
 
     const recordKeyboardClear = (event: KeyboardEvent) => {
+      if (microgame.canvas === "undertaleMouse") {
+        return;
+      }
+
       if (!isMicrogameClearKey(microgame.control, event)) {
         return;
       }
@@ -50,7 +56,10 @@ export function useMicrogameInput({
       recordClearOnce();
     };
     const recordPointerClear = () => {
-      if (microgame.control === "mouseClick") {
+      if (
+        microgame.control === "mouseClick" &&
+        microgame.canvas !== "undertaleMouse"
+      ) {
         recordClearOnce();
       }
     };
@@ -62,15 +71,20 @@ export function useMicrogameInput({
       event.preventDefault();
       recordClearOnce();
     };
+    const recordCustomClear = () => {
+      recordClearOnce();
+    };
 
     window.addEventListener("keydown", recordKeyboardClear);
     window.addEventListener("pointerdown", recordPointerClear);
     window.addEventListener("wheel", recordWheelClear, { passive: false });
+    window.addEventListener(MICROGAME_CLEAR_EVENT, recordCustomClear);
 
     return () => {
       window.removeEventListener("keydown", recordKeyboardClear);
       window.removeEventListener("pointerdown", recordPointerClear);
       window.removeEventListener("wheel", recordWheelClear);
+      window.removeEventListener(MICROGAME_CLEAR_EVENT, recordCustomClear);
     };
-  }, [isActive, microgame.control, recordClearOnce]);
+  }, [isActive, microgame.canvas, microgame.control, recordClearOnce]);
 }
