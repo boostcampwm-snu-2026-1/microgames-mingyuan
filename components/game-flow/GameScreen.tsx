@@ -1,8 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { getMicrogameForRound, isMicrogameClearKey } from "@/games/microgames";
+import { getMicrogameForRound } from "@/games/microgames";
 import { useBeatGameRound } from "@/hooks/useBeatGameRound";
+import { useMicrogameInput } from "@/hooks/useMicrogameInput";
 import { useSynchronizedRhythm } from "@/hooks/useSynchronizedRhythm";
 import { bgmLibrary, type SoundEffectTrack } from "@/lib/bgmLibrary";
 import { FixedLivesOverlay } from "./FixedLivesOverlay";
@@ -97,39 +98,12 @@ export function GameScreen({
       });
   }, [recordSuccess, roundNumber]);
 
-  useEffect(() => {
-    if (phase !== "game") {
-      return;
-    }
-
-    const recordKeyboardClear = (event: KeyboardEvent) => {
-      if (isMicrogameClearKey(microgame.control, event)) {
-        event.preventDefault();
-        recordSuccessWithClearSound();
-      }
-    };
-    const recordPointerClear = () => {
-      if (microgame.control === "mouseClick") {
-        recordSuccessWithClearSound();
-      }
-    };
-    const recordWheelClear = (event: WheelEvent) => {
-      if (microgame.control === "scroll") {
-        event.preventDefault();
-        recordSuccessWithClearSound();
-      }
-    };
-
-    window.addEventListener("keydown", recordKeyboardClear);
-    window.addEventListener("pointerdown", recordPointerClear);
-    window.addEventListener("wheel", recordWheelClear, { passive: false });
-
-    return () => {
-      window.removeEventListener("keydown", recordKeyboardClear);
-      window.removeEventListener("pointerdown", recordPointerClear);
-      window.removeEventListener("wheel", recordWheelClear);
-    };
-  }, [microgame.control, phase, recordSuccessWithClearSound]);
+  useMicrogameInput({
+    isActive: phase === "game",
+    microgame,
+    onClear: recordSuccessWithClearSound,
+    roundNumber,
+  });
 
   useEffect(() => {
     bgmLibrary.setBeatDurationMs(beatDurationMs);

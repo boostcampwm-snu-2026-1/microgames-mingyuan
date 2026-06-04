@@ -6,7 +6,6 @@ import { RHYTHM_DURATION_MS } from "@/hooks/useSynchronizedRhythm";
 
 const DEFAULT_GAME_BEATS = 8;
 const INSTRUCTION_BEATS = 8;
-const PROGRESS_TICK_MS = 50;
 const RESULT_BEATS = 4;
 const SPEED_UP_BEATS = 8;
 const BOSS_STAGE_BEATS = 8;
@@ -101,7 +100,8 @@ export function useBeatGameRound({
   shouldFinishAfterResult,
 }: UseBeatGameRoundParams) {
   const [phase, setPhase] = useState<GameRoundPhase>("instruction");
-  const [elapsedMs, setElapsedMs] = useState(0);
+  const [instructionStep, setInstructionStep] =
+    useState<InstructionStep>("idle");
   const [roundNumber, setRoundNumber] = useState(1);
   const [roundResult, setRoundResult] = useState<GameRoundResult>("idle");
   const [speedLevel, setSpeedLevel] = useState(0);
@@ -113,7 +113,7 @@ export function useBeatGameRound({
   const phaseDurationMs = phaseBeatCount * beatDurationMs;
 
   const beginInstruction = useCallback(() => {
-    setElapsedMs(0);
+    setInstructionStep("idle");
     setPhase("instruction");
     setRoundResult("idle");
     setHasClearedCurrentGame(false);
@@ -126,7 +126,6 @@ export function useBeatGameRound({
         return;
       }
 
-      setElapsedMs(0);
       setRoundResult(result);
       setPhase("result");
 
@@ -140,16 +139,8 @@ export function useBeatGameRound({
   );
 
   useEffect(() => {
-    const startedAt = window.performance.now();
-
-    const progressTimer = window.setInterval(() => {
-      setElapsedMs(
-        Math.min(window.performance.now() - startedAt, phaseDurationMs),
-      );
-    }, PROGRESS_TICK_MS);
     const phaseTimer = window.setTimeout(() => {
       if (phase === "instruction") {
-        setElapsedMs(0);
         setPhase("game");
         return;
       }
@@ -165,7 +156,6 @@ export function useBeatGameRound({
       }
 
       if (phase === "result" && shouldOneUpAfterResult && shouldPlayOneUp) {
-        setElapsedMs(0);
         setShouldOneUpAfterResult(false);
         setPhase("oneUp");
         return;
@@ -179,14 +169,12 @@ export function useBeatGameRound({
       }
 
       if (phase === "result" && roundNumber % BOSS_STAGE_INTERVAL_ROUNDS === 0) {
-        setElapsedMs(0);
         setSpeedLevel(0);
         setPhase("bossStage");
         return;
       }
 
       if (phase === "result" && roundNumber % SPEED_UP_INTERVAL_ROUNDS === 0) {
-        setElapsedMs(0);
         setPhase("speedUp");
         return;
       }
@@ -216,7 +204,6 @@ export function useBeatGameRound({
     }, phaseDurationMs);
 
     return () => {
-      window.clearInterval(progressTimer);
       window.clearTimeout(phaseTimer);
     };
   }, [
@@ -232,17 +219,25 @@ export function useBeatGameRound({
     showResult,
   ]);
 
-  const progressBeats = Math.min(
-    Math.ceil(elapsedMs / beatDurationMs),
-    phaseBeatCount,
-  );
+  useEffect(() => {
+    if (phase !== "instruction") {
+      return;
+    }
+
+    const formPhotoTimer = window.setTimeout(() => {
+      setInstructionStep("formPhoto");
+    }, 2 * beatDurationMs);
+    const floorTimer = window.setTimeout(() => {
+      setInstructionStep("floor");
+    }, 4 * beatDurationMs);
+
+    return () => {
+      window.clearTimeout(formPhotoTimer);
+      window.clearTimeout(floorTimer);
+    };
+  }, [beatDurationMs, phase, roundNumber]);
+
   const phaseLabel = PHASE_LABELS[phase];
-  const instructionStep: InstructionStep =
-    elapsedMs < 2 * beatDurationMs
-      ? "idle"
-      : elapsedMs < 4 * beatDurationMs
-        ? "formPhoto"
-        : "floor";
 
   return useMemo(
     () => ({
@@ -252,7 +247,6 @@ export function useBeatGameRound({
       phase,
       phaseBeatCount,
       phaseLabel,
-      progressBeats,
       recordFailure: () => setHasClearedCurrentGame(false),
       recordSuccess: () => setHasClearedCurrentGame(true),
       roundNumber,
@@ -266,7 +260,6 @@ export function useBeatGameRound({
       phase,
       phaseBeatCount,
       phaseLabel,
-      progressBeats,
       roundNumber,
       roundResult,
       speedLevel,

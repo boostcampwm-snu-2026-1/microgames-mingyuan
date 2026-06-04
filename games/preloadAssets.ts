@@ -1,3 +1,5 @@
+import { FORM_INSTRUCTIONS } from "@/games/formInstructions";
+
 export const ALL_GAME_PRELOAD_ASSETS = [
   "/images/main-elevator-1.png",
   "/images/main-elevator-2.png",
@@ -9,6 +11,7 @@ export const ALL_GAME_PRELOAD_ASSETS = [
   "/images/life-active.png",
   "/images/life-deactive.png",
   "/images/loading-spinner.png",
+  ...FORM_INSTRUCTIONS.map(({ imageSrc }) => imageSrc),
   "/sounds/fail.mp3",
   "/sounds/game-over.mp3",
   "/sounds/intermission.mp3",

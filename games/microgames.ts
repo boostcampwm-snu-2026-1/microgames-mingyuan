@@ -12,12 +12,15 @@ export type MicrogameControl =
   | "space"
   | "wasd";
 
+export type MicrogameType = "boss" | "normal";
+
 export type Microgame = Readonly<{
   beatCount: number;
   control: MicrogameControl;
   id: string;
   instruction: string;
   title: string;
+  type: MicrogameType;
 }>;
 
 const FORM_INSTRUCTIONS_BY_CONTROL = {
@@ -39,6 +42,7 @@ export const MICROGAMES = [
     id: "catch-arrow",
     instruction: "방향키 중 아무 키나 눌러 엘리베이터를 붙잡으세요.",
     title: "방향 잡기",
+    type: "normal",
   },
   {
     beatCount: 8,
@@ -46,6 +50,7 @@ export const MICROGAMES = [
     id: "jump-gap",
     instruction: "스페이스를 눌러 틈을 뛰어넘으세요.",
     title: "점프",
+    type: "normal",
   },
   {
     beatCount: 8,
@@ -53,6 +58,7 @@ export const MICROGAMES = [
     id: "press-button",
     instruction: "마우스로 버튼을 클릭하세요.",
     title: "버튼 누르기",
+    type: "normal",
   },
   {
     beatCount: 10,
@@ -60,6 +66,7 @@ export const MICROGAMES = [
     id: "balance-wasd",
     instruction: "WASD 중 아무 키나 눌러 균형을 잡으세요.",
     title: "균형 잡기",
+    type: "normal",
   },
   {
     beatCount: 8,
@@ -67,6 +74,7 @@ export const MICROGAMES = [
     id: "scroll-lift",
     instruction: "마우스 휠을 굴려 엘리베이터를 올리세요.",
     title: "휠 올리기",
+    type: "normal",
   },
   {
     beatCount: 12,
@@ -74,6 +82,7 @@ export const MICROGAMES = [
     id: "dash-jump",
     instruction: "방향키나 스페이스를 눌러 대시 점프를 성공시키세요.",
     title: "대시 점프",
+    type: "normal",
   },
   {
     beatCount: 8,
@@ -81,6 +90,7 @@ export const MICROGAMES = [
     id: "code-pad",
     instruction: "숫자키 중 아무 키나 눌러 비밀번호를 입력하세요.",
     title: "비밀번호",
+    type: "normal",
   },
   {
     beatCount: 8,
@@ -88,6 +98,7 @@ export const MICROGAMES = [
     id: "type-meow",
     instruction: "한글 키를 눌러 고양이에게 신호를 보내세요.",
     title: "야옹 입력",
+    type: "normal",
   },
   {
     beatCount: 8,
@@ -95,18 +106,64 @@ export const MICROGAMES = [
     id: "call-cat",
     instruction: "임시 구현: 아무 키나 눌러 마이크 입력을 성공 처리하세요.",
     title: "고양이 부르기",
+    type: "normal",
+  },
+  {
+    beatCount: 12,
+    control: "arrowAndSpace",
+    id: "boss-emergency-dash",
+    instruction: "방향키나 스페이스를 눌러 보스 엘리베이터의 급가속을 버티세요.",
+    title: "보스 급가속",
+    type: "boss",
+  },
+  {
+    beatCount: 12,
+    control: "numberKeys",
+    id: "boss-master-code",
+    instruction: "숫자키 중 아무 키나 눌러 보스층 잠금 장치를 해제하세요.",
+    title: "보스 암호",
+    type: "boss",
+  },
+  {
+    beatCount: 12,
+    control: "scroll",
+    id: "boss-overdrive-lift",
+    instruction: "마우스 휠을 굴려 보스 엘리베이터를 끝까지 끌어올리세요.",
+    title: "보스 오버드라이브",
+    type: "boss",
   },
 ] satisfies Microgame[];
 
-function getSeededMicrogameIndex(roundNumber: number, sessionSeed: number) {
+const NORMAL_MICROGAMES = MICROGAMES.filter(
+  (microgame) => microgame.type === "normal",
+);
+const BOSS_MICROGAMES = MICROGAMES.filter(
+  (microgame) => microgame.type === "boss",
+);
+
+function getSeededMicrogameIndex(
+  roundNumber: number,
+  sessionSeed: number,
+  poolSize: number,
+) {
   const seed = Math.sin((roundNumber + 1) * 9301 + sessionSeed * 49297);
   const normalizedSeed = seed - Math.floor(seed);
 
-  return Math.floor(normalizedSeed * MICROGAMES.length);
+  return Math.floor(normalizedSeed * poolSize);
+}
+
+export function isBossMicrogameRound(roundNumber: number) {
+  return roundNumber > 1 && (roundNumber - 1) % 12 === 0;
 }
 
 export function getMicrogameForRound(roundNumber: number, sessionSeed: number) {
-  return MICROGAMES[getSeededMicrogameIndex(roundNumber, sessionSeed)];
+  const microgamePool = isBossMicrogameRound(roundNumber)
+    ? BOSS_MICROGAMES
+    : NORMAL_MICROGAMES;
+
+  return microgamePool[
+    getSeededMicrogameIndex(roundNumber, sessionSeed, microgamePool.length)
+  ];
 }
 
 export function getMicrogameFormInstruction(microgame: Microgame) {
