@@ -229,31 +229,22 @@ body {
 @keyframes microgame-start-prompt {
   0% {
     opacity: 0;
-    transform: perspective(760px) translateZ(520px) scale(3.4);
+    transform: scale(1.12);
   }
 
-  12% {
+  18% {
     opacity: 1;
-    transform: perspective(760px) translateZ(90px) scale(1.28);
+    transform: scale(1.02);
   }
 
-  22% {
-    transform: perspective(760px) translateZ(-42px) scale(0.94);
-  }
-
-  32% {
-    transform: perspective(760px) translateZ(0) scale(1.04);
-  }
-
-  62% {
+  70% {
     opacity: 1;
-    transform: perspective(760px) translateZ(0) scale(1);
+    transform: scale(1);
   }
 
   100% {
     opacity: 0;
-    transform: perspective(760px) translateZ(-220px) translateY(-10vh)
-      scale(0.78);
+    transform: scale(0.98);
   }
 }
 
@@ -490,9 +481,9 @@ body {
 }
 
 .microgame-start-prompt {
-  animation: microgame-start-prompt calc(var(--game-rhythm-duration, 0.5s) * 3)
-    cubic-bezier(0.16, 0.92, 0.22, 1.08) both;
-  transform-style: preserve-3d;
+  animation: microgame-start-prompt calc(var(--game-rhythm-duration, 0.5s) * 2)
+    ease-out both;
+  will-change: opacity, transform;
 }
 
 .microgame-canvas-transition {
@@ -509,6 +500,12 @@ body {
     ease-out both;
   transform-origin: center;
   will-change: opacity, transform;
+}
+
+.elevator-backdrop-hidden {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
 }
 
 .microgame-start-prompt > p {

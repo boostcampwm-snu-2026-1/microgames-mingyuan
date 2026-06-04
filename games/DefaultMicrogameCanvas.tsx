@@ -24,19 +24,12 @@ export function DefaultMicrogameCanvas({
       context.arc(centerX, centerY, radius, 0, Math.PI * 2);
       context.stroke();
       context.shadowBlur = 0;
-      drawCenteredText(context, microgame.title, centerX, centerY, 42);
-      drawCenteredText(
-        context,
-        microgame.instruction,
-        centerX,
-        centerY + radius + 46,
-        18,
-        accent,
-      );
     },
-    [microgame.instruction, microgame.title, microgame.type],
+    [microgame.type],
   );
   const canvasRef = useStaticCanvas({ draw });
 
-  return <canvas ref={canvasRef} className="block h-screen w-screen bg-black" />;
+  return (
+    <canvas ref={canvasRef} className="block h-screen w-screen bg-black" />
+  );
 }

@@ -1,16 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import {
-  type CSSProperties,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FORM_INSTRUCTIONS } from "@/data/formInstructions";
-import { getMicrogameForRound } from "@/data/microgames";
+import { getMicrogamePoolForRound, type Microgame } from "@/data/microgames";
 import { useBeatGameRound } from "@/hooks/useBeatGameRound";
 import { useMicrogameInput } from "@/hooks/useMicrogameInput";
 import { useSynchronizedRhythm } from "@/hooks/useSynchronizedRhythm";
@@ -26,7 +19,6 @@ import {
   ResultRoundScreen,
   SpeedUpScreen,
 } from "./roundScreens";
-import { MicrogameCanvas } from "./MicrogameCanvas";
 
 const CLEAR_SOUND_EFFECTS = [
   "clear1",
@@ -63,6 +55,21 @@ function FormInstructionImageCache() {
   );
 }
 
+function shuffleMicrogames(microgames: readonly Microgame[]) {
+  const nextMicrogames = [...microgames];
+
+  for (let index = nextMicrogames.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    const currentMicrogame = nextMicrogames[index];
+    const swapMicrogame = nextMicrogames[swapIndex];
+
+    nextMicrogames[index] = swapMicrogame;
+    nextMicrogames[swapIndex] = currentMicrogame;
+  }
+
+  return nextMicrogames;
+}
+
 export function GameScreen({
   lives,
   maxLives,
@@ -80,14 +87,29 @@ export function GameScreen({
   onResetResult: () => void;
   onSuccess: (roundNumber: number) => void;
 }>) {
-  const [microgameSessionSeed] = useState(() => Math.random());
+  const microgameBagsRef = useRef<Record<string, Microgame[]>>({});
+  const selectedMicrogamesRef = useRef<Record<number, Microgame>>({});
   const oneUpAppliedRoundRef = useRef<number | null>(null);
   const clearSoundPlayedRoundRef = useRef<number | null>(null);
-  const getRoundMicrogame = useCallback(
-    (nextRoundNumber: number) =>
-      getMicrogameForRound(nextRoundNumber, microgameSessionSeed),
-    [microgameSessionSeed],
-  );
+  const getRoundMicrogame = useCallback((nextRoundNumber: number) => {
+    const selectedMicrogame = selectedMicrogamesRef.current[nextRoundNumber];
+
+    if (selectedMicrogame) {
+      return selectedMicrogame;
+    }
+
+    const microgamePool = getMicrogamePoolForRound(nextRoundNumber);
+    const bagKey = microgamePool.map(({ id }) => id).join("|");
+    const currentBag = microgameBagsRef.current[bagKey] ?? [];
+    const nextBag =
+      currentBag.length > 0 ? currentBag : shuffleMicrogames(microgamePool);
+    const [nextMicrogame, ...remainingMicrogames] = nextBag;
+
+    microgameBagsRef.current[bagKey] = remainingMicrogames;
+    selectedMicrogamesRef.current[nextRoundNumber] = nextMicrogame;
+
+    return nextMicrogame;
+  }, []);
 
   const {
     beatDurationMs,
@@ -229,14 +251,6 @@ export function GameScreen({
           maxLives={maxLives}
         />
       )}
-      {shouldShowCanvasTransition ? (
-        <div
-          className="microgame-canvas-transition fixed inset-0 z-20 bg-black"
-          style={rhythmStyle as CSSProperties}
-        >
-          <MicrogameCanvas microgame={microgame} />
-        </div>
-      ) : null}
       <div className={phase === "instruction" ? "contents" : "hidden"}>
         <InstructionRoundScreen
           beatDurationMs={beatDurationMs}
@@ -246,10 +260,11 @@ export function GameScreen({
           roundNumber={roundNumber}
         />
       </div>
-      {phase === "game" ? (
+      {phase === "game" || shouldShowCanvasTransition ? (
         <MicrogameRoundScreen
           beatsLeft={beatsLeft}
           canRecordResult={canRecordResult}
+          isTransitioning={shouldShowCanvasTransition}
           microgame={microgame}
           onFinish={onFinish}
         />

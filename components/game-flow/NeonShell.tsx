@@ -32,10 +32,12 @@ export function NeonButton({
 }
 
 function ElevatorBackdrop({
+  isVisible = true,
   transition = "none",
   shouldDim = true,
   roundResult = "idle",
 }: Readonly<{
+  isVisible?: boolean;
   roundResult?: GameRoundResult;
   shouldDim?: boolean;
   transition?: "none" | "toElevator";
@@ -45,7 +47,11 @@ function ElevatorBackdrop({
   return (
     <div
       className={`fixed inset-0 overflow-hidden ${
-        transition === "toElevator" ? "elevator-result-transition" : ""
+        isVisible ? "" : "elevator-backdrop-hidden"
+      } ${
+        isVisible && transition === "toElevator"
+          ? "elevator-result-transition"
+          : ""
       }`}
       aria-label="Neon elevator scene"
     >
@@ -97,13 +103,12 @@ export function NeonShell({
       className="relative min-h-screen overflow-hidden bg-black text-white"
       style={rhythmStyle}
     >
-      {showBackdrop ? (
-        <ElevatorBackdrop
-          roundResult={roundResult}
-          shouldDim={shouldDim}
-          transition={transition}
-        />
-      ) : null}
+      <ElevatorBackdrop
+        isVisible={showBackdrop}
+        roundResult={roundResult}
+        shouldDim={shouldDim}
+        transition={transition}
+      />
       <section className="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-col justify-center px-5 py-8 sm:px-8 lg:px-10">
         {children}
       </section>

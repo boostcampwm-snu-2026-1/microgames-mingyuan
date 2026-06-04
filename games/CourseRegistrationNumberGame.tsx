@@ -4,9 +4,9 @@ import { useCallback } from "react";
 import type { Microgame } from "@/data/microgames";
 import { drawCenteredText, useStaticCanvas } from "@/lib/canvasUtils";
 
-export function CourseRegistrationNumberGame({
-  microgame,
-}: Readonly<{ microgame: Microgame }>) {
+export function CourseRegistrationNumberGame(
+  _props: Readonly<{ microgame: Microgame }>,
+) {
   const draw = useCallback(
     (context: CanvasRenderingContext2D, width: number, height: number) => {
       context.fillStyle = "#082f49";
@@ -55,18 +55,12 @@ export function CourseRegistrationNumberGame({
         panelY + panelHeight - 68,
         20,
       );
-      drawCenteredText(
-        context,
-        microgame.title,
-        width / 2,
-        panelY + panelHeight + 48,
-        28,
-        "#fde68a",
-      );
     },
-    [microgame.title],
+    [],
   );
   const canvasRef = useStaticCanvas({ draw });
 
-  return <canvas ref={canvasRef} className="block h-screen w-screen bg-sky-950" />;
+  return (
+    <canvas ref={canvasRef} className="block h-screen w-screen bg-sky-950" />
+  );
 }

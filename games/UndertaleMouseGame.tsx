@@ -4,9 +4,7 @@ import { useCallback } from "react";
 import type { Microgame } from "@/data/microgames";
 import { drawCenteredText, useStaticCanvas } from "@/lib/canvasUtils";
 
-export function UndertaleMouseGame({
-  microgame,
-}: Readonly<{ microgame: Microgame }>) {
+export function UndertaleMouseGame(_props: Readonly<{ microgame: Microgame }>) {
   const draw = useCallback(
     (context: CanvasRenderingContext2D, width: number, height: number) => {
       context.fillStyle = "#050505";
@@ -55,19 +53,12 @@ export function UndertaleMouseGame({
       );
       context.stroke();
       context.setLineDash([]);
-
-      drawCenteredText(
-        context,
-        microgame.title,
-        width / 2,
-        boxY - 44,
-        28,
-        "#f9a8d4",
-      );
     },
-    [microgame.title],
+    [],
   );
   const canvasRef = useStaticCanvas({ draw });
 
-  return <canvas ref={canvasRef} className="block h-screen w-screen bg-black" />;
+  return (
+    <canvas ref={canvasRef} className="block h-screen w-screen bg-black" />
+  );
 }

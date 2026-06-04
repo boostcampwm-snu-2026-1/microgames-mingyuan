@@ -155,39 +155,49 @@ export function InstructionRoundScreen({
 export function MicrogameRoundScreen({
   beatsLeft,
   canRecordResult,
+  isTransitioning = false,
   microgame,
   onFinish,
 }: Readonly<{
   beatsLeft: number;
   canRecordResult: boolean;
+  isTransitioning?: boolean;
   microgame: Microgame;
   onFinish: () => void;
 }>) {
   return (
-    <div className="fixed inset-0 bg-black">
+    <div
+      className={`fixed inset-0 bg-black ${
+        isTransitioning ? "microgame-canvas-transition pointer-events-none" : ""
+      }`}
+    >
       <MicrogameCanvas microgame={microgame} />
-      <div className="timer-beat-shell absolute left-4 top-4 size-28 sm:left-6 sm:top-6 sm:size-32">
-        <Image
-          src="/games/game-flow/images/timer.png"
-          alt=""
-          fill
-          sizes="(min-width: 640px) 128px, 112px"
-          className="object-contain drop-shadow-[0_0_16px_rgba(103,232,249,0.55)]"
-          priority
-          unoptimized
-        />
-        <p className="timer-beat-number absolute inset-0 grid place-items-center pt-2 text-4xl font-black leading-none text-white sm:text-5xl">
-          {beatsLeft}
-        </p>
-      </div>
-      <div className="absolute bottom-5 right-5 flex items-center gap-3">
-        <p className="min-h-12 rounded-md border border-white/40 bg-black/55 px-6 py-3 text-center text-base font-black uppercase tracking-[0.18em] text-white/75">
-          {canRecordResult ? "입력 대기" : "판정 종료"}
-        </p>
-        <NeonButton onClick={onFinish} variant="secondary">
-          게임 종료
-        </NeonButton>
-      </div>
+      {isTransitioning ? null : (
+        <>
+          <div className="timer-beat-shell absolute left-4 top-4 size-28 sm:left-6 sm:top-6 sm:size-32">
+            <Image
+              src="/games/game-flow/images/timer.png"
+              alt=""
+              fill
+              sizes="(min-width: 640px) 128px, 112px"
+              className="object-contain drop-shadow-[0_0_16px_rgba(103,232,249,0.55)]"
+              priority
+              unoptimized
+            />
+            <p className="timer-beat-number absolute inset-0 grid place-items-center pt-2 text-4xl font-black leading-none text-white sm:text-5xl">
+              {beatsLeft}
+            </p>
+          </div>
+          <div className="absolute bottom-5 right-5 flex items-center gap-3">
+            <p className="min-h-12 rounded-md border border-white/40 bg-black/55 px-6 py-3 text-center text-base font-black uppercase tracking-[0.18em] text-white/75">
+              {canRecordResult ? "입력 대기" : "판정 종료"}
+            </p>
+            <NeonButton onClick={onFinish} variant="secondary">
+              게임 종료
+            </NeonButton>
+          </div>
+        </>
+      )}
     </div>
   );
 }
