@@ -71,6 +71,7 @@ export function FixedLivesOverlay({
                   className={`object-contain transition-opacity duration-300 ${
                     isActive ? "opacity-0" : "opacity-100"
                   } ${shouldAnimateLostLife ? "life-bone-enter" : ""}`}
+                  unoptimized
                 />
                 <Image
                   src="/games/game-flow/images/life-active.png"
@@ -82,6 +83,7 @@ export function FixedLivesOverlay({
                       ? "opacity-100 drop-shadow-[0_0_18px_#67e8f9]"
                       : "opacity-0"
                   } ${shouldAnimateLostLife ? "life-active-exit" : ""}`}
+                  unoptimized
                 />
               </div>
             </div>

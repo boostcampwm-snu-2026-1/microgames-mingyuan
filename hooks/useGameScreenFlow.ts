@@ -19,7 +19,30 @@ function waitForMinimumLoadingTime() {
   });
 }
 
-function preloadAsset(assetPath: string) {
+function isImageAsset(assetPath: string) {
+  return /\.(?:avif|gif|jpe?g|png|svg|webp)$/i.test(assetPath);
+}
+
+function preloadImageAsset(assetPath: string) {
+  return new Promise<void>((resolve, reject) => {
+    const image = new Image();
+
+    image.onload = () => {
+      if (!image.decode) {
+        resolve();
+        return;
+      }
+
+      image.decode().then(resolve).catch(resolve);
+    };
+    image.onerror = () => {
+      reject(new Error(`Failed to preload image ${assetPath}`));
+    };
+    image.src = assetPath;
+  });
+}
+
+function preloadFetchAsset(assetPath: string) {
   return fetch(assetPath, { cache: "force-cache" }).then((response) => {
     if (!response.ok) {
       throw new Error(`Failed to preload ${assetPath}`);
@@ -27,8 +50,16 @@ function preloadAsset(assetPath: string) {
   });
 }
 
+function preloadAsset(assetPath: string) {
+  if (isImageAsset(assetPath)) {
+    return preloadImageAsset(assetPath);
+  }
+
+  return preloadFetchAsset(assetPath);
+}
+
 function preloadAllGameAssets() {
-  allGameAssetsPreloadPromise ??= Promise.allSettled([
+  allGameAssetsPreloadPromise ??= Promise.all([
     ...ALL_GAME_PRELOAD_ASSETS.map(preloadAsset),
     bgmLibrary.preloadAll(),
     waitForMinimumLoadingTime(),

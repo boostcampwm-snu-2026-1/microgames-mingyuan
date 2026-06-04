@@ -102,6 +102,7 @@ export function MainScreen({
               height={1268}
               priority
               className="main-logo-bounce h-auto w-full object-contain drop-shadow-[0_0_24px_rgba(103,232,249,0.45)]"
+              unoptimized
             />
           </div>
         </div>
@@ -158,6 +159,7 @@ export function LoadingScreen() {
             height={151}
             priority
             className="h-auto w-full object-contain drop-shadow-[0_0_22px_rgba(103,232,249,0.75)]"
+            unoptimized
           />
         </div>
         <div className="mx-auto my-8 h-4 max-w-md overflow-hidden rounded-full border border-cyan-100/70 bg-black">

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import type { CSSProperties } from "react";
+import { memo, type CSSProperties } from "react";
 import { useState } from "react";
 import { FORM_INSTRUCTIONS } from "@/data/formInstructions";
 import type { Microgame } from "@/data/microgames";
@@ -54,6 +54,76 @@ function CurrentFloorDisplay({
   );
 }
 
+const InstructionFormPhoto = memo(function InstructionFormPhoto({
+  formInstruction,
+  selectedFormIndex,
+  shouldShowForm,
+  shouldShowIdle,
+}: Readonly<{
+  formInstruction: ReturnType<typeof getMicrogameFormInstruction>;
+  selectedFormIndex: number;
+  shouldShowForm: boolean;
+  shouldShowIdle: boolean;
+}>) {
+  return (
+    <>
+      <div
+        className={`instruction-idle-grid-card rounded-lg border border-cyan-100/45 bg-black/35 shadow-[0_0_22px_rgba(103,232,249,0.14)] ${
+          shouldShowForm && shouldShowIdle ? "" : "instruction-photo-hidden"
+        }`}
+      >
+        <div className="instruction-selection-grid">
+          {FORM_INSTRUCTIONS.map((candidate) => {
+            const isSelected = candidate.imageSrc === formInstruction.imageSrc;
+
+            return (
+              <div
+                className={`instruction-selection-tile ${
+                  isSelected ? "instruction-selection-tile-hidden" : ""
+                }`}
+                key={candidate.imageSrc}
+              >
+                <Image
+                  src={candidate.imageSrc}
+                  alt={isSelected ? formInstruction.alt : ""}
+                  fill
+                  sizes="96px"
+                  className="object-contain drop-shadow-[0_0_14px_rgba(103,232,249,0.5)]"
+                  unoptimized
+                />
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      <div
+        className={`instruction-photo-card rounded-lg border bg-black/70 p-3 ${
+          shouldShowIdle
+            ? "instruction-photo-card-grid-selected border-cyan-100/70 shadow-[0_0_24px_rgba(103,232,249,0.34)]"
+            : "instruction-photo-card-popup border-cyan-100/70 shadow-[0_0_28px_rgba(103,232,249,0.18)]"
+        } ${shouldShowForm ? "" : "instruction-photo-hidden"}`}
+        style={
+          {
+            "--instruction-selected-column": selectedFormIndex % 3,
+            "--instruction-selected-row": Math.floor(selectedFormIndex / 3),
+          } as CSSProperties
+        }
+      >
+        <div className="relative aspect-[4/3] w-full">
+          <Image
+            src={formInstruction.imageSrc}
+            alt={formInstruction.alt}
+            fill
+            sizes="(min-width: 640px) 360px, 78vw"
+            className="object-contain drop-shadow-[0_0_22px_rgba(103,232,249,0.62)]"
+            unoptimized
+          />
+        </div>
+      </div>
+    </>
+  );
+});
+
 export function InstructionRoundScreen({
   beatDurationMs,
   instructionStep,
@@ -74,11 +144,7 @@ export function InstructionRoundScreen({
   const shouldShowIdle = instructionStep === "idle";
   const shouldShowFloor = instructionStep === "floor";
   const shouldShowPrompt = instructionStep === "prompt";
-  const shouldShowForm = instructionStep !== "floor" && !shouldShowPrompt;
-
-  if (shouldShowPrompt) {
-    return <div className="mx-auto min-h-screen w-full max-w-5xl" />;
-  }
+  const shouldShowForm = !shouldShowFloor && !shouldShowPrompt;
 
   return (
     <div className="mx-auto w-full max-w-5xl space-y-8 text-center">
@@ -90,62 +156,12 @@ export function InstructionRoundScreen({
             roundNumber={roundNumber}
           />
         ) : null}
-        {shouldShowForm ? (
-          <>
-            {shouldShowIdle ? (
-              <div className="instruction-idle-grid-card rounded-lg border border-cyan-100/45 bg-black/35 shadow-[0_0_22px_rgba(103,232,249,0.14)]">
-                <div className="instruction-selection-grid">
-                  {FORM_INSTRUCTIONS.map((candidate) => {
-                    const isSelected =
-                      candidate.imageSrc === formInstruction.imageSrc;
-
-                    return (
-                      <div
-                        className={`instruction-selection-tile ${
-                          isSelected ? "instruction-selection-tile-hidden" : ""
-                        }`}
-                        key={candidate.imageSrc}
-                      >
-                        <Image
-                          src={candidate.imageSrc}
-                          alt={isSelected ? formInstruction.alt : ""}
-                          fill
-                          sizes="96px"
-                          className="object-contain drop-shadow-[0_0_14px_rgba(103,232,249,0.5)]"
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            ) : null}
-            <div
-              className={`instruction-photo-card rounded-lg border bg-black/70 p-3 ${
-                shouldShowIdle
-                  ? "instruction-photo-card-grid-selected border-cyan-100/70 shadow-[0_0_24px_rgba(103,232,249,0.34)]"
-                  : "instruction-photo-card-popup border-cyan-100/70 shadow-[0_0_28px_rgba(103,232,249,0.18)]"
-              }`}
-              style={
-                {
-                  "--instruction-selected-column": selectedFormIndex % 3,
-                  "--instruction-selected-row": Math.floor(
-                    selectedFormIndex / 3,
-                  ),
-                } as CSSProperties
-              }
-            >
-              <div className="relative aspect-[4/3] w-full">
-                <Image
-                  src={formInstruction.imageSrc}
-                  alt={formInstruction.alt}
-                  fill
-                  sizes="(min-width: 640px) 360px, 78vw"
-                  className="object-contain drop-shadow-[0_0_22px_rgba(103,232,249,0.62)]"
-                />
-              </div>
-            </div>
-          </>
-        ) : null}
+        <InstructionFormPhoto
+          formInstruction={formInstruction}
+          selectedFormIndex={selectedFormIndex}
+          shouldShowForm={shouldShowForm}
+          shouldShowIdle={shouldShowIdle}
+        />
       </div>
     </div>
   );
@@ -173,6 +189,7 @@ export function MicrogameRoundScreen({
           sizes="(min-width: 640px) 128px, 112px"
           className="object-contain drop-shadow-[0_0_16px_rgba(103,232,249,0.55)]"
           priority
+          unoptimized
         />
         <p className="timer-beat-number absolute inset-0 grid place-items-center pt-2 text-4xl font-black leading-none text-white sm:text-5xl">
           {beatsLeft}

@@ -11,6 +11,7 @@ export const ALL_GAME_PRELOAD_ASSETS = [
   "/games/game-flow/images/life-active.png",
   "/games/game-flow/images/life-deactive.png",
   "/games/game-flow/images/loading-spinner.png",
+  "/games/game-flow/images/timer.png",
   ...FORM_INSTRUCTIONS.map(({ imageSrc }) => imageSrc),
   "/games/game-flow/sounds/fail.mp3",
   "/games/game-flow/sounds/game-over.mp3",

@@ -5,7 +5,7 @@ import type { GameRoundResult } from "@/hooks/useGameScreenFlow";
 import { RHYTHM_DURATION_MS } from "@/hooks/useSynchronizedRhythm";
 
 const DEFAULT_GAME_BEATS = 8;
-const INSTRUCTION_BEATS = 8;
+const INSTRUCTION_BEATS = 7;
 const RESULT_BEATS = 4;
 const SPEED_UP_BEATS = 8;
 const BOSS_STAGE_BEATS = 8;
@@ -146,6 +146,10 @@ export function useBeatGameRound({
   useEffect(() => {
     const phaseTimer = window.setTimeout(() => {
       if (phase === "instruction") {
+        setGameBeatProgress({
+          beatsLeft: currentGameBeatCount,
+          key: `game-${roundNumber}-${currentGameBeatCount}`,
+        });
         setPhase("game");
         return;
       }
@@ -236,7 +240,7 @@ export function useBeatGameRound({
     }, 4 * beatDurationMs);
     const promptTimer = window.setTimeout(() => {
       setInstructionStep("prompt");
-    }, (INSTRUCTION_BEATS - 1) * beatDurationMs);
+    }, (INSTRUCTION_BEATS - 0.5) * beatDurationMs);
 
     return () => {
       window.clearTimeout(formPhotoTimer);
@@ -251,6 +255,11 @@ export function useBeatGameRound({
     }
 
     const startedAt = window.performance.now();
+    setGameBeatProgress({
+      beatsLeft: phaseBeatCount,
+      key: beatProgressKey,
+    });
+
     const beatTimer = window.setInterval(() => {
       const elapsedBeats = Math.floor(
         (window.performance.now() - startedAt) / beatDurationMs,

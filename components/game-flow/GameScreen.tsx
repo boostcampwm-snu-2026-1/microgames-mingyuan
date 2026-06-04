@@ -85,8 +85,8 @@ export function GameScreen({
   );
   const canRecordResult = phase === "game";
   const shouldShowStartPrompt =
-    instructionStep === "prompt" ||
-    (phase === "game" && beatsLeft > gameBeatCount - 2);
+    (phase === "instruction" && instructionStep === "prompt") ||
+    (phase === "game" && beatsLeft === gameBeatCount);
   const recordSuccessWithClearSound = useCallback(() => {
     recordSuccess();
 
@@ -194,7 +194,7 @@ export function GameScreen({
           maxLives={maxLives}
         />
       )}
-      {phase === "instruction" ? (
+      <div className={phase === "instruction" ? "contents" : "hidden"}>
         <InstructionRoundScreen
           beatDurationMs={beatDurationMs}
           instructionStep={instructionStep}
@@ -202,7 +202,8 @@ export function GameScreen({
           rhythmStyle={rhythmStyle}
           roundNumber={roundNumber}
         />
-      ) : phase === "game" ? (
+      </div>
+      {phase === "game" ? (
         <MicrogameRoundScreen
           beatsLeft={beatsLeft}
           canRecordResult={canRecordResult}
@@ -215,13 +216,13 @@ export function GameScreen({
         <BossStageScreen />
       ) : phase === "oneUp" ? (
         <OneUpScreen />
-      ) : (
+      ) : phase === "instruction" ? null : (
         <ResultRoundScreen />
       )}
       {shouldShowStartPrompt ? (
         <div
           className="microgame-start-prompt pointer-events-none fixed inset-0 z-30 grid place-items-center"
-          key={microgame.id}
+          key={`${roundNumber}-${microgame.id}`}
         >
           <p>{microgame.startPrompt}</p>
         </div>

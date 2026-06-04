@@ -49,6 +49,7 @@ function ElevatorBackdrop({
         fill
         priority
         sizes="100vw"
+        unoptimized
       />
       <Image
         className="neon-elevator-flicker absolute inset-0 size-full object-cover object-center"
@@ -57,6 +58,7 @@ function ElevatorBackdrop({
         fill
         priority
         sizes="100vw"
+        unoptimized
       />
       {shouldDim ? (
         <>
