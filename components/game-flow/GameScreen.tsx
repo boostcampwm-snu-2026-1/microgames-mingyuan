@@ -1,6 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
+import {
+  type CSSProperties,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { FORM_INSTRUCTIONS } from "@/data/formInstructions";
 import { getMicrogameForRound } from "@/data/microgames";
 import { useBeatGameRound } from "@/hooks/useBeatGameRound";
 import { useMicrogameInput } from "@/hooks/useMicrogameInput";
@@ -17,6 +26,7 @@ import {
   ResultRoundScreen,
   SpeedUpScreen,
 } from "./roundScreens";
+import { MicrogameCanvas } from "./MicrogameCanvas";
 
 const CLEAR_SOUND_EFFECTS = [
   "clear1",
@@ -30,6 +40,27 @@ function getRandomClearSoundEffect() {
   return CLEAR_SOUND_EFFECTS[
     Math.floor(Math.random() * CLEAR_SOUND_EFFECTS.length)
   ];
+}
+
+function FormInstructionImageCache() {
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none fixed -left-[9999px] top-0 size-px overflow-hidden opacity-0"
+    >
+      {FORM_INSTRUCTIONS.map((instruction) => (
+        <Image
+          src={instruction.imageSrc}
+          alt=""
+          width={1448}
+          height={1086}
+          key={instruction.imageSrc}
+          priority
+          unoptimized
+        />
+      ))}
+    </div>
+  );
 }
 
 export function GameScreen({
@@ -84,8 +115,10 @@ export function GameScreen({
     [getRoundMicrogame, roundNumber],
   );
   const canRecordResult = phase === "game";
+  const shouldShowCanvasTransition =
+    phase === "instruction" && instructionStep === "promptTransition";
   const shouldShowStartPrompt =
-    (phase === "instruction" && instructionStep === "prompt") ||
+    (phase === "instruction" && instructionStep === "promptTransition") ||
     (phase === "game" && beatsLeft === gameBeatCount);
   const recordSuccessWithClearSound = useCallback(() => {
     recordSuccess();
@@ -186,7 +219,9 @@ export function GameScreen({
       rhythmStyle={rhythmStyle}
       showBackdrop={phase !== "game"}
       shouldDim={false}
+      transition={phase === "result" ? "toElevator" : "none"}
     >
+      <FormInstructionImageCache />
       {phase === "game" ? null : (
         <FixedLivesOverlay
           getStaggeredRhythmStyle={getStaggeredRhythmStyle}
@@ -194,6 +229,14 @@ export function GameScreen({
           maxLives={maxLives}
         />
       )}
+      {shouldShowCanvasTransition ? (
+        <div
+          className="microgame-canvas-transition fixed inset-0 z-20 bg-black"
+          style={rhythmStyle as CSSProperties}
+        >
+          <MicrogameCanvas microgame={microgame} />
+        </div>
+      ) : null}
       <div className={phase === "instruction" ? "contents" : "hidden"}>
         <InstructionRoundScreen
           beatDurationMs={beatDurationMs}

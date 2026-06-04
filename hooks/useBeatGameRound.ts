@@ -5,7 +5,7 @@ import type { GameRoundResult } from "@/hooks/useGameScreenFlow";
 import { RHYTHM_DURATION_MS } from "@/hooks/useSynchronizedRhythm";
 
 const DEFAULT_GAME_BEATS = 8;
-const INSTRUCTION_BEATS = 7;
+const INSTRUCTION_BEATS = 8;
 const RESULT_BEATS = 4;
 const SPEED_UP_BEATS = 8;
 const BOSS_STAGE_BEATS = 8;
@@ -22,7 +22,11 @@ export type GameRoundPhase =
   | "oneUp"
   | "result"
   | "speedUp";
-export type InstructionStep = "floor" | "formPhoto" | "idle" | "prompt";
+export type InstructionStep =
+  | "floor"
+  | "formPhoto"
+  | "idle"
+  | "promptTransition";
 
 const PHASE_LABELS = {
   game: "본게임",
@@ -177,7 +181,10 @@ export function useBeatGameRound({
         return;
       }
 
-      if (phase === "result" && roundNumber % BOSS_STAGE_INTERVAL_ROUNDS === 0) {
+      if (
+        phase === "result" &&
+        roundNumber % BOSS_STAGE_INTERVAL_ROUNDS === 0
+      ) {
         setSpeedLevel(0);
         setPhase("bossStage");
         return;
@@ -238,14 +245,17 @@ export function useBeatGameRound({
     const floorTimer = window.setTimeout(() => {
       setInstructionStep("floor");
     }, 4 * beatDurationMs);
-    const promptTimer = window.setTimeout(() => {
-      setInstructionStep("prompt");
-    }, (INSTRUCTION_BEATS - 0.5) * beatDurationMs);
+    const promptTransitionTimer = window.setTimeout(
+      () => {
+        setInstructionStep("promptTransition");
+      },
+      (INSTRUCTION_BEATS - 1) * beatDurationMs,
+    );
 
     return () => {
       window.clearTimeout(formPhotoTimer);
       window.clearTimeout(floorTimer);
-      window.clearTimeout(promptTimer);
+      window.clearTimeout(promptTransitionTimer);
     };
   }, [beatDurationMs, phase, roundNumber]);
 
