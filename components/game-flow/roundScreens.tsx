@@ -167,7 +167,7 @@ export function MicrogameRoundScreen({
       <MicrogameCanvas microgame={microgame} />
       <div className="timer-beat-shell absolute left-4 top-4 size-28 sm:left-6 sm:top-6 sm:size-32">
         <Image
-          src="/images/timer.png"
+          src="/games/game-flow/images/timer.png"
           alt=""
           fill
           sizes="(min-width: 640px) 128px, 112px"

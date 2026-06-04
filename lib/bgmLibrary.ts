@@ -21,23 +21,23 @@ export type SoundEffectTrack =
   | "clear5";
 
 const BGM_TRACK_PATHS = {
-  bossStage: "/sounds/boss-stage.mp3",
-  fail: "/sounds/fail.mp3",
-  gameOver: "/sounds/game-over.mp3",
-  intermission: "/sounds/intermission.mp3",
-  oneUp: "/sounds/1-up.mp3",
-  resultsAndMain: "/sounds/results-and-main.mp3",
-  setup: "/sounds/setup.mp3",
-  speedUp: "/sounds/speed-up.mp3",
-  success: "/sounds/success.mp3",
+  bossStage: "/games/game-flow/sounds/boss-stage.mp3",
+  fail: "/games/game-flow/sounds/fail.mp3",
+  gameOver: "/games/game-flow/sounds/game-over.mp3",
+  intermission: "/games/game-flow/sounds/intermission.mp3",
+  oneUp: "/games/game-flow/sounds/1-up.mp3",
+  resultsAndMain: "/games/game-flow/sounds/results-and-main.mp3",
+  setup: "/games/game-flow/sounds/setup.mp3",
+  speedUp: "/games/game-flow/sounds/speed-up.mp3",
+  success: "/games/game-flow/sounds/success.mp3",
 } satisfies Record<BgmTrack, string>;
 
 const SOUND_EFFECT_TRACK_PATHS = {
-  clear1: "/sounds/clear-1.mp3",
-  clear2: "/sounds/clear-2.mp3",
-  clear3: "/sounds/clear-3.mp3",
-  clear4: "/sounds/clear-4.mp3",
-  clear5: "/sounds/clear-5.mp3",
+  clear1: "/games/game-flow/sounds/clear-1.mp3",
+  clear2: "/games/game-flow/sounds/clear-2.mp3",
+  clear3: "/games/game-flow/sounds/clear-3.mp3",
+  clear4: "/games/game-flow/sounds/clear-4.mp3",
+  clear5: "/games/game-flow/sounds/clear-5.mp3",
 } satisfies Record<SoundEffectTrack, string>;
 
 const AUDIO_TRACK_PATHS = {

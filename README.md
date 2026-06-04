@@ -1,165 +1,146 @@
-# Web Microgame Project
+# Microgames Elevator 🛗
 
-음악과 리듬에 맞춰 짧은 미션형 미니게임이 연속으로 등장하는 웹 기반 마이크로게임 프로젝트입니다.
-각 라운드마다 서로 다른 조작법과 게임 규칙이 빠르게 제시되며, 플레이어는 제한 시간 안에 즉각적으로 반응해야 합니다.
+<p align="center">
+  <img src="./public/games/game-flow/images/game-main-logo.png" alt="Microgames Elevator logo" width="240" />
+</p>
 
-## Overview
+<p align="center">
+  음악과 박자에 맞춰 짧은 미션이 빠르게 이어지는 웹 기반 마이크로게임입니다. 순식간에 판단하고, 정확한 타이밍에 입력하고, 더 높은 층까지 살아남으세요.
+</p>
 
-이 프로젝트는 WarioWare류의 짧고 빠른 마이크로게임 경험을 웹에서 구현하는 것을 목표로 합니다.
+<p align="center">
+  <img alt="Next.js" src="https://img.shields.io/badge/Next.js-16-black?logo=nextdotjs" />
+  <img alt="React" src="https://img.shields.io/badge/React-19-149eca?logo=react&logoColor=white" />
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&logoColor=white" />
+  <img alt="Tailwind CSS" src="https://img.shields.io/badge/Tailwind_CSS-4-38bdf8?logo=tailwindcss&logoColor=white" />
+</p>
 
-게임은 다음과 같은 흐름으로 진행됩니다.
+<p align="center">
+  <img src="./public/games/game-flow/images/main-elevator-1.png" alt="Main elevator gameplay scene" width="30%" />
+  <img src="./public/games/game-flow/images/main-elevator-success-1.png" alt="Successful elevator result scene" width="30%" />
+  <img src="./public/games/game-flow/images/main-elevator-fail-1.png" alt="Failed elevator result scene" width="30%" />
+</p>
 
-1. 음악과 함께 게임 시작
-2. 랜덤 마이크로게임 선택
-3. 짧은 조작 안내 표시
-4. 제한 시간 내 미션 수행
-5. 성공 / 실패 판정
-6. 다음 마이크로게임으로 전환
-7. 난이도 및 속도 점진 증가
+## 🎮 프로젝트 소개
 
-## Key Features
+Microgames Elevator는 WarioWare 스타일의 짧고 빠른 미션형 게임을 브라우저에서 즐길 수 있게 만든 Next.js 프로젝트입니다. 라운드마다 다른 조작법이 제시되고, 플레이어는 몇 박자 안에 즉시 반응해야 합니다.
 
-- 랜덤 마이크로게임 진행
-- 음악 BPM 또는 타이밍에 맞춘 게임 전환
-- 짧고 직관적인 조작 안내
-- 키보드 / 마우스 기반 입력
-- 게임별 독립적인 상태 관리
-- 빠른 에셋 로딩을 위한 사전 로드 구조
-- Next.js 기반 웹 배포
-- Vercel 배포 최적화
+현재 빌드에는 일반 라운드, 보스 라운드, 목숨 시스템, 최고 기록 저장, 셋업 전환, 음악 큐, 조작법 안내 화면, 여러 종류의 게임 캔버스가 포함되어 있습니다.
 
-## Tech Stack
-
-- **Framework**: Next.js
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **Deployment**: Vercel
-- **State Management**: React state / custom hooks
-- **Asset Handling**: Next.js static assets, preloading strategy
-
-## Project Structure
-
-```bash
-.
-├── public/
-│   ├── images/
-│   ├── sounds/
-│   └── games/
-├── src/
-│   ├── app/
-│   ├── components/
-│   ├── games/
-│   │   ├── GameA/
-│   │   ├── GameB/
-│   │   └── GameC/
-│   ├── hooks/
-│   ├── lib/
-│   ├── types/
-│   └── styles/
-├── README.md
-└── package.json
-```
-
-## Microgame Design
-
-각 마이크로게임은 독립적인 모듈로 관리됩니다.
-
-하나의 마이크로게임은 다음 요소를 가집니다.
-
-```ts
-type Microgame = {
-  id: string;
-  title: string;
-  instruction: string;
-  duration: number;
-  preloadAssets?: string[];
-  start: () => void;
-  update?: () => void;
-  end: () => void;
-};
-```
-
-## Game Flow
+## 🔁 게임 흐름
 
 ```txt
-Start
-  ↓
-Preload Assets
-  ↓
-Select Random Microgame
-  ↓
-Show Instruction
-  ↓
-Play Microgame
-  ↓
-Check Success / Failure
-  ↓
-Next Round
-  ↓
-Game Over
+에셋 로딩
+  -> 메인 화면
+  -> 시작 준비
+  -> 랜덤 마이크로게임 선택
+  -> 박자 제한 입력
+  -> 성공 / 실패 판정
+  -> 속도와 압박 증가
+  -> 12라운드마다 보스 라운드
+  -> 게임 오버
 ```
 
-## Asset Preloading
+## 🕹️ 조작 방식
 
-웹 환경에서는 이미지와 사운드 로딩 지연이 게임 경험을 크게 해칠 수 있습니다.
-따라서 게임 시작 전에 주요 에셋을 미리 로드합니다.
+<p>
+  <img src="./public/games/forms/images/space.png" alt="Space key control" width="23%" />
+  <img src="./public/games/forms/images/arrow-keys.png" alt="Arrow keys control" width="23%" />
+  <img src="./public/games/forms/images/mouse.png" alt="Mouse control" width="23%" />
+  <img src="./public/games/forms/images/number-keys.png" alt="Number keys control" width="23%" />
+</p>
 
-- 자주 등장하는 이미지 선로딩
-- 사운드 파일 선로딩
-- 다음 후보 게임의 에셋 미리 준비
-- 로딩 실패 시 fallback 처리
+현재 마이크로게임 레지스트리는 다음 조작을 지원합니다.
 
-## Getting Started
+- 스페이스바
+- 방향키
+- WASD
+- 방향키 + 스페이스바
+- 마우스 클릭
+- 마우스 휠 스크롤
+- 숫자키
+- 한글 키보드 입력
+- 마이크 입력 폼
 
-### 1. Install dependencies
+## ⚡ 현재 마이크로게임
+
+| ID | 캔버스 | 조작 | 종류 |
+| --- | --- | --- | --- |
+| `catch-arrow` | 기본 엘리베이터 | 방향키 | 일반 |
+| `jump-gap` | 크롬 공룡 스타일 | 스페이스바 | 일반 |
+| `press-button` | Undertale 스타일 | 마우스 클릭 | 일반 |
+| `balance-wasd` | 기본 엘리베이터 | WASD | 일반 |
+| `scroll-lift` | 기본 엘리베이터 | 스크롤 | 일반 |
+| `dash-jump` | 기본 엘리베이터 | 방향키 + 스페이스 | 일반 |
+| `code-pad` | 수강신청 번호판 | 숫자키 | 일반 |
+| `type-meow` | 기본 엘리베이터 | 한글 키보드 | 일반 |
+| `call-cat` | 기본 엘리베이터 | 마이크 폼 | 일반 |
+| `boss-emergency-dash` | 기본 엘리베이터 | 방향키 + 스페이스 | 보스 |
+| `boss-master-code` | 기본 엘리베이터 | 숫자키 | 보스 |
+| `boss-overdrive-lift` | 기본 엘리베이터 | 스크롤 | 보스 |
+
+## 🧰 기술 스택
+
+- Next.js App Router
+- React 19
+- TypeScript
+- Tailwind CSS 4
+- 게임 흐름, 리듬, 입력, BGM, 기록 저장을 위한 커스텀 React 훅
+- `public/games/*/images`, `public/games/*/sounds` 기반 게임별 정적 에셋
+
+## 🗂️ 프로젝트 구조
+
+```txt
+app/                     Next.js 라우트와 전역 스타일
+components/game-flow/    화면 흐름, 라운드 UI, 오버레이, 셸
+data/                    마이크로게임 레지스트리, 조작법, 프리로드 에셋
+games/                   마이크로게임 캔버스 구현
+hooks/                   게임 상태, 입력, 리듬, BGM, 기록 저장 훅
+lib/                     캔버스와 오디오 헬퍼
+public/games/game-flow/  메인 흐름 이미지와 사운드
+public/games/forms/      조작법 안내 이미지
+types/                   공유 타입 선언
+```
+
+## 🚀 시작하기
+
+의존성을 설치합니다.
 
 ```bash
 npm install
 ```
 
-### 2. Run development server
+개발 서버를 실행합니다.
 
 ```bash
 npm run dev
 ```
 
-### 3. Open browser
+브라우저에서 접속합니다.
 
-```bash
+```txt
 http://localhost:3000
 ```
 
-## Scripts
+## 📜 스크립트
 
 ```bash
-npm run dev      # Start development server
-npm run build    # Build production bundle
-npm run start    # Start production server
-npm run lint     # Run lint
+npm run dev           # 로컬 Next.js 개발 서버 실행
+npm run build         # 프로덕션 빌드 생성
+npm run start         # 프로덕션 서버 실행
+npm run lint          # ESLint 실행
+npm run format        # Prettier로 포맷팅
+npm run format:check  # 포맷팅 상태 확인
 ```
 
-## Development Notes
+## 🧩 마이크로게임 추가하기
 
-- 각 마이크로게임은 가능한 한 독립적인 컴포넌트로 작성합니다.
-- 게임 간 공유 상태는 최소화합니다.
-- 입력 처리, 타이머, 성공/실패 판정은 공통 hook으로 분리합니다.
-- 이미지와 사운드는 게임 시작 전에 preload합니다.
-- 랜덤 게임 선택 시 같은 게임이 지나치게 반복되지 않도록 history를 관리합니다.
-- 게임 전환 애니메이션은 짧고 명확하게 유지합니다.
+1. `games/`에 새 캔버스를 추가하거나 기존 캔버스를 재사용합니다.
+2. `data/microgames.ts`에 라운드를 등록합니다.
+3. `data/formInstructions.ts`의 조작법 폼 중 하나를 선택합니다.
+4. 필요한 이미지나 사운드를 `public/`에 추가합니다.
+5. 짧고 직관적이며 박자에 잘 맞는 미션으로 유지합니다.
 
-## Roadmap
+## 🔒 라이선스
 
-- [ ] 기본 게임 루프 구현
-- [ ] 마이크로게임 등록 시스템 구현
-- [ ] 에셋 프리로딩 구현
-- [ ] 음악 타이밍 기반 라운드 전환
-- [ ] 점수 및 콤보 시스템
-- [ ] 난이도 증가 시스템
-- [ ] 게임 오버 화면
-- [ ] 모바일 입력 대응
-- [ ] 애니메이션 강화
-- [ ] 사운드 이펙트 추가
-
-## License
-
-This project is for educational and experimental purposes.
+이 프로젝트는 개인 실험용 비공개 프로젝트입니다.

@@ -96,7 +96,7 @@ export function MainScreen({
           </div>
           <div className="mx-auto w-full max-w-48 lg:max-w-none">
             <Image
-              src="/images/game-main-logo.png"
+              src="/games/game-flow/images/game-main-logo.png"
               alt="캣타워 오르기 로고"
               width={880}
               height={1268}
@@ -152,7 +152,7 @@ export function LoadingScreen() {
         </h1>
         <div className="loading-spinner-vital mx-auto mt-8 grid size-32 place-items-center sm:size-40">
           <Image
-            src="/images/loading-spinner.png"
+            src="/games/game-flow/images/loading-spinner.png"
             alt=""
             width={180}
             height={151}

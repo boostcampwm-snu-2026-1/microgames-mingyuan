@@ -64,7 +64,7 @@ export function FixedLivesOverlay({
                 style={getStaggeredRhythmStyle(index)}
               >
                 <Image
-                  src="/images/life-deactive.png"
+                  src="/games/game-flow/images/life-deactive.png"
                   alt=""
                   fill
                   sizes="(min-width: 1024px) 176px, (min-width: 640px) 144px, 96px"
@@ -73,7 +73,7 @@ export function FixedLivesOverlay({
                   } ${shouldAnimateLostLife ? "life-bone-enter" : ""}`}
                 />
                 <Image
-                  src="/images/life-active.png"
+                  src="/games/game-flow/images/life-active.png"
                   alt={isActive ? `${label} active` : ""}
                   fill
                   sizes="(min-width: 1024px) 176px, (min-width: 640px) 144px, 96px"
