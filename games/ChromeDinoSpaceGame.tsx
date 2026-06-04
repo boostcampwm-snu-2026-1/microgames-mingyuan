@@ -372,11 +372,11 @@ export function ChromeDinoSpaceGame(
       if (state.hasDied) {
         drawCenteredText(
           context,
-          "DIE",
+          "GAME OVER",
           canvasWidth / 2,
           canvasHeight * 0.34,
-          44,
-          "#ef4444",
+          38,
+          "#777777",
         );
       }
 
