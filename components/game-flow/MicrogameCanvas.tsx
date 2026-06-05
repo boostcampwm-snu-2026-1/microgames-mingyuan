@@ -9,6 +9,7 @@ import { CourseRegistrationNumberGame } from "@/games/CourseRegistrationNumberGa
 import { DefaultMicrogameCanvas } from "@/games/DefaultMicrogameCanvas";
 import { GeometryDashGame } from "@/games/GeometryDashGame";
 import { KartriderBossGame } from "@/games/KartriderBossGame";
+import { MaplestoryLieDetectorGame } from "@/games/MaplestoryLieDetectorGame";
 import { MinecraftMiningGame } from "@/games/MinecraftMiningGame";
 import type { Microgame } from "@/data/microgames";
 import { PianoMelodyGame } from "@/games/PianoMelodyGame";
@@ -52,6 +53,10 @@ function renderGameCanvas(microgame: Microgame) {
 
   if (microgame.canvas === "minecraftMining") {
     return <MinecraftMiningGame microgame={microgame} />;
+  }
+
+  if (microgame.canvas === "maplestoryLieDetector") {
+    return <MaplestoryLieDetectorGame microgame={microgame} />;
   }
 
   if (microgame.canvas === "pianoMelody") {

@@ -23,6 +23,7 @@ export type MicrogameCanvas =
   | "default"
   | "geometryDashSpikes"
   | "kartriderCourse"
+  | "maplestoryLieDetector"
   | "minecraftMining"
   | "pianoMelody"
   | "pokemonTyping"
@@ -150,6 +151,16 @@ export const MICROGAMES = [
     id: "brain-academy-block-count",
     startPrompt: "블록은 몇 개?",
     title: "말랑말랑 두뇌교실",
+    type: "normal",
+  },
+
+  {
+    beatCount: 12,
+    canvas: "maplestoryLieDetector",
+    control: "koreanKeyboard",
+    id: "maplestory-lie-detector",
+    startPrompt: "보이는 대로 입력해라!",
+    title: "MapleStory",
     type: "normal",
   },
 
