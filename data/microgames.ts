@@ -21,6 +21,7 @@ export type MicrogameCanvas =
   | "default"
   | "geometryDashSpikes"
   | "minecraftMining"
+  | "pianoMelody"
   | "pokemonTyping"
   | "superMarioCoins"
   | "tetrisLineClear"
@@ -116,6 +117,16 @@ export const MICROGAMES = [
     id: "minecraft-diamond-mining",
     startPrompt: "다이아몬드를 캐라!",
     title: "Minecraft",
+    type: "normal",
+  },
+
+  {
+    beatCount: 10,
+    canvas: "pianoMelody",
+    control: "numberKeys",
+    id: "piano-melody-repeat",
+    startPrompt: "주어진 멜로디를 연주해라!",
+    title: "Piano",
     type: "normal",
   },
 

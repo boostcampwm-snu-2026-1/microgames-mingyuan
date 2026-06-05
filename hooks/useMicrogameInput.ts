@@ -47,6 +47,7 @@ export function useMicrogameInput({
       if (
         microgame.canvas === "animalFarmReverseTyping" ||
         microgame.canvas === "geometryDashSpikes" ||
+        microgame.canvas === "pianoMelody" ||
         microgame.canvas === "pokemonTyping" ||
         microgame.canvas === "superMarioCoins" ||
         microgame.canvas === "tetrisLineClear" ||
