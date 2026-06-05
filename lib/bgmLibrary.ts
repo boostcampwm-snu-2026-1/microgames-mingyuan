@@ -12,6 +12,7 @@ export type BgmTrack =
   | "geometryDash"
   | "intermission"
   | "kartrider"
+  | "layton"
   | "maplestory"
   | "minecraft"
   | "oneUp"
@@ -44,6 +45,7 @@ const BGM_TRACK_PATHS = {
   geometryDash: "/games/geometry-dash/sounds/geometry-dash-bgm.mp3",
   intermission: "/games/game-flow/sounds/intermission.mp3",
   kartrider: "/games/kartrider/sounds/kartrider-bgm.mp3",
+  layton: "/games/layton/sounds/layton-bgm.mp3",
   maplestory: "/games/maplestory-lie-detector/sounds/maplestory-bgm.mp3",
   minecraft: "/games/minecraft/sounds/minecraft-bgm.mp3",
   oneUp: "/games/game-flow/sounds/1-up.mp3",
@@ -91,6 +93,7 @@ const BGM_TRACK_BEATS = {
   geometryDash: 12,
   intermission: 8,
   kartrider: 36,
+  layton: 8,
   maplestory: 12,
   minecraft: 8,
   oneUp: 8,

@@ -23,6 +23,7 @@ export type MicrogameCanvas =
   | "default"
   | "geometryDashSpikes"
   | "kartriderCourse"
+  | "laytonShapeMatch"
   | "maplestoryLieDetector"
   | "minecraftMining"
   | "pianoMelody"
@@ -161,6 +162,16 @@ export const MICROGAMES = [
     id: "maplestory-lie-detector",
     startPrompt: "보이는 대로 입력해라!",
     title: "MapleStory",
+    type: "normal",
+  },
+
+  {
+    beatCount: 8,
+    canvas: "laytonShapeMatch",
+    control: "numberKeys",
+    id: "layton-shape-match",
+    startPrompt: "같은 모양을 찾아라!",
+    title: "Layton",
     type: "normal",
   },
 
