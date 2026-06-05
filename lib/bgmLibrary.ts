@@ -13,6 +13,7 @@ export type BgmTrack =
   | "intermission"
   | "kartrider"
   | "layton"
+  | "leagueOfLegend"
   | "maplestory"
   | "mapleRune"
   | "minecraft"
@@ -35,6 +36,7 @@ export type SoundEffectTrack =
   | "animalCrossingStamp"
   | "minecraftDig1"
   | "minecraftDig2"
+  | "leagueChampionSelect"
   | "runeEffect";
 
 const BGM_TRACK_PATHS = {
@@ -48,6 +50,7 @@ const BGM_TRACK_PATHS = {
   intermission: "/games/game-flow/sounds/intermission.mp3",
   kartrider: "/games/kartrider/sounds/kartrider-bgm.mp3",
   layton: "/games/layton/sounds/layton-bgm.mp3",
+  leagueOfLegend: "/games/league-of-legend/sounds/league-of-legend-ban-bgm.mp3",
   maplestory: "/games/maplestory-lie-detector/sounds/maplestory-bgm.mp3",
   mapleRune: "/games/maple-story-rune/sounds/maple-rune-bgm.mp3",
   minecraft: "/games/minecraft/sounds/minecraft-bgm.mp3",
@@ -69,6 +72,7 @@ const SOUND_EFFECT_TRACK_PATHS = {
   clear4: "/games/game-flow/sounds/clear-4.mp3",
   clear5: "/games/game-flow/sounds/clear-5.mp3",
   animalCrossingStamp: "/games/animal-crossing/sounds/stamp.mp3",
+  leagueChampionSelect: "/games/league-of-legend/sounds/champ-select.mp3",
   minecraftDig1: "/games/minecraft/sounds/dig-1.mp3",
   minecraftDig2: "/games/minecraft/sounds/dig-2.mp3",
   runeEffect: "/games/maple-story-rune/sounds/rune-effect.mp3",
@@ -98,6 +102,7 @@ const BGM_TRACK_BEATS = {
   intermission: 8,
   kartrider: 36,
   layton: 8,
+  leagueOfLegend: 12,
   maplestory: 12,
   mapleRune: 8,
   minecraft: 8,

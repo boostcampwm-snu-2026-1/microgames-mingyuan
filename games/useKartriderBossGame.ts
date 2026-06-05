@@ -11,10 +11,10 @@ const MAX_DELTA_SECONDS = 0.04;
 const MAP_WIDTH = 1626;
 const MAP_HEIGHT = 967;
 const ROAD_LUMINANCE_THRESHOLD = 205;
-const ACCELERATION_SMOOTHING = 18;
-const ANGLE_SMOOTHING = 20;
-const FRICTION = 2400;
-const MAX_MOVE_SPEED = 960;
+const ACCELERATION_SMOOTHING = 9;
+const ANGLE_SMOOTHING = 13;
+const FRICTION = 1500;
+const MAX_MOVE_SPEED = 720;
 const CHECKPOINT_RADIUS = 82;
 const CAR_COLLISION_RADIUS = 13;
 const COLLISION_EFFECT_SECONDS = 0.22;
@@ -384,12 +384,7 @@ function updateDrivingState(
 }
 
 function getTrackLayout(width: number, height: number): TrackLayout {
-  const maxTrackWidth = width * 0.9;
-  const maxTrackHeight = height * 0.74;
-  const scale = Math.min(
-    maxTrackWidth / MAP_WIDTH,
-    maxTrackHeight / MAP_HEIGHT,
-  );
+  const scale = Math.max(width / MAP_WIDTH, height / MAP_HEIGHT);
   const trackWidth = MAP_WIDTH * scale;
   const trackHeight = MAP_HEIGHT * scale;
 
@@ -398,7 +393,7 @@ function getTrackLayout(width: number, height: number): TrackLayout {
     scale,
     width: trackWidth,
     x: (width - trackWidth) / 2,
-    y: (height - trackHeight) / 2 + height * 0.035,
+    y: (height - trackHeight) / 2,
   };
 }
 
@@ -577,27 +572,7 @@ function drawScene(
 ) {
   const layout = getTrackLayout(width, height);
 
-  context.fillStyle = "#020617";
-  context.fillRect(0, 0, width, height);
-
-  const backgroundGradient = context.createRadialGradient(
-    width / 2,
-    height / 2,
-    0,
-    width / 2,
-    height / 2,
-    Math.max(width, height) * 0.68,
-  );
-
-  backgroundGradient.addColorStop(0, "rgba(14, 165, 233, 0.2)");
-  backgroundGradient.addColorStop(0.52, "rgba(15, 23, 42, 0.42)");
-  backgroundGradient.addColorStop(1, "rgba(0, 0, 0, 1)");
-  context.fillStyle = backgroundGradient;
-  context.fillRect(0, 0, width, height);
-
   context.save();
-  context.shadowColor = "rgba(248, 250, 252, 0.36)";
-  context.shadowBlur = 20;
 
   if (images.track?.complete && images.track.naturalWidth > 0) {
     context.drawImage(

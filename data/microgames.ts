@@ -24,6 +24,7 @@ export type MicrogameCanvas =
   | "geometryDashSpikes"
   | "kartriderCourse"
   | "laytonShapeMatch"
+  | "leagueChampionBan"
   | "maplestoryLieDetector"
   | "maplestoryRune"
   | "minecraftMining"
@@ -141,7 +142,7 @@ export const MICROGAMES = [
     canvas: "pianoMelody",
     control: "numberKeys",
     id: "piano-melody-repeat",
-    startPrompt: "주어진 멜로디를 연주해라!",
+    startPrompt: "멜로디를 연주해라!",
     title: "Piano",
     type: "normal",
   },
@@ -183,6 +184,16 @@ export const MICROGAMES = [
     id: "layton-shape-match",
     startPrompt: "같은 모양을 찾아라!",
     title: "Layton",
+    type: "normal",
+  },
+
+  {
+    beatCount: 12,
+    canvas: "leagueChampionBan",
+    control: "mouseClick",
+    id: "league-of-legend-champion-ban",
+    startPrompt: "타겟 챔피언을 밴해라!",
+    title: "League of Legend",
     type: "normal",
   },
 

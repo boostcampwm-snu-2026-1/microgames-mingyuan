@@ -195,9 +195,6 @@ function drawScene(
     context.fillRect(0, 0, width, height);
   }
 
-  context.fillStyle = "rgba(12, 10, 9, 0.42)";
-  context.fillRect(0, 0, width, height);
-
   const panelWidth = Math.min(width * 0.76, 720);
   const panelX = (width - panelWidth) / 2;
   const panelY = height * 0.1;

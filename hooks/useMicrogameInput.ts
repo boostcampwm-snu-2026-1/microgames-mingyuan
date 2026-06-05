@@ -5,11 +5,13 @@ import type { Microgame } from "@/data/microgames";
 import { isMicrogameClearKey } from "@/data/microgames";
 
 export const MICROGAME_CLEAR_EVENT = "microgame-clear";
+export const MICROGAME_FAILURE_EVENT = "microgame-failure";
 
 type UseMicrogameInputParams = Readonly<{
   isActive: boolean;
   microgame: Microgame;
   onClear: () => void;
+  onFailure: () => void;
   roundNumber: number;
 }>;
 
@@ -17,26 +19,36 @@ export function useMicrogameInput({
   isActive,
   microgame,
   onClear,
+  onFailure,
   roundNumber,
 }: UseMicrogameInputParams) {
-  const clearedRoundRef = useRef<number | null>(null);
+  const resolvedRoundRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (!isActive) {
       return;
     }
 
-    clearedRoundRef.current = null;
+    resolvedRoundRef.current = null;
   }, [isActive, roundNumber]);
 
   const recordClearOnce = useCallback(() => {
-    if (clearedRoundRef.current === roundNumber) {
+    if (resolvedRoundRef.current === roundNumber) {
       return;
     }
 
-    clearedRoundRef.current = roundNumber;
+    resolvedRoundRef.current = roundNumber;
     onClear();
   }, [onClear, roundNumber]);
+
+  const recordFailureOnce = useCallback(() => {
+    if (resolvedRoundRef.current === roundNumber) {
+      return;
+    }
+
+    resolvedRoundRef.current = roundNumber;
+    onFailure();
+  }, [onFailure, roundNumber]);
 
   useEffect(() => {
     if (!isActive) {
@@ -50,6 +62,7 @@ export function useMicrogameInput({
         microgame.canvas === "geometryDashSpikes" ||
         microgame.canvas === "kartriderCourse" ||
         microgame.canvas === "laytonShapeMatch" ||
+        microgame.canvas === "leagueChampionBan" ||
         microgame.canvas === "maplestoryLieDetector" ||
         microgame.canvas === "maplestoryRune" ||
         microgame.canvas === "pianoMelody" ||
@@ -73,6 +86,7 @@ export function useMicrogameInput({
         microgame.control === "mouseClick" &&
         microgame.canvas !== "animalCrossingStamps" &&
         microgame.canvas !== "amongUsWires" &&
+        microgame.canvas !== "leagueChampionBan" &&
         microgame.canvas !== "minecraftMining" &&
         microgame.canvas !== "undertaleMouse"
       ) {
@@ -90,17 +104,28 @@ export function useMicrogameInput({
     const recordCustomClear = () => {
       recordClearOnce();
     };
+    const recordCustomFailure = () => {
+      recordFailureOnce();
+    };
 
     window.addEventListener("keydown", recordKeyboardClear);
     window.addEventListener("pointerdown", recordPointerClear);
     window.addEventListener("wheel", recordWheelClear, { passive: false });
     window.addEventListener(MICROGAME_CLEAR_EVENT, recordCustomClear);
+    window.addEventListener(MICROGAME_FAILURE_EVENT, recordCustomFailure);
 
     return () => {
       window.removeEventListener("keydown", recordKeyboardClear);
       window.removeEventListener("pointerdown", recordPointerClear);
       window.removeEventListener("wheel", recordWheelClear);
       window.removeEventListener(MICROGAME_CLEAR_EVENT, recordCustomClear);
+      window.removeEventListener(MICROGAME_FAILURE_EVENT, recordCustomFailure);
     };
-  }, [isActive, microgame.canvas, microgame.control, recordClearOnce]);
+  }, [
+    isActive,
+    microgame.canvas,
+    microgame.control,
+    recordClearOnce,
+    recordFailureOnce,
+  ]);
 }

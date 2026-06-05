@@ -335,7 +335,7 @@ export function useBeatGameRound({
       phaseBeatCount,
       phaseLabel,
       recordFailure: () => {
-        hasClearedCurrentGameRef.current = false;
+        showResult("failure");
       },
       recordSuccess: () => {
         hasClearedCurrentGameRef.current = true;
@@ -354,6 +354,7 @@ export function useBeatGameRound({
       phaseLabel,
       roundNumber,
       roundResult,
+      showResult,
       speedLevel,
     ],
   );

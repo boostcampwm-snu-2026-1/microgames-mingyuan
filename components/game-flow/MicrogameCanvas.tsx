@@ -10,6 +10,7 @@ import { DefaultMicrogameCanvas } from "@/games/DefaultMicrogameCanvas";
 import { GeometryDashGame } from "@/games/GeometryDashGame";
 import { KartriderBossGame } from "@/games/KartriderBossGame";
 import { LaytonShapeMatchGame } from "@/games/LaytonShapeMatchGame";
+import { LeagueChampionBanGame } from "@/games/LeagueChampionBanGame";
 import { MaplestoryLieDetectorGame } from "@/games/MaplestoryLieDetectorGame";
 import { MaplestoryRuneGame } from "@/games/MaplestoryRuneGame";
 import { MinecraftMiningGame } from "@/games/MinecraftMiningGame";
@@ -67,6 +68,10 @@ function renderGameCanvas(microgame: Microgame) {
 
   if (microgame.canvas === "laytonShapeMatch") {
     return <LaytonShapeMatchGame microgame={microgame} />;
+  }
+
+  if (microgame.canvas === "leagueChampionBan") {
+    return <LeagueChampionBanGame microgame={microgame} />;
   }
 
   if (microgame.canvas === "pianoMelody") {

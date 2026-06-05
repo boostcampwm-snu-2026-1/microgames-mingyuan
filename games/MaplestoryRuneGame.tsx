@@ -32,10 +32,10 @@ export function MaplestoryRuneGame({
         src="/games/maple-story-rune/images/field.png"
         unoptimized
       />
-      <div className="absolute inset-0 bg-black/20" />
-      <div className="absolute left-[8.5%] top-[39%] grid -translate-x-1/2 -translate-y-1/2 place-items-center">
+      <div className="absolute inset-0 bg-black/35" />
+      <div className="absolute left-1/2 top-1/2 grid -translate-x-1/2 -translate-y-1/2 place-items-center">
         <div
-          className={`relative size-[clamp(5rem,12vw,10rem)] transition-transform duration-150 ${
+          className={`relative size-[clamp(10rem,24vw,19rem)] transition-transform duration-150 ${
             effectKey > 0 ? "scale-105" : "scale-100"
           }`}
         >
@@ -44,7 +44,7 @@ export function MaplestoryRuneGame({
             className="object-contain drop-shadow-[0_0_22px_rgba(216,180,254,0.76)]"
             fill
             priority
-            sizes="160px"
+            sizes="304px"
             src="/games/maple-story-rune/images/rune.png"
             unoptimized
           />
@@ -63,7 +63,7 @@ export function MaplestoryRuneGame({
       <div className="absolute left-1/2 top-[12%] flex -translate-x-1/2 items-center gap-[clamp(0.7rem,1.5vw,1.25rem)] rounded-md border border-white/30 bg-black/45 px-[clamp(0.8rem,1.8vw,1.5rem)] py-[clamp(0.55rem,1.4vw,1rem)] shadow-[0_0_24px_rgba(168,85,247,0.24)] backdrop-blur-sm">
         {pattern.map((direction, index) => (
           <div
-            className={`relative aspect-square w-[clamp(3rem,7vw,5.8rem)] transition duration-150 ${
+            className={`relative aspect-square w-[clamp(4rem,9vw,7.4rem)] transition duration-150 ${
               index < progress
                 ? "scale-90 opacity-35"
                 : index === progress

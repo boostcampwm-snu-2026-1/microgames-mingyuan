@@ -216,6 +216,7 @@ export function GameScreen({
     gameBeatCount,
     instructionStep,
     phase,
+    recordFailure,
     recordSuccess,
     roundNumber,
     roundResult,
@@ -263,6 +264,7 @@ export function GameScreen({
     isActive: phase === "game",
     microgame,
     onClear: recordSuccessWithClearSound,
+    onFailure: recordFailure,
     roundNumber,
   });
 
@@ -357,6 +359,15 @@ export function GameScreen({
         bgmLibrary.play("layton", "once", "now").catch((error: unknown) => {
           console.error(error);
         });
+        return;
+      }
+
+      if (microgame.canvas === "leagueChampionBan") {
+        bgmLibrary
+          .play("leagueOfLegend", "once", "now")
+          .catch((error: unknown) => {
+            console.error(error);
+          });
         return;
       }
 
