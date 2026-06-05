@@ -11,11 +11,13 @@ const MAX_DELTA_SECONDS = 0.04;
 const MAP_WIDTH = 1629;
 const MAP_HEIGHT = 965;
 const ROAD_LUMINANCE_THRESHOLD = 92;
-const FRICTION = 4200;
-const MAX_MOVE_SPEED = 920;
+const ACCELERATION_SMOOTHING = 18;
+const ANGLE_SMOOTHING = 20;
+const FRICTION = 2400;
+const MAX_MOVE_SPEED = 960;
 const CHECKPOINT_RADIUS = 82;
 const CAR_COLLISION_RADIUS = 13;
-const COLLISION_FLASH_SECONDS = 0.22;
+const COLLISION_FLASH_SECONDS = 0.16;
 const KARTRIDER_ASSETS = {
   kart: "/games/kartrider/images/kart.png",
   minimap: "/games/kartrider/images/minimap.png",
@@ -183,6 +185,10 @@ function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(value, max));
 }
 
+function getSmoothingRatio(rate: number, deltaSeconds: number) {
+  return 1 - Math.exp(-rate * deltaSeconds);
+}
+
 function getVectorLength(x: number, y: number) {
   return Math.hypot(x, y);
 }
@@ -224,6 +230,13 @@ function applyFrictionToVelocity(
 
 function getDistance(first: Point, second: Point) {
   return Math.hypot(first.x - second.x, first.y - second.y);
+}
+
+function getShortestAngleDelta(fromAngle: number, toAngle: number) {
+  return Math.atan2(
+    Math.sin(toAngle - fromAngle),
+    Math.cos(toAngle - fromAngle),
+  );
 }
 
 function updateCheckpoints(state: GameState) {
@@ -285,8 +298,15 @@ function updateDrivingState(
   const inputDirection = getInputDirection(pressedKeys);
 
   if (inputDirection.x !== 0 || inputDirection.y !== 0) {
-    state.velocityX = inputDirection.x * MAX_MOVE_SPEED;
-    state.velocityY = inputDirection.y * MAX_MOVE_SPEED;
+    const smoothingRatio = getSmoothingRatio(
+      ACCELERATION_SMOOTHING,
+      deltaSeconds,
+    );
+    const targetVelocityX = inputDirection.x * MAX_MOVE_SPEED;
+    const targetVelocityY = inputDirection.y * MAX_MOVE_SPEED;
+
+    state.velocityX += (targetVelocityX - state.velocityX) * smoothingRatio;
+    state.velocityY += (targetVelocityY - state.velocityY) * smoothingRatio;
   } else {
     const nextVelocity = applyFrictionToVelocity(
       state.velocityX,
@@ -308,7 +328,11 @@ function updateDrivingState(
   state.velocityY = clampedVelocity.y;
 
   if (getVectorLength(state.velocityX, state.velocityY) > 8) {
-    state.angle = Math.atan2(state.velocityY, state.velocityX);
+    const targetAngle = Math.atan2(state.velocityY, state.velocityX);
+    const smoothingRatio = getSmoothingRatio(ANGLE_SMOOTHING, deltaSeconds);
+
+    state.angle +=
+      getShortestAngleDelta(state.angle, targetAngle) * smoothingRatio;
   }
 
   const previousX = state.x;
@@ -323,10 +347,28 @@ function updateDrivingState(
     return;
   }
 
-  state.x = previousX;
-  state.y = previousY;
-  state.velocityX *= -0.18;
-  state.velocityY *= -0.18;
+  const canMoveX = canPlaceKart(mask, nextX, previousY);
+  const canMoveY = canPlaceKart(mask, previousX, nextY);
+
+  if (canMoveX) {
+    state.x = nextX;
+  } else {
+    state.x = previousX;
+    state.velocityX *= 0.16;
+  }
+
+  if (canMoveY) {
+    state.y = nextY;
+  } else {
+    state.y = previousY;
+    state.velocityY *= 0.16;
+  }
+
+  if (canMoveX || canMoveY) {
+    updateCheckpoints(state);
+    return;
+  }
+
   state.collisionFlashSeconds = COLLISION_FLASH_SECONDS;
 }
 
