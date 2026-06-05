@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import { MICROGAME_CLEAR_EVENT } from "@/hooks/useMicrogameInput";
-import { drawCenteredText } from "@/lib/canvasUtils";
 
 const MIN_CANVAS_HEIGHT = 360;
 const MIN_CANVAS_WIDTH = 640;
@@ -18,6 +17,7 @@ type Note = Readonly<{
 }>;
 
 type Melody = readonly number[];
+type NoteResult = "correct" | "pending" | "wrong";
 
 type GameState = {
   feedback: "idle" | "reset" | "success";
@@ -25,6 +25,7 @@ type GameState = {
   hasCleared: boolean;
   lastTimestamp: number | null;
   melody: Melody;
+  noteResults: NoteResult[];
   progress: number;
 };
 
@@ -58,12 +59,15 @@ function getRandomMelody() {
 }
 
 function createInitialState() {
+  const melody = getRandomMelody();
+
   return {
     feedback: "idle",
     feedbackMs: 0,
     hasCleared: false,
     lastTimestamp: null,
-    melody: getRandomMelody(),
+    melody,
+    noteResults: createPendingNoteResults(melody),
     progress: 0,
   } satisfies GameState;
 }
@@ -96,8 +100,63 @@ function drawCoverImage(
   );
 }
 
-function getMelodyLabel(melody: Melody) {
-  return melody.map((noteNumber) => NOTES[noteNumber - 1].label).join(" ");
+function getNoteTextColor(result: NoteResult) {
+  if (result === "correct") {
+    return "#15803d";
+  }
+
+  if (result === "wrong") {
+    return "#dc2626";
+  }
+
+  return "#431407";
+}
+
+function createPendingNoteResults(melody: Melody) {
+  return Array.from({ length: melody.length }, () => "pending" as const);
+}
+
+function drawMelodyLabel(
+  context: CanvasRenderingContext2D,
+  state: GameState,
+  x: number,
+  y: number,
+  maxWidth: number,
+  fontSize: number,
+) {
+  const labels = state.melody.map((noteNumber) => NOTES[noteNumber - 1].label);
+  const gap = fontSize * 0.46;
+
+  context.save();
+  context.font = `900 ${fontSize}px Arial, Helvetica, sans-serif`;
+  context.textAlign = "left";
+  context.textBaseline = "middle";
+
+  const labelWidths = labels.map((label) => context.measureText(label).width);
+  const totalWidth =
+    labelWidths.reduce((sum, labelWidth) => sum + labelWidth, 0) +
+    gap * Math.max(labels.length - 1, 0);
+  const scale = Math.min(1, maxWidth / totalWidth);
+  const resolvedFontSize = fontSize * scale;
+  const resolvedGap = gap * scale;
+
+  context.font = `900 ${resolvedFontSize}px Arial, Helvetica, sans-serif`;
+
+  const resolvedLabelWidths = labels.map(
+    (label) => context.measureText(label).width,
+  );
+  const resolvedTotalWidth =
+    resolvedLabelWidths.reduce((sum, labelWidth) => sum + labelWidth, 0) +
+    resolvedGap * Math.max(labels.length - 1, 0);
+  let cursorX = x - resolvedTotalWidth / 2;
+
+  labels.forEach((label, index) => {
+    context.fillStyle = getNoteTextColor(state.noteResults[index] ?? "pending");
+    context.fillText(label, cursorX, y);
+    cursorX += resolvedLabelWidths[index] + resolvedGap;
+  });
+
+  context.restore();
 }
 
 function playNoteAudio(
@@ -152,25 +211,14 @@ function drawScene(
   context.lineWidth = 3;
   context.stroke();
 
-  drawCenteredText(
+  drawMelodyLabel(
     context,
-    getMelodyLabel(state.melody),
+    state,
     width / 2,
     panelY + panelHeight / 2,
+    panelWidth * 0.86,
     Math.min(42, panelWidth / 13),
-    "#431407",
   );
-
-  if (state.feedback === "reset") {
-    drawCenteredText(
-      context,
-      "처음부터!",
-      width / 2,
-      panelY + panelHeight + 44,
-      34,
-      "#fecaca",
-    );
-  }
 }
 
 export function usePianoMelodyGameCanvas() {
@@ -233,18 +281,33 @@ export function usePianoMelodyGameCanvas() {
       event.stopImmediatePropagation();
 
       const state = stateRef.current;
+
+      if (state.feedback === "reset") {
+        state.feedback = "idle";
+        state.feedbackMs = 0;
+        state.noteResults = createPendingNoteResults(state.melody);
+      }
+
       const noteNumber = noteIndex + 1;
       const expectedNoteNumber = state.melody[state.progress];
+      const attemptedProgress = state.progress;
 
       playNoteAudio(noteAudiosRef.current, noteIndex);
 
       if (noteNumber !== expectedNoteNumber) {
-        state.progress = 0;
         state.feedback = "reset";
         state.feedbackMs = FEEDBACK_DURATION_MS;
+        state.noteResults = state.melody.map((_, index) =>
+          index < attemptedProgress ? "correct" : "pending",
+        );
+        state.noteResults[
+          Math.min(attemptedProgress, state.melody.length - 1)
+        ] = "wrong";
+        state.progress = 0;
         return;
       }
 
+      state.noteResults[state.progress] = "correct";
       state.progress += 1;
       state.feedback = "idle";
       state.feedbackMs = 0;
@@ -266,8 +329,9 @@ export function usePianoMelodyGameCanvas() {
       state.lastTimestamp = timestamp;
       state.feedbackMs = Math.max(state.feedbackMs - deltaMs, 0);
 
-      if (state.feedbackMs === 0 && state.feedback !== "success") {
+      if (state.feedback === "reset" && state.feedbackMs === 0) {
         state.feedback = "idle";
+        state.noteResults = createPendingNoteResults(state.melody);
       }
 
       drawScene(
