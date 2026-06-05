@@ -286,6 +286,15 @@ export function GameScreen({
         return;
       }
 
+      if (microgame.canvas === "brainAcademyBlocks") {
+        bgmLibrary
+          .play("brainAcademy", "once", "now")
+          .catch((error: unknown) => {
+            console.error(error);
+          });
+        return;
+      }
+
       if (microgame.canvas === "animalFarmReverseTyping") {
         bgmLibrary.play("animalFarm", "once", "now").catch((error: unknown) => {
           console.error(error);

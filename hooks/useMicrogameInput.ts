@@ -46,6 +46,7 @@ export function useMicrogameInput({
     const recordKeyboardClear = (event: KeyboardEvent) => {
       if (
         microgame.canvas === "animalFarmReverseTyping" ||
+        microgame.canvas === "brainAcademyBlocks" ||
         microgame.canvas === "geometryDashSpikes" ||
         microgame.canvas === "pianoMelody" ||
         microgame.canvas === "pokemonTyping" ||

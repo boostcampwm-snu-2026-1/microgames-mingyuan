@@ -3,6 +3,7 @@
 import { AnimalCrossingStampGame } from "@/games/AnimalCrossingStampGame";
 import { AnimalFarmBossGame } from "@/games/AnimalFarmBossGame";
 import { AmongUsWireGame } from "@/games/AmongUsWireGame";
+import { BrainAcademyBlockGame } from "@/games/BrainAcademyBlockGame";
 import { ChromeDinoSpaceGame } from "@/games/ChromeDinoSpaceGame";
 import { CourseRegistrationNumberGame } from "@/games/CourseRegistrationNumberGame";
 import { DefaultMicrogameCanvas } from "@/games/DefaultMicrogameCanvas";
@@ -30,6 +31,10 @@ function renderGameCanvas(microgame: Microgame) {
 
   if (microgame.canvas === "amongUsWires") {
     return <AmongUsWireGame microgame={microgame} />;
+  }
+
+  if (microgame.canvas === "brainAcademyBlocks") {
+    return <BrainAcademyBlockGame microgame={microgame} />;
   }
 
   if (microgame.canvas === "undertaleMouse") {

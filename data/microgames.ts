@@ -17,6 +17,7 @@ export type MicrogameCanvas =
   | "animalCrossingStamps"
   | "animalFarmReverseTyping"
   | "amongUsWires"
+  | "brainAcademyBlocks"
   | "chromeDinoSpace"
   | "courseRegistrationNumber"
   | "default"
@@ -138,6 +139,16 @@ export const MICROGAMES = [
     id: "piano-melody-repeat",
     startPrompt: "주어진 멜로디를 연주해라!",
     title: "Piano",
+    type: "normal",
+  },
+
+  {
+    beatCount: 12,
+    canvas: "brainAcademyBlocks",
+    control: "numberKeys",
+    id: "brain-academy-block-count",
+    startPrompt: "블록은 몇 개?",
+    title: "말랑말랑 두뇌교실",
     type: "normal",
   },
 

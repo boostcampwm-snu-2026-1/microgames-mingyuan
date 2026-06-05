@@ -6,6 +6,7 @@ export type BgmTrack =
   | "animalCrossing"
   | "animalFarm"
   | "bossStage"
+  | "brainAcademy"
   | "fail"
   | "gameOver"
   | "geometryDash"
@@ -35,6 +36,7 @@ const BGM_TRACK_PATHS = {
   animalCrossing: "/games/animal-crossing/sounds/animal-crossing-bgm.mp3",
   animalFarm: "/games/animal-farm/sounds/animal-farm-bgm.mp3",
   bossStage: "/games/game-flow/sounds/boss-stage.mp3",
+  brainAcademy: "/games/brain-academy/sounds/brain-academy-bgm.mp3",
   fail: "/games/game-flow/sounds/fail.mp3",
   gameOver: "/games/game-flow/sounds/game-over.mp3",
   geometryDash: "/games/geometry-dash/sounds/geometry-dash-bgm.mp3",
@@ -80,6 +82,7 @@ const BGM_TRACK_BEATS = {
   animalCrossing: 8,
   animalFarm: 36,
   bossStage: 8,
+  brainAcademy: 12,
   fail: 4,
   geometryDash: 12,
   intermission: 8,
