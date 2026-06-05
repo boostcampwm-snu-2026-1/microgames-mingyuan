@@ -11,14 +11,10 @@ const MAX_DELTA_SECONDS = 0.04;
 const MAP_WIDTH = 1629;
 const MAP_HEIGHT = 965;
 const ROAD_LUMINANCE_THRESHOLD = 92;
-const ACCELERATION = 620;
-const BRAKE_ACCELERATION = 780;
-const FRICTION = 410;
-const MAX_FORWARD_SPEED = 440;
-const MAX_REVERSE_SPEED = 150;
-const TURN_RATE = 2.9;
+const FRICTION = 4200;
+const MAX_MOVE_SPEED = 920;
 const CHECKPOINT_RADIUS = 82;
-const CAR_COLLISION_RADIUS = 22;
+const CAR_COLLISION_RADIUS = 13;
 const COLLISION_FLASH_SECONDS = 0.22;
 const KARTRIDER_ASSETS = {
   kart: "/games/kartrider/images/kart.png",
@@ -73,7 +69,8 @@ type GameState = {
   hasCleared: boolean;
   lastTimestamp: number | null;
   nextCheckpointIndex: number;
-  speed: number;
+  velocityX: number;
+  velocityY: number;
   x: number;
   y: number;
 };
@@ -99,7 +96,8 @@ function createInitialState() {
     hasCleared: false,
     lastTimestamp: null,
     nextCheckpointIndex: 0,
-    speed: 0,
+    velocityX: 0,
+    velocityY: 0,
     x: start.x,
     y: start.y,
   } satisfies GameState;
@@ -185,16 +183,43 @@ function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(value, max));
 }
 
-function applyFriction(speed: number, deltaSeconds: number) {
-  if (speed > 0) {
-    return Math.max(speed - FRICTION * deltaSeconds, 0);
+function getVectorLength(x: number, y: number) {
+  return Math.hypot(x, y);
+}
+
+function clampVectorLength(x: number, y: number, maxLength: number) {
+  const length = getVectorLength(x, y);
+
+  if (length <= maxLength || length === 0) {
+    return { x, y };
   }
 
-  if (speed < 0) {
-    return Math.min(speed + FRICTION * deltaSeconds, 0);
+  const scale = maxLength / length;
+
+  return {
+    x: x * scale,
+    y: y * scale,
+  };
+}
+
+function applyFrictionToVelocity(
+  velocityX: number,
+  velocityY: number,
+  deltaSeconds: number,
+) {
+  const speed = getVectorLength(velocityX, velocityY);
+
+  if (speed === 0) {
+    return { x: 0, y: 0 };
   }
 
-  return 0;
+  const nextSpeed = Math.max(speed - FRICTION * deltaSeconds, 0);
+  const scale = nextSpeed / speed;
+
+  return {
+    x: velocityX * scale,
+    y: velocityY * scale,
+  };
 }
 
 function getDistance(first: Point, second: Point) {
@@ -222,9 +247,29 @@ function updateCheckpoints(state: GameState) {
 
   if (state.nextCheckpointIndex >= CHECKPOINTS.length) {
     state.hasCleared = true;
-    state.speed = 0;
+    state.velocityX = 0;
+    state.velocityY = 0;
     dispatchClear();
   }
+}
+
+function getInputDirection(pressedKeys: ReadonlySet<string>) {
+  const x =
+    (pressedKeys.has("ArrowLeft") ? -1 : 0) +
+    (pressedKeys.has("ArrowRight") ? 1 : 0);
+  const y =
+    (pressedKeys.has("ArrowUp") ? -1 : 0) +
+    (pressedKeys.has("ArrowDown") ? 1 : 0);
+  const length = getVectorLength(x, y);
+
+  if (length === 0) {
+    return { x: 0, y: 0 };
+  }
+
+  return {
+    x: x / length,
+    y: y / length,
+  };
 }
 
 function updateDrivingState(
@@ -237,36 +282,39 @@ function updateDrivingState(
     return;
   }
 
-  const steering =
-    (pressedKeys.has("ArrowLeft") ? -1 : 0) +
-    (pressedKeys.has("ArrowRight") ? 1 : 0);
-  const absoluteSpeedRatio = Math.min(
-    Math.abs(state.speed) / MAX_FORWARD_SPEED,
-    1,
-  );
-  const steeringDirection = state.speed < 0 ? -1 : 1;
+  const inputDirection = getInputDirection(pressedKeys);
 
-  state.angle +=
-    steering *
-    steeringDirection *
-    TURN_RATE *
-    (0.36 + absoluteSpeedRatio * 0.82) *
-    deltaSeconds;
-
-  if (pressedKeys.has("ArrowUp")) {
-    state.speed += ACCELERATION * deltaSeconds;
-  } else if (pressedKeys.has("ArrowDown")) {
-    state.speed -= BRAKE_ACCELERATION * deltaSeconds;
+  if (inputDirection.x !== 0 || inputDirection.y !== 0) {
+    state.velocityX = inputDirection.x * MAX_MOVE_SPEED;
+    state.velocityY = inputDirection.y * MAX_MOVE_SPEED;
   } else {
-    state.speed = applyFriction(state.speed, deltaSeconds);
+    const nextVelocity = applyFrictionToVelocity(
+      state.velocityX,
+      state.velocityY,
+      deltaSeconds,
+    );
+
+    state.velocityX = nextVelocity.x;
+    state.velocityY = nextVelocity.y;
   }
 
-  state.speed = clamp(state.speed, -MAX_REVERSE_SPEED, MAX_FORWARD_SPEED);
+  const clampedVelocity = clampVectorLength(
+    state.velocityX,
+    state.velocityY,
+    MAX_MOVE_SPEED,
+  );
+
+  state.velocityX = clampedVelocity.x;
+  state.velocityY = clampedVelocity.y;
+
+  if (getVectorLength(state.velocityX, state.velocityY) > 8) {
+    state.angle = Math.atan2(state.velocityY, state.velocityX);
+  }
 
   const previousX = state.x;
   const previousY = state.y;
-  const nextX = state.x + Math.cos(state.angle) * state.speed * deltaSeconds;
-  const nextY = state.y + Math.sin(state.angle) * state.speed * deltaSeconds;
+  const nextX = state.x + state.velocityX * deltaSeconds;
+  const nextY = state.y + state.velocityY * deltaSeconds;
 
   if (canPlaceKart(mask, nextX, nextY)) {
     state.x = nextX;
@@ -277,7 +325,8 @@ function updateDrivingState(
 
   state.x = previousX;
   state.y = previousY;
-  state.speed *= -0.22;
+  state.velocityX *= -0.18;
+  state.velocityY *= -0.18;
   state.collisionFlashSeconds = COLLISION_FLASH_SECONDS;
 }
 
@@ -372,7 +421,7 @@ function drawKart(
   layout: TrackLayout,
 ) {
   const kartCenter = mapToCanvas({ x: state.x, y: state.y }, layout);
-  const kartWidth = clamp(layout.width * 0.055, 42, 72);
+  const kartWidth = clamp(layout.width * 0.026, 22, 36);
   const kartHeight = kartWidth * 0.72;
 
   context.save();
