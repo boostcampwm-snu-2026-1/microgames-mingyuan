@@ -7,7 +7,6 @@ import { drawCenteredText } from "@/lib/canvasUtils";
 const MIN_CANVAS_HEIGHT = 360;
 const MIN_CANVAS_WIDTH = 640;
 const MAX_DELTA_MS = 50;
-const ACTIVE_KEY_DURATION_MS = 180;
 const FEEDBACK_DURATION_MS = 360;
 const BACKGROUND_IMAGE_SRC = "/games/piano/images/background.png";
 const NOTE_VOLUME = 0.68;
@@ -21,8 +20,6 @@ type Note = Readonly<{
 type Melody = readonly number[];
 
 type GameState = {
-  activeKeyIndex: number | null;
-  activeKeyMs: number;
   feedback: "idle" | "reset" | "success";
   feedbackMs: number;
   hasCleared: boolean;
@@ -62,8 +59,6 @@ function getRandomMelody() {
 
 function createInitialState() {
   return {
-    activeKeyIndex: null,
-    activeKeyMs: 0,
     feedback: "idle",
     feedbackMs: 0,
     hasCleared: false,
@@ -122,18 +117,6 @@ function playNoteAudio(
   });
 }
 
-function drawRoundedRect(
-  context: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  radius: number,
-) {
-  context.beginPath();
-  context.roundRect(x, y, width, height, radius);
-}
-
 function drawScene(
   context: CanvasRenderingContext2D,
   state: GameState,
@@ -156,12 +139,14 @@ function drawScene(
   context.fillStyle = "rgba(12, 10, 9, 0.42)";
   context.fillRect(0, 0, width, height);
 
-  const panelWidth = Math.min(width * 0.82, 780);
+  const panelWidth = Math.min(width * 0.76, 720);
   const panelX = (width - panelWidth) / 2;
-  const panelY = height * 0.13;
+  const panelY = height * 0.1;
+  const panelHeight = Math.min(height * 0.18, 128);
 
   context.fillStyle = "rgba(255, 247, 237, 0.9)";
-  drawRoundedRect(context, panelX, panelY, panelWidth, 172, 18);
+  context.beginPath();
+  context.roundRect(panelX, panelY, panelWidth, panelHeight, 18);
   context.fill();
   context.strokeStyle = "rgba(120, 53, 15, 0.32)";
   context.lineWidth = 3;
@@ -171,73 +156,21 @@ function drawScene(
     context,
     getMelodyLabel(state.melody),
     width / 2,
-    panelY + 62,
+    panelY + panelHeight / 2,
     Math.min(42, panelWidth / 13),
     "#431407",
   );
-
-  context.font = "800 20px Arial, Helvetica, sans-serif";
-  context.textAlign = "center";
-  context.textBaseline = "middle";
-  state.melody.forEach((noteNumber, index) => {
-    const x = width / 2 - ((state.melody.length - 1) * 34) / 2 + index * 34;
-    const isComplete = index < state.progress;
-    const isCurrent = index === state.progress;
-
-    context.fillStyle = isComplete
-      ? "#16a34a"
-      : isCurrent
-        ? "#f97316"
-        : "#9ca3af";
-    context.beginPath();
-    context.arc(x, panelY + 123, isCurrent ? 10 : 8, 0, Math.PI * 2);
-    context.fill();
-    context.fillStyle = "#ffffff";
-    context.fillText(String(noteNumber), x, panelY + 123);
-  });
 
   if (state.feedback === "reset") {
     drawCenteredText(
       context,
       "처음부터!",
       width / 2,
-      panelY + 205,
+      panelY + panelHeight + 44,
       34,
       "#fecaca",
     );
   }
-
-  const keyboardWidth = Math.min(width * 0.9, 900);
-  const keyGap = 8;
-  const keyWidth = (keyboardWidth - keyGap * (NOTES.length - 1)) / NOTES.length;
-  const keyHeight = Math.min(height * 0.32, 220);
-  const keyY = height - keyHeight - height * 0.08;
-  const keyX = (width - keyboardWidth) / 2;
-
-  NOTES.forEach((note, index) => {
-    const x = keyX + index * (keyWidth + keyGap);
-    const isActive = state.activeKeyIndex === index;
-    const isExpected = state.melody[state.progress] === index + 1;
-
-    context.fillStyle = isActive
-      ? "#fde68a"
-      : isExpected
-        ? "#fff7ed"
-        : "#f8fafc";
-    drawRoundedRect(context, x, keyY, keyWidth, keyHeight, 8);
-    context.fill();
-    context.strokeStyle = isActive ? "#f59e0b" : "#27272a";
-    context.lineWidth = isActive ? 5 : 2;
-    context.stroke();
-
-    context.fillStyle = "#18181b";
-    context.font = `900 ${Math.min(30, keyWidth * 0.32)}px Arial, Helvetica, sans-serif`;
-    context.textAlign = "center";
-    context.textBaseline = "middle";
-    context.fillText(note.key, x + keyWidth / 2, keyY + keyHeight * 0.22);
-    context.font = `900 ${Math.min(34, keyWidth * 0.38)}px Arial, Helvetica, sans-serif`;
-    context.fillText(note.label, x + keyWidth / 2, keyY + keyHeight * 0.62);
-  });
 }
 
 export function usePianoMelodyGameCanvas() {
@@ -304,8 +237,6 @@ export function usePianoMelodyGameCanvas() {
       const expectedNoteNumber = state.melody[state.progress];
 
       playNoteAudio(noteAudiosRef.current, noteIndex);
-      state.activeKeyIndex = noteIndex;
-      state.activeKeyMs = ACTIVE_KEY_DURATION_MS;
 
       if (noteNumber !== expectedNoteNumber) {
         state.progress = 0;
@@ -333,12 +264,7 @@ export function usePianoMelodyGameCanvas() {
           : Math.min(timestamp - state.lastTimestamp, MAX_DELTA_MS);
 
       state.lastTimestamp = timestamp;
-      state.activeKeyMs = Math.max(state.activeKeyMs - deltaMs, 0);
       state.feedbackMs = Math.max(state.feedbackMs - deltaMs, 0);
-
-      if (state.activeKeyMs === 0) {
-        state.activeKeyIndex = null;
-      }
 
       if (state.feedbackMs === 0 && state.feedback !== "success") {
         state.feedback = "idle";
