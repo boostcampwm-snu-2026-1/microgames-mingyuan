@@ -1,10 +1,16 @@
 "use client";
 
+import { AnimalFarmBossGame } from "@/games/AnimalFarmBossGame";
+import { AmongUsWireGame } from "@/games/AmongUsWireGame";
 import { ChromeDinoSpaceGame } from "@/games/ChromeDinoSpaceGame";
 import { CourseRegistrationNumberGame } from "@/games/CourseRegistrationNumberGame";
 import { DefaultMicrogameCanvas } from "@/games/DefaultMicrogameCanvas";
+import { GeometryDashGame } from "@/games/GeometryDashGame";
+import { MinecraftMiningGame } from "@/games/MinecraftMiningGame";
 import type { Microgame } from "@/data/microgames";
+import { PokemonTypingGame } from "@/games/PokemonTypingGame";
 import { SuperMarioCoinGame } from "@/games/SuperMarioCoinGame";
+import { TetrisLineClearGame } from "@/games/TetrisLineClearGame";
 import { UndertaleMouseGame } from "@/games/UndertaleMouseGame";
 
 type GameCanvasProps = Readonly<{
@@ -12,6 +18,14 @@ type GameCanvasProps = Readonly<{
 }>;
 
 function renderGameCanvas(microgame: Microgame) {
+  if (microgame.canvas === "animalFarmReverseTyping") {
+    return <AnimalFarmBossGame microgame={microgame} />;
+  }
+
+  if (microgame.canvas === "amongUsWires") {
+    return <AmongUsWireGame microgame={microgame} />;
+  }
+
   if (microgame.canvas === "undertaleMouse") {
     return <UndertaleMouseGame microgame={microgame} />;
   }
@@ -20,8 +34,24 @@ function renderGameCanvas(microgame: Microgame) {
     return <SuperMarioCoinGame microgame={microgame} />;
   }
 
+  if (microgame.canvas === "pokemonTyping") {
+    return <PokemonTypingGame microgame={microgame} />;
+  }
+
+  if (microgame.canvas === "minecraftMining") {
+    return <MinecraftMiningGame microgame={microgame} />;
+  }
+
   if (microgame.canvas === "chromeDinoSpace") {
     return <ChromeDinoSpaceGame microgame={microgame} />;
+  }
+
+  if (microgame.canvas === "geometryDashSpikes") {
+    return <GeometryDashGame microgame={microgame} />;
+  }
+
+  if (microgame.canvas === "tetrisLineClear") {
+    return <TetrisLineClearGame microgame={microgame} />;
   }
 
   if (microgame.canvas === "courseRegistrationNumber") {

@@ -14,6 +14,7 @@ const SPEED_UP_INTERVAL_ROUNDS = 4;
 const BOSS_STAGE_INTERVAL_ROUNDS = 12;
 const SPEED_UP_BEAT_DURATION_MULTIPLIER = 0.94;
 const MIN_SPEED_RATE = 0.65;
+const BEAT_PROGRESS_INTERVAL_MS = 50;
 
 export type GameRoundPhase =
   | "bossStage"
@@ -83,6 +84,10 @@ function getBeatDurationMs(speedLevel: number) {
   const speedRate = getSpeedRate(speedLevel);
 
   return RHYTHM_DURATION_MS * speedRate;
+}
+
+function getBossStageSpeedLevel(roundNumber: number) {
+  return Math.max(roundNumber / BOSS_STAGE_INTERVAL_ROUNDS - 1, 0);
 }
 
 function getPhaseBeatDurationMs(phase: GameRoundPhase, speedLevel: number) {
@@ -176,6 +181,7 @@ export function useBeatGameRound({
 
       if (phase === "result" && shouldOneUpAfterResult) {
         setShouldOneUpAfterResult(false);
+        setSpeedLevel((currentSpeedLevel) => currentSpeedLevel + 1);
         setRoundNumber((currentRoundNumber) => currentRoundNumber + 1);
         beginInstruction();
         return;
@@ -185,7 +191,7 @@ export function useBeatGameRound({
         phase === "result" &&
         roundNumber % BOSS_STAGE_INTERVAL_ROUNDS === 0
       ) {
-        setSpeedLevel(0);
+        setSpeedLevel(getBossStageSpeedLevel(roundNumber));
         setPhase("bossStage");
         return;
       }
@@ -210,6 +216,7 @@ export function useBeatGameRound({
       }
 
       if (phase === "oneUp") {
+        setSpeedLevel((currentSpeedLevel) => currentSpeedLevel + 1);
         setRoundNumber((currentRoundNumber) => currentRoundNumber + 1);
         beginInstruction();
         return;
@@ -224,6 +231,7 @@ export function useBeatGameRound({
     };
   }, [
     beginInstruction,
+    currentGameBeatCount,
     onFinish,
     phase,
     phaseDurationMs,
@@ -265,24 +273,39 @@ export function useBeatGameRound({
     }
 
     const startedAt = window.performance.now();
-    setGameBeatProgress({
-      beatsLeft: phaseBeatCount,
-      key: beatProgressKey,
-    });
+    const phaseEndsAt = startedAt + phaseBeatCount * beatDurationMs;
 
-    const beatTimer = window.setInterval(() => {
-      const elapsedBeats = Math.floor(
-        (window.performance.now() - startedAt) / beatDurationMs,
-      );
-
+    const initialBeatTimer = window.setTimeout(() => {
       setGameBeatProgress({
-        beatsLeft: Math.max(phaseBeatCount - elapsedBeats, 0),
+        beatsLeft: phaseBeatCount,
         key: beatProgressKey,
       });
-    }, beatDurationMs);
+    }, 0);
+
+    const beatTimer = window.setInterval(() => {
+      const remainingMs = Math.max(phaseEndsAt - window.performance.now(), 0);
+      const beatsLeft = Math.ceil(remainingMs / beatDurationMs);
+
+      setGameBeatProgress({
+        beatsLeft: Math.min(beatsLeft, phaseBeatCount),
+        key: beatProgressKey,
+      });
+    }, BEAT_PROGRESS_INTERVAL_MS);
+
+    const finalBeatTimer = window.setTimeout(
+      () => {
+        setGameBeatProgress({
+          beatsLeft: 0,
+          key: beatProgressKey,
+        });
+      },
+      Math.max(phaseBeatCount * beatDurationMs - BEAT_PROGRESS_INTERVAL_MS, 0),
+    );
 
     return () => {
+      window.clearTimeout(initialBeatTimer);
       window.clearInterval(beatTimer);
+      window.clearTimeout(finalBeatTimer);
     };
   }, [beatDurationMs, beatProgressKey, phase, phaseBeatCount]);
 

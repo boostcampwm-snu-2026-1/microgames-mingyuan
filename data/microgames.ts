@@ -14,10 +14,16 @@ export type MicrogameControl =
 
 export type MicrogameType = "boss" | "normal";
 export type MicrogameCanvas =
+  | "animalFarmReverseTyping"
+  | "amongUsWires"
   | "chromeDinoSpace"
   | "courseRegistrationNumber"
   | "default"
+  | "geometryDashSpikes"
+  | "minecraftMining"
+  | "pokemonTyping"
   | "superMarioCoins"
+  | "tetrisLineClear"
   | "undertaleMouse";
 
 export type Microgame = Readonly<{
@@ -44,11 +50,31 @@ const FORM_INSTRUCTIONS_BY_CONTROL = {
 
 export const MICROGAMES = [
   {
+    beatCount: 12,
+    canvas: "pokemonTyping",
+    control: "koreanKeyboard",
+    id: "pokemon-name-typing",
+    startPrompt: "이 포켓몬의 이름은?",
+    title: "포켓몬",
+    type: "normal",
+  },
+
+  {
+    beatCount: 14,
+    canvas: "amongUsWires",
+    control: "mouseClick",
+    id: "among-us-wire-task",
+    startPrompt: "전선을 연결해라!",
+    title: "어몽어스",
+    type: "normal",
+  },
+
+  {
     beatCount: 8,
     canvas: "superMarioCoins",
     control: "space",
     id: "super-mario-coin-count",
-    startPrompt: "코인을 정확한 개수로 모아라!",
+    startPrompt: "코인을 정확히 모아라!",
     title: "슈퍼 마리오",
     type: "normal",
   },
@@ -64,6 +90,36 @@ export const MICROGAMES = [
   },
 
   {
+    beatCount: 12,
+    canvas: "geometryDashSpikes",
+    control: "space",
+    id: "geometry-dash-spike-dodge",
+    startPrompt: "가시를 피해라!",
+    title: "Geometry Dash",
+    type: "normal",
+  },
+
+  {
+    beatCount: 12,
+    canvas: "tetrisLineClear",
+    control: "arrowAndSpace",
+    id: "tetris-four-line-clear",
+    startPrompt: "4줄 없애라!",
+    title: "Tetris",
+    type: "normal",
+  },
+
+  {
+    beatCount: 8,
+    canvas: "minecraftMining",
+    control: "mouseClick",
+    id: "minecraft-diamond-mining",
+    startPrompt: "다이아몬드를 캐라!",
+    title: "Minecraft",
+    type: "normal",
+  },
+
+  {
     beatCount: 8,
     canvas: "undertaleMouse",
     control: "arrowKeys",
@@ -74,12 +130,12 @@ export const MICROGAMES = [
   },
 
   {
-    beatCount: 12,
-    canvas: "default",
-    control: "scroll",
-    id: "boss-overdrive-lift",
-    startPrompt: "끌어올려라!",
-    title: "보스 오버드라이브",
+    beatCount: 36,
+    canvas: "animalFarmReverseTyping",
+    control: "koreanKeyboard",
+    id: "animal-farm-reverse-typing",
+    startPrompt: "단어를 거꾸로 써라!",
+    title: "AnimalFarm",
     type: "boss",
   },
 ] satisfies Microgame[];
@@ -139,7 +195,10 @@ export function isMicrogameClearKey(
   }
 
   if (control === "wasd") {
-    return ["a", "d", "s", "w"].includes(event.key.toLowerCase());
+    return (
+      ["KeyA", "KeyD", "KeyS", "KeyW"].includes(event.code) ||
+      ["a", "d", "s", "w"].includes(event.key.toLowerCase())
+    );
   }
 
   if (control === "arrowAndSpace") {

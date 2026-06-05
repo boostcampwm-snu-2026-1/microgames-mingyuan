@@ -45,7 +45,11 @@ export function useMicrogameInput({
 
     const recordKeyboardClear = (event: KeyboardEvent) => {
       if (
+        microgame.canvas === "animalFarmReverseTyping" ||
+        microgame.canvas === "geometryDashSpikes" ||
+        microgame.canvas === "pokemonTyping" ||
         microgame.canvas === "superMarioCoins" ||
+        microgame.canvas === "tetrisLineClear" ||
         microgame.canvas === "undertaleMouse"
       ) {
         return;
@@ -61,6 +65,8 @@ export function useMicrogameInput({
     const recordPointerClear = () => {
       if (
         microgame.control === "mouseClick" &&
+        microgame.canvas !== "amongUsWires" &&
+        microgame.canvas !== "minecraftMining" &&
         microgame.canvas !== "undertaleMouse"
       ) {
         recordClearOnce();

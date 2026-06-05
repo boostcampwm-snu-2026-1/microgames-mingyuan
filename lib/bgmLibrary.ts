@@ -3,15 +3,21 @@
 import { RHYTHM_DURATION_MS } from "@/hooks/useSynchronizedRhythm";
 
 export type BgmTrack =
+  | "animalFarm"
   | "bossStage"
   | "fail"
   | "gameOver"
+  | "geometryDash"
   | "intermission"
+  | "minecraft"
   | "oneUp"
+  | "pokemon"
   | "resultsAndMain"
   | "setup"
   | "speedUp"
+  | "superMario"
   | "success"
+  | "tetris"
   | "undertale";
 
 export type SoundEffectTrack =
@@ -19,18 +25,26 @@ export type SoundEffectTrack =
   | "clear2"
   | "clear3"
   | "clear4"
-  | "clear5";
+  | "clear5"
+  | "minecraftDig1"
+  | "minecraftDig2";
 
 const BGM_TRACK_PATHS = {
+  animalFarm: "/games/animal-farm/sounds/animal-farm-bgm.mp3",
   bossStage: "/games/game-flow/sounds/boss-stage.mp3",
   fail: "/games/game-flow/sounds/fail.mp3",
   gameOver: "/games/game-flow/sounds/game-over.mp3",
+  geometryDash: "/games/geometry-dash/sounds/geometry-dash-bgm.mp3",
   intermission: "/games/game-flow/sounds/intermission.mp3",
+  minecraft: "/games/minecraft/sounds/minecraft-bgm.mp3",
   oneUp: "/games/game-flow/sounds/1-up.mp3",
+  pokemon: "/games/pokemon/sounds/pokemon-bgm.mp3",
   resultsAndMain: "/games/game-flow/sounds/results-and-main.mp3",
   setup: "/games/game-flow/sounds/setup.mp3",
   speedUp: "/games/game-flow/sounds/speed-up.mp3",
+  superMario: "/games/supermario/sounds/overworld-theme.mp3",
   success: "/games/game-flow/sounds/success.mp3",
+  tetris: "/games/tetris/sounds/tetris-bgm.mp3",
   undertale: "/games/undertale/sounds/undertale-bgm.mp3",
 } satisfies Record<BgmTrack, string>;
 
@@ -40,6 +54,8 @@ const SOUND_EFFECT_TRACK_PATHS = {
   clear3: "/games/game-flow/sounds/clear-3.mp3",
   clear4: "/games/game-flow/sounds/clear-4.mp3",
   clear5: "/games/game-flow/sounds/clear-5.mp3",
+  minecraftDig1: "/games/minecraft/sounds/dig-1.mp3",
+  minecraftDig2: "/games/minecraft/sounds/dig-2.mp3",
 } satisfies Record<SoundEffectTrack, string>;
 
 const AUDIO_TRACK_PATHS = {
@@ -57,14 +73,20 @@ const ATTACK_FADE_SECONDS = 0.012;
 const RELEASE_FADE_SECONDS = 0.045;
 
 const BGM_TRACK_BEATS = {
+  animalFarm: 36,
   bossStage: 8,
   fail: 4,
+  geometryDash: 12,
   intermission: 8,
+  minecraft: 8,
   oneUp: 8,
+  pokemon: 12,
   resultsAndMain: 83,
   setup: 4,
   speedUp: 8,
+  superMario: 8,
   success: 4,
+  tetris: 12,
   undertale: 8,
 } satisfies Record<Exclude<BgmTrack, "gameOver">, number>;
 
