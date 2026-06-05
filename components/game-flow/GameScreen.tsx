@@ -72,8 +72,7 @@ function createSeededRandom(seed: number) {
 
 function getStringHash(value: string) {
   return Array.from(value).reduce(
-    (hash, character) =>
-      (Math.imul(hash, 31) + character.charCodeAt(0)) >>> 0,
+    (hash, character) => (Math.imul(hash, 31) + character.charCodeAt(0)) >>> 0,
     0,
   );
 }
@@ -278,6 +277,15 @@ export function GameScreen({
     }
 
     if (phase === "game") {
+      if (microgame.canvas === "animalCrossingStamps") {
+        bgmLibrary
+          .play("animalCrossing", "once", "now")
+          .catch((error: unknown) => {
+            console.error(error);
+          });
+        return;
+      }
+
       if (microgame.canvas === "animalFarmReverseTyping") {
         bgmLibrary.play("animalFarm", "once", "now").catch((error: unknown) => {
           console.error(error);

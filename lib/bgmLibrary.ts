@@ -3,6 +3,7 @@
 import { RHYTHM_DURATION_MS } from "@/hooks/useSynchronizedRhythm";
 
 export type BgmTrack =
+  | "animalCrossing"
   | "animalFarm"
   | "bossStage"
   | "fail"
@@ -26,10 +27,12 @@ export type SoundEffectTrack =
   | "clear3"
   | "clear4"
   | "clear5"
+  | "animalCrossingStamp"
   | "minecraftDig1"
   | "minecraftDig2";
 
 const BGM_TRACK_PATHS = {
+  animalCrossing: "/games/animal-crossing/sounds/animal-crossing-bgm.mp3",
   animalFarm: "/games/animal-farm/sounds/animal-farm-bgm.mp3",
   bossStage: "/games/game-flow/sounds/boss-stage.mp3",
   fail: "/games/game-flow/sounds/fail.mp3",
@@ -54,6 +57,7 @@ const SOUND_EFFECT_TRACK_PATHS = {
   clear3: "/games/game-flow/sounds/clear-3.mp3",
   clear4: "/games/game-flow/sounds/clear-4.mp3",
   clear5: "/games/game-flow/sounds/clear-5.mp3",
+  animalCrossingStamp: "/games/animal-crossing/sounds/stamp.mp3",
   minecraftDig1: "/games/minecraft/sounds/dig-1.mp3",
   minecraftDig2: "/games/minecraft/sounds/dig-2.mp3",
 } satisfies Record<SoundEffectTrack, string>;
@@ -73,6 +77,7 @@ const ATTACK_FADE_SECONDS = 0.012;
 const RELEASE_FADE_SECONDS = 0.045;
 
 const BGM_TRACK_BEATS = {
+  animalCrossing: 8,
   animalFarm: 36,
   bossStage: 8,
   fail: 4,

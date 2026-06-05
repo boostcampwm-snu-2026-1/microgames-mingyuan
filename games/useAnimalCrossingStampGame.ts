@@ -3,12 +3,17 @@
 import { useEffect, useRef } from "react";
 import { MICROGAME_CLEAR_EVENT } from "@/hooks/useMicrogameInput";
 import { drawCenteredText } from "@/lib/canvasUtils";
+import { bgmLibrary } from "@/lib/bgmLibrary";
 
 const MIN_CANVAS_HEIGHT = 360;
 const MIN_CANVAS_WIDTH = 640;
 const MAX_DELTA_MS = 50;
 const STAMP_COUNT = 3;
-const STAMP_PULSE_MS = 260;
+const STAMP_ANIMATION_MS = 420;
+const ANIMAL_CROSSING_ASSETS = {
+  background: "/games/animal-crossing/images/background.png",
+  stamp: "/games/animal-crossing/images/stamp.png",
+} as const;
 
 type GameState = {
   hasCleared: boolean;
@@ -18,6 +23,10 @@ type GameState = {
   stamps: number;
 };
 
+type LoadedImages = Partial<
+  Record<keyof typeof ANIMAL_CROSSING_ASSETS, HTMLImageElement>
+>;
+
 type Point = {
   x: number;
   y: number;
@@ -25,6 +34,12 @@ type Point = {
 
 function dispatchClear() {
   window.dispatchEvent(new CustomEvent(MICROGAME_CLEAR_EVENT));
+}
+
+function playStampSound() {
+  bgmLibrary.playSoundEffect("animalCrossingStamp").catch((error: unknown) => {
+    console.error(error);
+  });
 }
 
 function createInitialState() {
@@ -58,85 +73,139 @@ function drawRoundedRect(
   context.roundRect(x, y, width, height, radius);
 }
 
-function drawLeaf(
+function isImageReady(
+  image: HTMLImageElement | undefined,
+): image is HTMLImageElement {
+  return Boolean(image?.complete && image.naturalWidth > 0);
+}
+
+function drawCoverImage(
   context: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  size: number,
-  rotation: number,
+  image: HTMLImageElement,
+  width: number,
+  height: number,
 ) {
-  context.save();
-  context.translate(x, y);
-  context.rotate(rotation);
-  context.fillStyle = "rgba(22, 163, 74, 0.26)";
-  context.beginPath();
-  context.ellipse(0, 0, size * 0.48, size, 0, 0, Math.PI * 2);
-  context.fill();
-  context.strokeStyle = "rgba(21, 128, 61, 0.22)";
-  context.lineWidth = 2;
-  context.beginPath();
-  context.moveTo(0, -size * 0.72);
-  context.lineTo(0, size * 0.72);
-  context.stroke();
-  context.restore();
+  const scale = Math.max(
+    width / image.naturalWidth,
+    height / image.naturalHeight,
+  );
+  const imageWidth = image.naturalWidth * scale;
+  const imageHeight = image.naturalHeight * scale;
+
+  context.drawImage(
+    image,
+    (width - imageWidth) / 2,
+    (height - imageHeight) / 2,
+    imageWidth,
+    imageHeight,
+  );
 }
 
 function drawStamp(
   context: CanvasRenderingContext2D,
+  image: HTMLImageElement | undefined,
   x: number,
   y: number,
   radius: number,
-  pulseRatio: number,
+  animationRatio: number,
 ) {
-  const pulseScale = 1 + pulseRatio * 0.18;
+  const easedDrop = 1 - Math.pow(1 - animationRatio, 3);
+  const impact = Math.max(0, 1 - Math.abs(animationRatio - 0.34) / 0.34);
+  const settle = Math.max(0, 1 - animationRatio);
+  const yOffset = -radius * 0.42 * settle;
+  const scaleX = 1 + impact * 0.18;
+  const scaleY = 1 - impact * 0.16;
+  const opacity = Math.min(1, 0.2 + easedDrop * 1.35);
 
   context.save();
   context.translate(x, y);
-  context.rotate(-0.16);
-  context.scale(pulseScale, pulseScale);
-  context.globalAlpha = 0.95;
-  context.fillStyle = "#ef4444";
+  context.rotate(-0.12 + impact * 0.08);
+  context.scale(scaleX, scaleY);
+  context.globalAlpha = opacity;
+
+  if (isImageReady(image)) {
+    const size = radius * 2.38;
+
+    context.drawImage(image, -size / 2, -size / 2 + yOffset, size, size);
+  } else {
+    context.fillStyle = "#ef4444";
+    context.beginPath();
+    context.arc(0, yOffset, radius, 0, Math.PI * 2);
+    context.fill();
+    context.strokeStyle = "#991b1b";
+    context.lineWidth = 5;
+    context.stroke();
+    context.fillStyle = "#fff7ed";
+    context.font = `900 ${radius * 0.72}px Arial, Helvetica, sans-serif`;
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.fillText("OK", 0, yOffset + 1);
+  }
+
+  context.restore();
+}
+
+function drawInkBurst(
+  context: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  radius: number,
+  animationRatio: number,
+) {
+  const impact = Math.max(0, 1 - Math.abs(animationRatio - 0.34) / 0.34);
+
+  if (impact <= 0) {
+    return;
+  }
+
+  context.save();
+  context.globalAlpha = impact * 0.52;
+  context.strokeStyle = "#dc2626";
+  context.lineWidth = Math.max(3, radius * 0.08 * impact);
   context.beginPath();
-  context.arc(0, 0, radius, 0, Math.PI * 2);
-  context.fill();
-  context.strokeStyle = "#991b1b";
-  context.lineWidth = 5;
+  context.arc(x, y, radius * (0.62 + impact * 0.46), 0, Math.PI * 2);
   context.stroke();
 
-  context.strokeStyle = "rgba(255, 255, 255, 0.9)";
-  context.lineWidth = 4;
-  context.beginPath();
-  context.arc(0, 0, radius * 0.58, 0, Math.PI * 2);
-  context.stroke();
+  context.fillStyle = "#b91c1c";
+  Array.from({ length: 8 }, (_, index) => {
+    const angle = index * ((Math.PI * 2) / 8);
+    const burstRadius = radius * (0.72 + impact * 0.52);
+    const dotSize = radius * 0.045 * impact;
 
-  context.fillStyle = "#fff7ed";
-  context.font = `900 ${radius * 0.72}px Arial, Helvetica, sans-serif`;
-  context.textAlign = "center";
-  context.textBaseline = "middle";
-  context.fillText("OK", 0, 1);
+    context.beginPath();
+    context.arc(
+      x + Math.cos(angle) * burstRadius,
+      y + Math.sin(angle) * burstRadius,
+      dotSize,
+      0,
+      Math.PI * 2,
+    );
+    context.fill();
+  });
   context.restore();
 }
 
 function drawScene(
   context: CanvasRenderingContext2D,
   state: GameState,
+  images: LoadedImages,
   width: number,
   height: number,
 ) {
-  const gradient = context.createLinearGradient(0, 0, 0, height);
+  if (isImageReady(images.background)) {
+    drawCoverImage(context, images.background, width, height);
+  } else {
+    const gradient = context.createLinearGradient(0, 0, 0, height);
 
-  gradient.addColorStop(0, "#d9f99d");
-  gradient.addColorStop(0.42, "#bbf7d0");
-  gradient.addColorStop(1, "#fef3c7");
-  context.fillStyle = gradient;
+    gradient.addColorStop(0, "#d9f99d");
+    gradient.addColorStop(0.42, "#bbf7d0");
+    gradient.addColorStop(1, "#fef3c7");
+    context.fillStyle = gradient;
+    context.fillRect(0, 0, width, height);
+  }
+
+  context.fillStyle = "rgba(255, 251, 235, 0.2)";
   context.fillRect(0, 0, width, height);
-
-  Array.from({ length: 18 }, (_, index) => {
-    const x = ((index * 149) % width) + 18;
-    const y = 28 + ((index * 83) % Math.max(height - 80, 1));
-
-    drawLeaf(context, x, y, 24 + (index % 4) * 7, index * 0.58);
-  });
 
   const cardWidth = Math.min(width * 0.78, 760);
   const cardHeight = Math.min(height * 0.52, 390);
@@ -174,9 +243,9 @@ function drawScene(
     const x = firstSlotX + index * (slotRadius * 2 + slotGap);
     const isStamped = index < state.stamps;
     const isNewest = isStamped && index === state.stamps - 1;
-    const pulseRatio = isNewest
-      ? Math.max(state.stampPulseMs / STAMP_PULSE_MS, 0)
-      : 0;
+    const animationRatio = isNewest
+      ? 1 - Math.max(state.stampPulseMs / STAMP_ANIMATION_MS, 0)
+      : 1;
 
     context.fillStyle = "#fffbeb";
     context.beginPath();
@@ -189,7 +258,15 @@ function drawScene(
     context.setLineDash([]);
 
     if (isStamped) {
-      drawStamp(context, x, slotY, slotRadius * 0.78, pulseRatio);
+      drawInkBurst(context, x, slotY, slotRadius, animationRatio);
+      drawStamp(
+        context,
+        images.stamp,
+        x,
+        slotY,
+        slotRadius * 0.78,
+        animationRatio,
+      );
     }
   });
 
@@ -211,7 +288,7 @@ function drawScene(
     context.arc(
       state.lastPointer.x,
       state.lastPointer.y,
-      26 + (state.stampPulseMs / STAMP_PULSE_MS) * 22,
+      26 + (state.stampPulseMs / STAMP_ANIMATION_MS) * 22,
       0,
       Math.PI * 2,
     );
@@ -221,7 +298,25 @@ function drawScene(
 
 export function useAnimalCrossingStampGameCanvas() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const imagesRef = useRef<LoadedImages>({});
   const stateRef = useRef<GameState>(createInitialState());
+
+  useEffect(() => {
+    imagesRef.current = (
+      Object.keys(ANIMAL_CROSSING_ASSETS) as Array<
+        keyof typeof ANIMAL_CROSSING_ASSETS
+      >
+    ).reduce<LoadedImages>((nextImages, assetKey) => {
+      const image = new Image();
+
+      image.src = ANIMAL_CROSSING_ASSETS[assetKey];
+
+      return {
+        ...nextImages,
+        [assetKey]: image,
+      };
+    }, {});
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -262,8 +357,9 @@ export function useAnimalCrossingStampGameCanvas() {
       event.stopImmediatePropagation();
 
       state.lastPointer = getPointerPoint(canvas, event);
-      state.stampPulseMs = STAMP_PULSE_MS;
+      state.stampPulseMs = STAMP_ANIMATION_MS;
       state.stamps += 1;
+      playStampSound();
 
       if (state.stamps >= STAMP_COUNT) {
         state.hasCleared = true;
@@ -280,7 +376,7 @@ export function useAnimalCrossingStampGameCanvas() {
 
       state.lastTimestamp = timestamp;
       state.stampPulseMs = Math.max(state.stampPulseMs - deltaMs, 0);
-      drawScene(context, state, canvasWidth, canvasHeight);
+      drawScene(context, state, imagesRef.current, canvasWidth, canvasHeight);
       animationFrame = window.requestAnimationFrame(render);
     };
 
