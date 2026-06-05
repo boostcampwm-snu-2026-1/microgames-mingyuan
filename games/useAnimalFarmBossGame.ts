@@ -4,6 +4,7 @@ import type { ChangeEvent, CompositionEvent, RefObject } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { MICROGAME_CLEAR_EVENT } from "@/hooks/useMicrogameInput";
 
+const STAGE_ADVANCE_DELAY_MS = 420;
 const EASY_WORDS = ["바나나", "네이버", "토마토", "기러기", "우유", "나무"];
 const MEDIUM_WORDS = [
   "프론트엔드",
@@ -69,14 +70,17 @@ export function useAnimalFarmBossGame(): Readonly<{
   currentStageIndex: number;
   inputHandlers: AnimalFarmInputHandlers;
   inputRef: RefObject<HTMLInputElement | null>;
+  isAdvancingStage: boolean;
   stageCount: number;
   typedValue: string;
 }> {
+  const advanceTimerRef = useRef<number | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const hasClearedRef = useRef(false);
   const isComposingRef = useRef(false);
   const [stages] = useState(createBossStages);
   const [currentStageIndex, setCurrentStageIndex] = useState(0);
+  const [isAdvancingStage, setIsAdvancingStage] = useState(false);
   const [typedValue, setTypedValue] = useState("");
   const currentStage = stages[currentStageIndex];
   const answer = useMemo(
@@ -85,6 +89,10 @@ export function useAnimalFarmBossGame(): Readonly<{
   );
 
   const updateTypedValue = (value: string) => {
+    if (isAdvancingStage) {
+      return;
+    }
+
     const nextTypedValue = sanitizeReverseTypingInput(value);
     const input = inputRef.current;
 
@@ -101,12 +109,18 @@ export function useAnimalFarmBossGame(): Readonly<{
       return;
     }
 
-    setCurrentStageIndex((nextStageIndex) => nextStageIndex + 1);
     setTypedValue("");
+    setIsAdvancingStage(true);
 
     if (input) {
       input.value = "";
+      input.blur();
     }
+
+    advanceTimerRef.current = window.setTimeout(() => {
+      setCurrentStageIndex((nextStageIndex) => nextStageIndex + 1);
+      setIsAdvancingStage(false);
+    }, STAGE_ADVANCE_DELAY_MS);
   };
   const syncTypedValueFromInput = () => {
     const input = inputRef.current;
@@ -118,7 +132,7 @@ export function useAnimalFarmBossGame(): Readonly<{
 
   const inputHandlers = {
     onChange: (event) => {
-      if (isComposingRef.current) {
+      if (isComposingRef.current || isAdvancingStage) {
         return;
       }
 
@@ -134,8 +148,18 @@ export function useAnimalFarmBossGame(): Readonly<{
   } satisfies AnimalFarmInputHandlers;
 
   useEffect(() => {
-    inputRef.current?.focus({ preventScroll: true });
-  }, [currentStageIndex]);
+    if (!isAdvancingStage) {
+      inputRef.current?.focus({ preventScroll: true });
+    }
+  }, [currentStageIndex, isAdvancingStage]);
+
+  useEffect(() => {
+    return () => {
+      if (advanceTimerRef.current !== null) {
+        window.clearTimeout(advanceTimerRef.current);
+      }
+    };
+  }, []);
 
   return {
     answer,
@@ -143,6 +167,7 @@ export function useAnimalFarmBossGame(): Readonly<{
     currentStageIndex,
     inputHandlers,
     inputRef,
+    isAdvancingStage,
     stageCount: stages.length,
     typedValue,
   };

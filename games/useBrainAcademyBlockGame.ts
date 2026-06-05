@@ -31,7 +31,6 @@ type GameState = {
   hasCleared: boolean;
   hasFailed: boolean;
   lastTimestamp: number | null;
-  pressedKey: string | null;
   puzzle: Puzzle;
 };
 
@@ -99,7 +98,6 @@ function createInitialState() {
     hasCleared: false,
     hasFailed: false,
     lastTimestamp: null,
-    pressedKey: null,
     puzzle: getRandomPuzzle(),
   } satisfies GameState;
 }
@@ -157,44 +155,6 @@ function drawPuzzlePlaceholder(
   context.lineWidth = 5;
   context.stroke();
   drawCenteredText(context, "?", x + size / 2, y + size / 2, 92, "#0369a1");
-}
-
-function drawNumberPad(
-  context: CanvasRenderingContext2D,
-  width: number,
-  height: number,
-  pressedKey: string | null,
-  hasFailed: boolean,
-) {
-  const padWidth = Math.min(width * 0.78, 640);
-  const keyGap = 10;
-  const keySize = Math.min((padWidth - keyGap * 8) / 9, 58);
-  const totalWidth = keySize * 9 + keyGap * 8;
-  const startX = (width - totalWidth) / 2;
-  const y = height - keySize - height * 0.075;
-
-  Array.from({ length: 9 }, (_, index) => {
-    const key = String(index + 1);
-    const x = startX + index * (keySize + keyGap);
-    const isPressed = key === pressedKey;
-
-    context.fillStyle = hasFailed
-      ? "#fee2e2"
-      : isPressed
-        ? "#fde68a"
-        : "#f8fafc";
-    drawRoundedRect(context, x, y, keySize, keySize, 12);
-    context.fill();
-    context.strokeStyle = isPressed ? "#f59e0b" : "#0f172a";
-    context.lineWidth = isPressed ? 5 : 2;
-    context.stroke();
-
-    context.fillStyle = "#0f172a";
-    context.font = `900 ${keySize * 0.48}px Arial, Helvetica, sans-serif`;
-    context.textAlign = "center";
-    context.textBaseline = "middle";
-    context.fillText(key, x + keySize / 2, y + keySize / 2 + 1);
-  });
 }
 
 function drawScene(
@@ -264,8 +224,6 @@ function drawScene(
       "#ef4444",
     );
   }
-
-  drawNumberPad(context, width, height, state.pressedKey, state.hasFailed);
 }
 
 export function useBrainAcademyBlockGameCanvas() {
@@ -325,7 +283,6 @@ export function useBrainAcademyBlockGameCanvas() {
 
       event.preventDefault();
       event.stopImmediatePropagation();
-      state.pressedKey = event.key;
       state.feedbackMs = FEEDBACK_DURATION_MS;
 
       if (Number(event.key) === state.puzzle.answer) {

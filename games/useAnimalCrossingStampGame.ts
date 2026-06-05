@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import { MICROGAME_CLEAR_EVENT } from "@/hooks/useMicrogameInput";
-import { drawCenteredText } from "@/lib/canvasUtils";
 import { bgmLibrary } from "@/lib/bgmLibrary";
 
 const MIN_CANVAS_HEIGHT = 360;
@@ -10,15 +9,25 @@ const MIN_CANVAS_WIDTH = 640;
 const MAX_DELTA_MS = 50;
 const STAMP_COUNT = 3;
 const STAMP_ANIMATION_MS = 420;
+const MISS_PULSE_MS = 240;
+const TARGET_HIT_RADIUS = 86;
 const ANIMAL_CROSSING_ASSETS = {
   background: "/games/animal-crossing/images/background.png",
   stamp: "/games/animal-crossing/images/stamp.png",
 } as const;
+const STAMP_TARGET_RATIOS = [
+  { x: 0.32, y: 0.39 },
+  { x: 0.5, y: 0.56 },
+  { x: 0.68, y: 0.4 },
+] as const;
 
 type GameState = {
   hasCleared: boolean;
+  lastStampedTargetIndex: number | null;
   lastPointer: Point | null;
   lastTimestamp: number | null;
+  missPulseMs: number;
+  stampedTargets: boolean[];
   stampPulseMs: number;
   stamps: number;
 };
@@ -45,8 +54,11 @@ function playStampSound() {
 function createInitialState() {
   return {
     hasCleared: false,
+    lastStampedTargetIndex: null,
     lastPointer: null,
     lastTimestamp: null,
+    missPulseMs: 0,
+    stampedTargets: Array.from({ length: STAMP_COUNT }, () => false),
     stampPulseMs: 0,
     stamps: 0,
   } satisfies GameState;
@@ -61,16 +73,28 @@ function getPointerPoint(canvas: HTMLCanvasElement, event: PointerEvent) {
   };
 }
 
-function drawRoundedRect(
-  context: CanvasRenderingContext2D,
-  x: number,
-  y: number,
+function getTargetPoints(width: number, height: number) {
+  return STAMP_TARGET_RATIOS.map((target) => ({
+    x: width * target.x,
+    y: height * target.y,
+  }));
+}
+
+function getTargetIndexAtPoint(
+  state: GameState,
+  point: Point,
   width: number,
   height: number,
-  radius: number,
 ) {
-  context.beginPath();
-  context.roundRect(x, y, width, height, radius);
+  return getTargetPoints(width, height).findIndex((target, index) => {
+    if (state.stampedTargets[index]) {
+      return false;
+    }
+
+    return (
+      Math.hypot(point.x - target.x, point.y - target.y) <= TARGET_HIT_RADIUS
+    );
+  });
 }
 
 function isImageReady(
@@ -207,88 +231,60 @@ function drawScene(
   context.fillStyle = "rgba(255, 251, 235, 0.2)";
   context.fillRect(0, 0, width, height);
 
-  const cardWidth = Math.min(width * 0.78, 760);
-  const cardHeight = Math.min(height * 0.52, 390);
-  const cardX = (width - cardWidth) / 2;
-  const cardY = height * 0.18;
+  const targetPoints = getTargetPoints(width, height);
+  const targetRadius = Math.min(TARGET_HIT_RADIUS, width * 0.07, height * 0.12);
+  const stampRadius = targetRadius * 0.76;
 
-  context.shadowColor = "rgba(22, 101, 52, 0.24)";
-  context.shadowBlur = 24;
-  context.shadowOffsetY = 14;
-  context.fillStyle = "#fff7ed";
-  drawRoundedRect(context, cardX, cardY, cardWidth, cardHeight, 26);
-  context.fill();
-  context.shadowBlur = 0;
-  context.shadowOffsetY = 0;
-  context.strokeStyle = "#92400e";
-  context.lineWidth = 4;
-  context.stroke();
-
-  drawCenteredText(
-    context,
-    "STAMP CARD",
-    width / 2,
-    cardY + cardHeight * 0.18,
-    Math.min(42, cardWidth / 12),
-    "#713f12",
-  );
-
-  const slotGap = cardWidth * 0.08;
-  const slotRadius = Math.min(cardWidth * 0.115, cardHeight * 0.22, 74);
-  const totalSlotWidth = slotRadius * 2 * STAMP_COUNT + slotGap * 2;
-  const firstSlotX = width / 2 - totalSlotWidth / 2 + slotRadius;
-  const slotY = cardY + cardHeight * 0.58;
-
-  Array.from({ length: STAMP_COUNT }, (_, index) => {
-    const x = firstSlotX + index * (slotRadius * 2 + slotGap);
-    const isStamped = index < state.stamps;
-    const isNewest = isStamped && index === state.stamps - 1;
+  targetPoints.forEach((target, index) => {
+    const isStamped = state.stampedTargets[index];
+    const isNewest = isStamped && index === state.lastStampedTargetIndex;
     const animationRatio = isNewest
       ? 1 - Math.max(state.stampPulseMs / STAMP_ANIMATION_MS, 0)
       : 1;
 
-    context.fillStyle = "#fffbeb";
-    context.beginPath();
-    context.arc(x, slotY, slotRadius, 0, Math.PI * 2);
-    context.fill();
-    context.setLineDash([10, 8]);
-    context.strokeStyle = "#d97706";
-    context.lineWidth = 4;
-    context.stroke();
-    context.setLineDash([]);
+    if (!isStamped) {
+      context.save();
+      context.globalAlpha = 0.86;
+      context.fillStyle = "rgba(255, 255, 255, 0.34)";
+      context.beginPath();
+      context.arc(target.x, target.y, targetRadius, 0, Math.PI * 2);
+      context.fill();
+      context.setLineDash([12, 9]);
+      context.strokeStyle = "#ef4444";
+      context.lineWidth = 5;
+      context.stroke();
+      context.setLineDash([]);
+      context.fillStyle = "#ef4444";
+      context.font = `900 ${targetRadius * 0.52}px Arial, Helvetica, sans-serif`;
+      context.textAlign = "center";
+      context.textBaseline = "middle";
+      context.fillText(String(index + 1), target.x, target.y + 1);
+      context.restore();
+    }
 
     if (isStamped) {
-      drawInkBurst(context, x, slotY, slotRadius, animationRatio);
+      drawInkBurst(context, target.x, target.y, targetRadius, animationRatio);
       drawStamp(
         context,
         images.stamp,
-        x,
-        slotY,
-        slotRadius * 0.78,
+        target.x,
+        target.y,
+        stampRadius,
         animationRatio,
       );
     }
   });
 
-  const counterText = `${Math.min(state.stamps, STAMP_COUNT)} / ${STAMP_COUNT}`;
+  if (state.lastPointer && state.missPulseMs > 0) {
+    const missRatio = state.missPulseMs / MISS_PULSE_MS;
 
-  drawCenteredText(
-    context,
-    counterText,
-    width / 2,
-    cardY + cardHeight - 42,
-    34,
-    "#14532d",
-  );
-
-  if (state.lastPointer && !state.hasCleared) {
-    context.strokeStyle = "rgba(239, 68, 68, 0.55)";
+    context.strokeStyle = `rgba(239, 68, 68, ${0.7 * missRatio})`;
     context.lineWidth = 5;
     context.beginPath();
     context.arc(
       state.lastPointer.x,
       state.lastPointer.y,
-      26 + (state.stampPulseMs / STAMP_ANIMATION_MS) * 22,
+      26 + (1 - missRatio) * 34,
       0,
       Math.PI * 2,
     );
@@ -356,9 +352,25 @@ export function useAnimalCrossingStampGameCanvas() {
       event.preventDefault();
       event.stopImmediatePropagation();
 
-      state.lastPointer = getPointerPoint(canvas, event);
+      const pointer = getPointerPoint(canvas, event);
+      const targetIndex = getTargetIndexAtPoint(
+        state,
+        pointer,
+        canvasWidth,
+        canvasHeight,
+      );
+
+      state.lastPointer = pointer;
+
+      if (targetIndex < 0) {
+        state.missPulseMs = MISS_PULSE_MS;
+        return;
+      }
+
+      state.stampedTargets[targetIndex] = true;
+      state.lastStampedTargetIndex = targetIndex;
       state.stampPulseMs = STAMP_ANIMATION_MS;
-      state.stamps += 1;
+      state.stamps = state.stampedTargets.filter(Boolean).length;
       playStampSound();
 
       if (state.stamps >= STAMP_COUNT) {
@@ -376,6 +388,7 @@ export function useAnimalCrossingStampGameCanvas() {
 
       state.lastTimestamp = timestamp;
       state.stampPulseMs = Math.max(state.stampPulseMs - deltaMs, 0);
+      state.missPulseMs = Math.max(state.missPulseMs - deltaMs, 0);
       drawScene(context, state, imagesRef.current, canvasWidth, canvasHeight);
       animationFrame = window.requestAnimationFrame(render);
     };
