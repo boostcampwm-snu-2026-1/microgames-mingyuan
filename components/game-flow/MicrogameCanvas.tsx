@@ -4,6 +4,7 @@ import { ChromeDinoSpaceGame } from "@/games/ChromeDinoSpaceGame";
 import { CourseRegistrationNumberGame } from "@/games/CourseRegistrationNumberGame";
 import { DefaultMicrogameCanvas } from "@/games/DefaultMicrogameCanvas";
 import type { Microgame } from "@/data/microgames";
+import { SuperMarioCoinGame } from "@/games/SuperMarioCoinGame";
 import { UndertaleMouseGame } from "@/games/UndertaleMouseGame";
 
 type GameCanvasProps = Readonly<{
@@ -13,6 +14,10 @@ type GameCanvasProps = Readonly<{
 function renderGameCanvas(microgame: Microgame) {
   if (microgame.canvas === "undertaleMouse") {
     return <UndertaleMouseGame microgame={microgame} />;
+  }
+
+  if (microgame.canvas === "superMarioCoins") {
+    return <SuperMarioCoinGame microgame={microgame} />;
   }
 
   if (microgame.canvas === "chromeDinoSpace") {
@@ -27,7 +32,5 @@ function renderGameCanvas(microgame: Microgame) {
 }
 
 export function MicrogameCanvas({ microgame }: GameCanvasProps) {
-  return (
-    renderGameCanvas(microgame)
-  );
+  return renderGameCanvas(microgame);
 }

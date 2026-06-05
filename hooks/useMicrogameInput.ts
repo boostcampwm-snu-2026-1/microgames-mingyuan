@@ -44,7 +44,10 @@ export function useMicrogameInput({
     }
 
     const recordKeyboardClear = (event: KeyboardEvent) => {
-      if (microgame.canvas === "undertaleMouse") {
+      if (
+        microgame.canvas === "superMarioCoins" ||
+        microgame.canvas === "undertaleMouse"
+      ) {
         return;
       }
 

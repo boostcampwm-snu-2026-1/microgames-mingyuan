@@ -17,6 +17,7 @@ export type MicrogameCanvas =
   | "chromeDinoSpace"
   | "courseRegistrationNumber"
   | "default"
+  | "superMarioCoins"
   | "undertaleMouse";
 
 export type Microgame = Readonly<{
@@ -42,6 +43,16 @@ const FORM_INSTRUCTIONS_BY_CONTROL = {
 } satisfies Record<MicrogameControl, FormInstruction>;
 
 export const MICROGAMES = [
+  {
+    beatCount: 8,
+    canvas: "superMarioCoins",
+    control: "space",
+    id: "super-mario-coin-count",
+    startPrompt: "코인을 정확한 개수로 모아라!",
+    title: "슈퍼 마리오",
+    type: "normal",
+  },
+
   {
     beatCount: 8,
     canvas: "chromeDinoSpace",
