@@ -40,7 +40,7 @@ export const ALL_GAME_PRELOAD_ASSETS = [
   "/games/geometry-dash/images/obstacle.png",
   "/games/geometry-dash/images/player.png",
   "/games/kartrider/images/kart.png",
-  "/games/kartrider/images/minimap.png",
+  "/games/kartrider/images/track.png",
   "/games/layton/images/four-A.png",
   "/games/layton/images/four-B.png",
   "/games/layton/images/one-A.png",

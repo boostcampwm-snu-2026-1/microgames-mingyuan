@@ -8,9 +8,9 @@ const DEFAULT_BEAT_DURATION_MS = 500;
 const MIN_CANVAS_HEIGHT = 360;
 const MIN_CANVAS_WIDTH = 640;
 const MAX_DELTA_SECONDS = 0.04;
-const MAP_WIDTH = 1629;
-const MAP_HEIGHT = 965;
-const ROAD_LUMINANCE_THRESHOLD = 92;
+const MAP_WIDTH = 1626;
+const MAP_HEIGHT = 967;
+const ROAD_LUMINANCE_THRESHOLD = 205;
 const ACCELERATION_SMOOTHING = 18;
 const ANGLE_SMOOTHING = 20;
 const FRICTION = 2400;
@@ -20,25 +20,25 @@ const CAR_COLLISION_RADIUS = 13;
 const COLLISION_EFFECT_SECONDS = 0.22;
 const KARTRIDER_ASSETS = {
   kart: "/games/kartrider/images/kart.png",
-  minimap: "/games/kartrider/images/minimap.png",
+  track: "/games/kartrider/images/track.png",
 } as const;
-const START_POINT = { x: 0.54, y: 0.14 } as const;
+const START_POINT = { x: 0.54, y: 0.205 } as const;
 const CHECKPOINTS = [
-  { x: 0.71, y: 0.17 },
-  { x: 0.8, y: 0.34 },
-  { x: 0.84, y: 0.47 },
-  { x: 0.84, y: 0.68 },
-  { x: 0.78, y: 0.79 },
-  { x: 0.58, y: 0.79 },
-  { x: 0.45, y: 0.75 },
-  { x: 0.45, y: 0.86 },
-  { x: 0.38, y: 0.79 },
-  { x: 0.24, y: 0.78 },
-  { x: 0.17, y: 0.66 },
-  { x: 0.17, y: 0.39 },
-  { x: 0.2, y: 0.18 },
-  { x: 0.34, y: 0.14 },
-  { x: 0.54, y: 0.14 },
+  { x: 0.68, y: 0.205 },
+  { x: 0.75, y: 0.28 },
+  { x: 0.775, y: 0.42 },
+  { x: 0.775, y: 0.61 },
+  { x: 0.745, y: 0.74 },
+  { x: 0.61, y: 0.755 },
+  { x: 0.475, y: 0.755 },
+  { x: 0.47, y: 0.85 },
+  { x: 0.39, y: 0.785 },
+  { x: 0.245, y: 0.775 },
+  { x: 0.23, y: 0.64 },
+  { x: 0.23, y: 0.39 },
+  { x: 0.255, y: 0.225 },
+  { x: 0.35, y: 0.205 },
+  { x: 0.54, y: 0.205 },
 ] as const;
 
 type LoadedImages = Partial<
@@ -599,9 +599,9 @@ function drawScene(
   context.shadowColor = "rgba(248, 250, 252, 0.36)";
   context.shadowBlur = 20;
 
-  if (images.minimap?.complete && images.minimap.naturalWidth > 0) {
+  if (images.track?.complete && images.track.naturalWidth > 0) {
     context.drawImage(
-      images.minimap,
+      images.track,
       layout.x,
       layout.y,
       layout.width,
@@ -637,7 +637,7 @@ export function useKartriderBossGameCanvas(gameBeatCount: number) {
     ).reduce<LoadedImages>((nextImages, assetKey) => {
       const image = new Image();
 
-      if (assetKey === "minimap") {
+      if (assetKey === "track") {
         image.onload = () => {
           trackMaskRef.current = createTrackMask(image);
         };
@@ -645,7 +645,7 @@ export function useKartriderBossGameCanvas(gameBeatCount: number) {
 
       image.src = KARTRIDER_ASSETS[assetKey];
 
-      if (assetKey === "minimap" && image.complete && image.naturalWidth > 0) {
+      if (assetKey === "track" && image.complete && image.naturalWidth > 0) {
         trackMaskRef.current = createTrackMask(image);
       }
 
