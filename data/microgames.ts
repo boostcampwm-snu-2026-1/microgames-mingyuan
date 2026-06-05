@@ -22,6 +22,7 @@ export type MicrogameCanvas =
   | "courseRegistrationNumber"
   | "default"
   | "geometryDashSpikes"
+  | "kartriderCourse"
   | "minecraftMining"
   | "pianoMelody"
   | "pokemonTyping"
@@ -169,6 +170,16 @@ export const MICROGAMES = [
     id: "animal-farm-reverse-typing",
     startPrompt: "단어를 거꾸로 써라!",
     title: "AnimalFarm",
+    type: "boss",
+  },
+
+  {
+    beatCount: 36,
+    canvas: "kartriderCourse",
+    control: "arrowKeys",
+    id: "kartrider-village-canal-course",
+    startPrompt: "완주해라!",
+    title: "카트라이더",
     type: "boss",
   },
 ] satisfies Microgame[];

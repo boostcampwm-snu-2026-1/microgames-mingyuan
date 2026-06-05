@@ -39,6 +39,8 @@ export const ALL_GAME_PRELOAD_ASSETS = [
   "/games/geometry-dash/images/background.png",
   "/games/geometry-dash/images/obstacle.png",
   "/games/geometry-dash/images/player.png",
+  "/games/kartrider/images/kart.png",
+  "/games/kartrider/images/minimap.png",
   "/games/minecraft/images/background.png",
   "/games/minecraft/images/cracked-1.png",
   "/games/minecraft/images/cracked-2.png",

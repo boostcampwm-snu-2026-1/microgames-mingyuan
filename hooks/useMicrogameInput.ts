@@ -48,6 +48,7 @@ export function useMicrogameInput({
         microgame.canvas === "animalFarmReverseTyping" ||
         microgame.canvas === "brainAcademyBlocks" ||
         microgame.canvas === "geometryDashSpikes" ||
+        microgame.canvas === "kartriderCourse" ||
         microgame.canvas === "pianoMelody" ||
         microgame.canvas === "pokemonTyping" ||
         microgame.canvas === "superMarioCoins" ||
