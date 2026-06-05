@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimalCrossingStampGame } from "@/games/AnimalCrossingStampGame";
 import { AnimalFarmBossGame } from "@/games/AnimalFarmBossGame";
 import { AmongUsWireGame } from "@/games/AmongUsWireGame";
 import { ChromeDinoSpaceGame } from "@/games/ChromeDinoSpaceGame";
@@ -19,6 +20,10 @@ type GameCanvasProps = Readonly<{
 }>;
 
 function renderGameCanvas(microgame: Microgame) {
+  if (microgame.canvas === "animalCrossingStamps") {
+    return <AnimalCrossingStampGame microgame={microgame} />;
+  }
+
   if (microgame.canvas === "animalFarmReverseTyping") {
     return <AnimalFarmBossGame microgame={microgame} />;
   }

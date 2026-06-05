@@ -14,6 +14,7 @@ export type MicrogameControl =
 
 export type MicrogameType = "boss" | "normal";
 export type MicrogameCanvas =
+  | "animalCrossingStamps"
   | "animalFarmReverseTyping"
   | "amongUsWires"
   | "chromeDinoSpace"
@@ -67,6 +68,16 @@ export const MICROGAMES = [
     id: "among-us-wire-task",
     startPrompt: "전선을 연결해라!",
     title: "어몽어스",
+    type: "normal",
+  },
+
+  {
+    beatCount: 8,
+    canvas: "animalCrossingStamps",
+    control: "mouseClick",
+    id: "animal-crossing-stamp-card",
+    startPrompt: "도장을 세 번 찍어라!",
+    title: "동물의 숲",
     type: "normal",
   },
 

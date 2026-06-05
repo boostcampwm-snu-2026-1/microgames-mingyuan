@@ -66,6 +66,7 @@ export function useMicrogameInput({
     const recordPointerClear = () => {
       if (
         microgame.control === "mouseClick" &&
+        microgame.canvas !== "animalCrossingStamps" &&
         microgame.canvas !== "amongUsWires" &&
         microgame.canvas !== "minecraftMining" &&
         microgame.canvas !== "undertaleMouse"
