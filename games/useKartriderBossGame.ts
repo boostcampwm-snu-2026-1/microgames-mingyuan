@@ -22,15 +22,8 @@ const KARTRIDER_ASSETS = {
   kart: "/games/kartrider/images/kart.png",
   minimap: "/games/kartrider/images/minimap.png",
 } as const;
-const START_POINT = { x: 0.45, y: 0.86 } as const;
+const START_POINT = { x: 0.54, y: 0.14 } as const;
 const CHECKPOINTS = [
-  { x: 0.38, y: 0.79 },
-  { x: 0.24, y: 0.78 },
-  { x: 0.17, y: 0.66 },
-  { x: 0.17, y: 0.39 },
-  { x: 0.2, y: 0.18 },
-  { x: 0.34, y: 0.14 },
-  { x: 0.54, y: 0.14 },
   { x: 0.71, y: 0.17 },
   { x: 0.8, y: 0.34 },
   { x: 0.84, y: 0.47 },
@@ -39,6 +32,13 @@ const CHECKPOINTS = [
   { x: 0.58, y: 0.79 },
   { x: 0.45, y: 0.75 },
   { x: 0.45, y: 0.86 },
+  { x: 0.38, y: 0.79 },
+  { x: 0.24, y: 0.78 },
+  { x: 0.17, y: 0.66 },
+  { x: 0.17, y: 0.39 },
+  { x: 0.2, y: 0.18 },
+  { x: 0.34, y: 0.14 },
+  { x: 0.54, y: 0.14 },
 ] as const;
 
 type LoadedImages = Partial<
@@ -92,7 +92,7 @@ function createInitialState() {
   const start = toMapPoint(START_POINT);
 
   return {
-    angle: Math.PI,
+    angle: 0,
     collisionFlashSeconds: 0,
     elapsedMs: 0,
     hasCleared: false,
