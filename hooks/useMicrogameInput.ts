@@ -61,6 +61,7 @@ export function useMicrogameInput({
         microgame.canvas === "brainAcademyBlocks" ||
         microgame.canvas === "cookieRun" ||
         microgame.canvas === "crazyArcade" ||
+        microgame.canvas === "flappyBird" ||
         microgame.canvas === "geometryDashSpikes" ||
         microgame.canvas === "hancomTyping" ||
         microgame.canvas === "kartriderCourse" ||
@@ -68,10 +69,13 @@ export function useMicrogameInput({
         microgame.canvas === "leagueChampionBan" ||
         microgame.canvas === "maplestoryLieDetector" ||
         microgame.canvas === "maplestoryRune" ||
+        microgame.canvas === "minigameExBearMeat" ||
         microgame.canvas === "pianoMelody" ||
+        microgame.canvas === "pongSurvival" ||
         microgame.canvas === "pokemonTyping" ||
         microgame.canvas === "superMarioCoins" ||
         microgame.canvas === "tetrisLineClear" ||
+        microgame.canvas === "twoThousandFortyEightBoss" ||
         microgame.canvas === "undertaleMouse" ||
         microgame.canvas === "modooMarble"
       ) {
@@ -90,6 +94,7 @@ export function useMicrogameInput({
         microgame.control === "mouseClick" &&
         microgame.canvas !== "animalCrossingStamps" &&
         microgame.canvas !== "amongUsWires" &&
+        microgame.canvas !== "gomokuWhiteStone" &&
         microgame.canvas !== "halliGalliBoss" &&
         microgame.canvas !== "leagueChampionBan" &&
         microgame.canvas !== "minecraftMining" &&

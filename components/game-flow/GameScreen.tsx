@@ -240,7 +240,6 @@ export function GameScreen({
     [getMicrogameForRound, roundNumber],
   );
 
-  const canRecordResult = phase === "game";
   const backdropTone =
     phase === "bossStage" || phase === "speedUp" ? "warning" : "default";
   const shouldShowCanvasTransition =
@@ -312,6 +311,13 @@ export function GameScreen({
         return;
       }
 
+      if (microgame.canvas === "appleNumberSum") {
+        bgmLibrary.play("appleGame", "once", "now").catch((error: unknown) => {
+          console.error(error);
+        });
+        return;
+      }
+
       if (microgame.canvas === "geometryDashSpikes") {
         bgmLibrary
           .play("geometryDash", "once", "now")
@@ -339,6 +345,15 @@ export function GameScreen({
         bgmLibrary.play("superMario", "once", "now").catch((error: unknown) => {
           console.error(error);
         });
+        return;
+      }
+
+      if (microgame.canvas === "superMarioGalaxyStarBits") {
+        bgmLibrary
+          .play("superMarioGalaxy", "once", "now")
+          .catch((error: unknown) => {
+            console.error(error);
+          });
         return;
       }
 
@@ -427,6 +442,13 @@ export function GameScreen({
 
       if (microgame.canvas === "maplestoryRune") {
         bgmLibrary.play("mapleRune", "once", "now").catch((error: unknown) => {
+          console.error(error);
+        });
+        return;
+      }
+
+      if (microgame.canvas === "minigameExBearMeat") {
+        bgmLibrary.play("minigameEx", "once", "now").catch((error: unknown) => {
           console.error(error);
         });
         return;
@@ -536,10 +558,8 @@ export function GameScreen({
       {phase === "game" || shouldShowCanvasTransition ? (
         <MicrogameRoundScreen
           beatsLeft={beatsLeft}
-          canRecordResult={canRecordResult}
           isTransitioning={shouldShowCanvasTransition}
           microgame={microgame}
-          onFinish={onFinish}
           roundNumber={roundNumber}
         />
       ) : phase === "speedUp" ? (

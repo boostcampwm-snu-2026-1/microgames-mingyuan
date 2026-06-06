@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="640" viewBox="0 0 640 640" role="img" aria-label="2048 board">
+  <rect width="640" height="640" fill="#faf8ef"/>
+  <text x="320" y="92" fill="#776e65" font-family="Arial, sans-serif" font-size="72" font-weight="700" text-anchor="middle">2048</text>
+  <rect x="110" y="140" width="420" height="420" rx="14" fill="#bbada0"/>
+  <g font-family="Arial, sans-serif" font-size="44" font-weight="700" text-anchor="middle" dominant-baseline="middle">
+    <rect x="130" y="160" width="90" height="90" rx="8" fill="#eee4da"/>
+    <text x="175" y="207" fill="#776e65">2</text>
+    <rect x="230" y="160" width="90" height="90" rx="8" fill="#ede0c8"/>
+    <text x="275" y="207" fill="#776e65">4</text>
+    <rect x="330" y="160" width="90" height="90" rx="8" fill="#f2b179"/>
+    <text x="375" y="207" fill="#f9f6f2">8</text>
+    <rect x="430" y="160" width="90" height="90" rx="8" fill="#f59563"/>
+    <text x="475" y="207" fill="#f9f6f2">16</text>
+    <rect x="130" y="260" width="90" height="90" rx="8" fill="#f67c5f"/>
+    <text x="175" y="307" fill="#f9f6f2">32</text>
+    <rect x="230" y="260" width="90" height="90" rx="8" fill="#cdc1b4"/>
+    <rect x="330" y="260" width="90" height="90" rx="8" fill="#cdc1b4"/>
+    <rect x="430" y="260" width="90" height="90" rx="8" fill="#cdc1b4"/>
+    <rect x="130" y="360" width="90" height="90" rx="8" fill="#cdc1b4"/>
+    <rect x="230" y="360" width="90" height="90" rx="8" fill="#cdc1b4"/>
+    <rect x="330" y="360" width="90" height="90" rx="8" fill="#cdc1b4"/>
+    <rect x="430" y="360" width="90" height="90" rx="8" fill="#cdc1b4"/>
+    <rect x="130" y="460" width="90" height="90" rx="8" fill="#cdc1b4"/>
+    <rect x="230" y="460" width="90" height="90" rx="8" fill="#cdc1b4"/>
+    <rect x="330" y="460" width="90" height="90" rx="8" fill="#cdc1b4"/>
+    <rect x="430" y="460" width="90" height="90" rx="8" fill="#cdc1b4"/>
+  </g>
+</svg>

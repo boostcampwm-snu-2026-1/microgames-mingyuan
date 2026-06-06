@@ -73,11 +73,10 @@ function resolveTypedProgress(
     return { completedWords, remainingValue: value };
   }
 
-  return resolveTypedProgress(
-    value.slice(targetWord.length),
-    targetWords,
-    [...completedWords, targetWord],
-  );
+  return resolveTypedProgress(value.slice(targetWord.length), targetWords, [
+    ...completedWords,
+    targetWord,
+  ]);
 }
 
 function clearInput(input: HTMLInputElement | null) {
@@ -115,7 +114,7 @@ export function useHancomTypingGame(): Readonly<{
     );
     const hasCompletedWord =
       nextProgress.completedWords.length > completedWords.length;
-    const nextInputValue = hasCompletedWord ? "" : nextProgress.remainingValue;
+    const nextInputValue = hasCompletedWord ? "" : value;
 
     if (inputRef.current && inputRef.current.value !== nextInputValue) {
       inputRef.current.value = nextInputValue;

@@ -5,6 +5,7 @@ import { RHYTHM_DURATION_MS } from "@/hooks/useSynchronizedRhythm";
 export type BgmTrack =
   | "animalCrossing"
   | "animalFarm"
+  | "appleGame"
   | "bossStage"
   | "brainAcademy"
   | "cookieRun"
@@ -20,6 +21,7 @@ export type BgmTrack =
   | "leagueOfLegend"
   | "maplestory"
   | "mapleRune"
+  | "minigameEx"
   | "minecraft"
   | "modooMarble"
   | "oneUp"
@@ -27,6 +29,7 @@ export type BgmTrack =
   | "resultsAndMain"
   | "setup"
   | "speedUp"
+  | "superMarioGalaxy"
   | "superMario"
   | "success"
   | "tetris"
@@ -48,12 +51,15 @@ export type SoundEffectTrack =
   | "minecraftDig1"
   | "minecraftDig2"
   | "modooDiceRoll"
+  | "pongHit"
   | "leagueChampionSelect"
-  | "runeEffect";
+  | "runeEffect"
+  | "twentyFortyEightSwipe";
 
 const BGM_TRACK_PATHS = {
   animalCrossing: "/games/animal-crossing/sounds/animal-crossing-bgm.mp3",
   animalFarm: "/games/animal-farm/sounds/animal-farm-bgm.mp3",
+  appleGame: "/games/apple-game/sounds/apple-game-bgm.mp3",
   bossStage: "/games/game-flow/sounds/boss-stage.mp3",
   brainAcademy: "/games/brain-academy/sounds/brain-academy-bgm.mp3",
   cookieRun: "/games/cookie-run/sounds/cookie-run-bgm.mp3",
@@ -69,6 +75,7 @@ const BGM_TRACK_PATHS = {
   leagueOfLegend: "/games/league-of-legend/sounds/league-of-legend-ban-bgm.mp3",
   maplestory: "/games/maplestory-lie-detector/sounds/maplestory-bgm.mp3",
   mapleRune: "/games/maple-story-rune/sounds/maple-rune-bgm.mp3",
+  minigameEx: "/games/minigame-ex/sounds/minigame-ex-bgm.mp3",
   minecraft: "/games/minecraft/sounds/minecraft-bgm.mp3",
   modooMarble: "/games/modoo-marble/sounds/modoo-bgm.mp3",
   oneUp: "/games/game-flow/sounds/1-up.mp3",
@@ -76,6 +83,8 @@ const BGM_TRACK_PATHS = {
   resultsAndMain: "/games/game-flow/sounds/results-and-main.mp3",
   setup: "/games/game-flow/sounds/setup.mp3",
   speedUp: "/games/game-flow/sounds/speed-up.mp3",
+  superMarioGalaxy:
+    "/games/super-mario-galaxy/sounds/super-mario-galaxy-bgm.mp3",
   superMario: "/games/supermario/sounds/overworld-theme.mp3",
   success: "/games/game-flow/sounds/success.mp3",
   tetris: "/games/tetris/sounds/tetris-bgm.mp3",
@@ -100,7 +109,9 @@ const SOUND_EFFECT_TRACK_PATHS = {
   minecraftDig1: "/games/minecraft/sounds/dig-1.mp3",
   minecraftDig2: "/games/minecraft/sounds/dig-2.mp3",
   modooDiceRoll: "/games/modoo-marble/sounds/dice-roll.mp3",
+  pongHit: "/games/pong/sounds/pong-hit.mp3",
   runeEffect: "/games/maple-story-rune/sounds/rune-effect.mp3",
+  twentyFortyEightSwipe: "/games/two-thousand-forty-eight/sounds/swipe.mp3",
 } satisfies Record<SoundEffectTrack, string>;
 
 const AUDIO_TRACK_PATHS = {
@@ -125,6 +136,7 @@ const RELEASE_FADE_SECONDS = 0.045;
 const BGM_TRACK_BEATS = {
   animalCrossing: 8,
   animalFarm: 36,
+  appleGame: 12,
   bossStage: 8,
   brainAcademy: 12,
   cookieRun: 12,
@@ -139,6 +151,7 @@ const BGM_TRACK_BEATS = {
   leagueOfLegend: 12,
   maplestory: 12,
   mapleRune: 8,
+  minigameEx: 16,
   minecraft: 8,
   modooMarble: 8,
   oneUp: 8,
@@ -146,6 +159,7 @@ const BGM_TRACK_BEATS = {
   resultsAndMain: 83,
   setup: 4,
   speedUp: 8,
+  superMarioGalaxy: 12,
   superMario: 8,
   success: 4,
   tetris: 12,

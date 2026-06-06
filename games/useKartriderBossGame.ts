@@ -19,7 +19,7 @@ const CHECKPOINT_RADIUS = 82;
 const CAR_COLLISION_RADIUS = 13;
 const COLLISION_EFFECT_SECONDS = 0.22;
 const FINAL_LAP_BANNER_SECONDS = 1.35;
-const TOTAL_LAPS = 2;
+const TOTAL_LAPS = 3;
 const KARTRIDER_ASSETS = {
   kart: "/games/kartrider/images/kart.png",
   track: "/games/kartrider/images/track.png",

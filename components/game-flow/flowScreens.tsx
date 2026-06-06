@@ -102,10 +102,19 @@ function HomeHeader({
       <nav className="w-full bg-white/10 px-4 py-3 shadow-[0_0_28px_rgba(103,232,249,0.18)] backdrop-blur-xl sm:px-6">
         <div className="flex items-center justify-between gap-3">
           <Link
-            className="shrink-0 px-2 text-sm font-black tracking-normal text-cyan-50 drop-shadow-[0_0_12px_rgba(103,232,249,0.72)] sm:px-3 sm:text-base"
+            className="flex shrink-0 items-center gap-2 px-2 text-sm font-black tracking-normal text-cyan-50 drop-shadow-[0_0_12px_rgba(103,232,249,0.72)] sm:px-3 sm:text-base"
             href="/"
           >
-            캣타워 오르기
+            <Image
+              alt=""
+              aria-hidden="true"
+              className="size-7 object-contain drop-shadow-[0_0_10px_rgba(103,232,249,0.5)]"
+              height={28}
+              src="/games/game-flow/images/timer.png"
+              unoptimized
+              width={28}
+            />
+            <span>캣타워 오르기</span>
           </Link>
           <div className="grid grid-cols-3 gap-1 rounded-md border border-white/10 bg-black/20 p-1">
             {HOME_NAV_ITEMS.map((item) => {
