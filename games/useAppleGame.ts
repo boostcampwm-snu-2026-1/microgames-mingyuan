@@ -21,6 +21,13 @@ const INNER_BOARD = {
 const MIN_CANVAS_HEIGHT = 360;
 const MIN_CANVAS_WIDTH = 640;
 const TARGET_SUM = 10;
+const TARGET_PAIRS = [
+  [1, 9],
+  [2, 8],
+  [3, 7],
+  [4, 6],
+  [5, 5],
+] as const;
 
 type AssetKey = keyof typeof APPLE_GAME_ASSETS;
 
@@ -28,6 +35,11 @@ type Point = {
   x: number;
   y: number;
 };
+
+type ApplePosition = Readonly<{
+  column: number;
+  row: number;
+}>;
 
 type AppleCell = Readonly<{
   column: number;
@@ -69,16 +81,38 @@ function dispatchClear() {
   window.dispatchEvent(new CustomEvent(MICROGAME_CLEAR_EVENT));
 }
 
+function getRandomValue(min: number, max: number) {
+  return min + Math.floor(Math.random() * (max - min + 1));
+}
+
+function getGuaranteedPairPositions() {
+  const row = getRandomValue(0, BOARD_ROWS - 1);
+  const column = getRandomValue(0, BOARD_COLUMNS - 2);
+
+  return [
+    { column, row },
+    { column: column + 1, row },
+  ] satisfies [ApplePosition, ApplePosition];
+}
+
 function createInitialApples() {
+  const pair = TARGET_PAIRS[getRandomValue(0, TARGET_PAIRS.length - 1)];
+  const [firstTarget, secondTarget] = getGuaranteedPairPositions();
+  const shouldFlipPair = Math.random() > 0.5;
+  const firstValue = shouldFlipPair ? pair[1] : pair[0];
+  const secondValue = shouldFlipPair ? pair[0] : pair[1];
+
   return Array.from({ length: BOARD_ROWS }, (_, row) =>
     Array.from({ length: BOARD_COLUMNS }, (_, column) => {
-      const isTargetFirst = row === 2 && column === 4;
-      const isTargetSecond = row === 2 && column === 5;
+      const isTargetFirst =
+        row === firstTarget.row && column === firstTarget.column;
+      const isTargetSecond =
+        row === secondTarget.row && column === secondTarget.column;
       const value = isTargetFirst
-        ? 4
+        ? firstValue
         : isTargetSecond
-          ? 6
-          : ((row * 3 + column * 5 + 2) % 9) + 1;
+          ? secondValue
+          : getRandomValue(1, 9);
 
       return {
         column,
@@ -253,7 +287,7 @@ function drawApple(
     context.fill();
   }
 
-  context.fillStyle = "#111827";
+  context.fillStyle = "#fff";
   context.font = `700 ${Math.floor(size * 0.46)}px Arial, sans-serif`;
   context.textAlign = "center";
   context.textBaseline = "middle";
