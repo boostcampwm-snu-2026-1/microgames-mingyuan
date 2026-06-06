@@ -30,6 +30,7 @@ export type MicrogameCanvas =
   | "maplestoryLieDetector"
   | "maplestoryRune"
   | "minecraftMining"
+  | "modooMarble"
   | "pianoMelody"
   | "pokemonTyping"
   | "superMarioCoins"
@@ -166,6 +167,16 @@ export const MICROGAMES = [
     id: "minecraft-diamond-mining",
     startPrompt: "다이아몬드를 캐라!",
     title: "Minecraft",
+    type: "normal",
+  },
+
+  {
+    beatCount: 8,
+    canvas: "modooMarble",
+    control: "mouseHold",
+    id: "modoo-marble-big-number",
+    startPrompt: "큰 수를 굴려라!",
+    title: "모두의마블",
     type: "normal",
   },
 

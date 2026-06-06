@@ -20,6 +20,7 @@ export type BgmTrack =
   | "maplestory"
   | "mapleRune"
   | "minecraft"
+  | "modooMarble"
   | "oneUp"
   | "pokemon"
   | "resultsAndMain"
@@ -44,6 +45,7 @@ export type SoundEffectTrack =
   | "halliGalliCard"
   | "minecraftDig1"
   | "minecraftDig2"
+  | "modooDiceRoll"
   | "leagueChampionSelect"
   | "runeEffect";
 
@@ -65,6 +67,7 @@ const BGM_TRACK_PATHS = {
   maplestory: "/games/maplestory-lie-detector/sounds/maplestory-bgm.mp3",
   mapleRune: "/games/maple-story-rune/sounds/maple-rune-bgm.mp3",
   minecraft: "/games/minecraft/sounds/minecraft-bgm.mp3",
+  modooMarble: "/games/modoo-marble/sounds/modoo-bgm.mp3",
   oneUp: "/games/game-flow/sounds/1-up.mp3",
   pokemon: "/games/pokemon/sounds/pokemon-bgm.mp3",
   resultsAndMain: "/games/game-flow/sounds/results-and-main.mp3",
@@ -91,6 +94,7 @@ const SOUND_EFFECT_TRACK_PATHS = {
   leagueChampionSelect: "/games/league-of-legend/sounds/champ-select.mp3",
   minecraftDig1: "/games/minecraft/sounds/dig-1.mp3",
   minecraftDig2: "/games/minecraft/sounds/dig-2.mp3",
+  modooDiceRoll: "/games/modoo-marble/sounds/dice-roll.mp3",
   runeEffect: "/games/maple-story-rune/sounds/rune-effect.mp3",
 } satisfies Record<SoundEffectTrack, string>;
 
@@ -130,6 +134,7 @@ const BGM_TRACK_BEATS = {
   maplestory: 12,
   mapleRune: 8,
   minecraft: 8,
+  modooMarble: 8,
   oneUp: 8,
   pokemon: 12,
   resultsAndMain: 83,

@@ -17,6 +17,7 @@ import { LeagueChampionBanGame } from "@/games/LeagueChampionBanGame";
 import { MaplestoryLieDetectorGame } from "@/games/MaplestoryLieDetectorGame";
 import { MaplestoryRuneGame } from "@/games/MaplestoryRuneGame";
 import { MinecraftMiningGame } from "@/games/MinecraftMiningGame";
+import { ModooMarbleGame } from "@/games/ModooMarbleGame";
 import type { Microgame } from "@/data/microgames";
 import { PianoMelodyGame } from "@/games/PianoMelodyGame";
 import { PokemonTypingGame } from "@/games/PokemonTypingGame";
@@ -60,6 +61,10 @@ function renderGameCanvas(microgame: Microgame) {
 
   if (microgame.canvas === "minecraftMining") {
     return <MinecraftMiningGame microgame={microgame} />;
+  }
+
+  if (microgame.canvas === "modooMarble") {
+    return <ModooMarbleGame microgame={microgame} />;
   }
 
   if (microgame.canvas === "maplestoryLieDetector") {
