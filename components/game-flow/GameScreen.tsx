@@ -447,6 +447,13 @@ export function GameScreen({
         return;
       }
 
+      if (microgame.canvas === "minigameExBearMeat") {
+        bgmLibrary.play("minigameEx", "once", "now").catch((error: unknown) => {
+          console.error(error);
+        });
+        return;
+      }
+
       if (microgame.canvas === "kartriderCourse") {
         bgmLibrary.play("kartrider", "once", "now").catch((error: unknown) => {
           console.error(error);

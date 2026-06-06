@@ -32,6 +32,7 @@ export type MicrogameCanvas =
   | "leagueChampionBan"
   | "maplestoryLieDetector"
   | "maplestoryRune"
+  | "minigameExBearMeat"
   | "minecraftMining"
   | "modooMarble"
   | "pianoMelody"
@@ -406,6 +407,22 @@ export const MICROGAMES = [
     id: "maplestory-rune-sequence",
     startPrompt: "순서대로 입력해라!",
     title: "메이플스토리 룬",
+    type: "normal",
+  },
+
+  {
+    beatCount: 16,
+    canvas: "minigameExBearMeat",
+    microscope: {
+      description:
+        "미니게임EX에서는 잠깐 본 걸 바로 기억해야 합니다. 곰 셋이 고기를 먹는데, 누가 제일 많이 먹었는지 놓치면 끝이에요.",
+      imageAlt: "미니게임EX 곰",
+      imageSrc: "/games/minigame-ex/images/idle-bear.png",
+    },
+    control: "numberKeys",
+    id: "minigame-ex-bear-meat",
+    startPrompt: "가장 고기를 많이 먹은 곰을 선택해라!",
+    title: "미니게임EX",
     type: "normal",
   },
 

@@ -21,6 +21,7 @@ export type BgmTrack =
   | "leagueOfLegend"
   | "maplestory"
   | "mapleRune"
+  | "minigameEx"
   | "minecraft"
   | "modooMarble"
   | "oneUp"
@@ -74,6 +75,7 @@ const BGM_TRACK_PATHS = {
   leagueOfLegend: "/games/league-of-legend/sounds/league-of-legend-ban-bgm.mp3",
   maplestory: "/games/maplestory-lie-detector/sounds/maplestory-bgm.mp3",
   mapleRune: "/games/maple-story-rune/sounds/maple-rune-bgm.mp3",
+  minigameEx: "/games/minigame-ex/sounds/minigame-ex-bgm.mp3",
   minecraft: "/games/minecraft/sounds/minecraft-bgm.mp3",
   modooMarble: "/games/modoo-marble/sounds/modoo-bgm.mp3",
   oneUp: "/games/game-flow/sounds/1-up.mp3",
@@ -149,6 +151,7 @@ const BGM_TRACK_BEATS = {
   leagueOfLegend: 12,
   maplestory: 12,
   mapleRune: 8,
+  minigameEx: 16,
   minecraft: 8,
   modooMarble: 8,
   oneUp: 8,

@@ -68,6 +68,7 @@ export function useMicrogameInput({
         microgame.canvas === "leagueChampionBan" ||
         microgame.canvas === "maplestoryLieDetector" ||
         microgame.canvas === "maplestoryRune" ||
+        microgame.canvas === "minigameExBearMeat" ||
         microgame.canvas === "pianoMelody" ||
         microgame.canvas === "pongSurvival" ||
         microgame.canvas === "pokemonTyping" ||

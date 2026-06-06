@@ -20,6 +20,7 @@ import { LeagueChampionBanGame } from "@/games/LeagueChampionBanGame";
 import { MaplestoryLieDetectorGame } from "@/games/MaplestoryLieDetectorGame";
 import { MaplestoryRuneGame } from "@/games/MaplestoryRuneGame";
 import { MinecraftMiningGame } from "@/games/MinecraftMiningGame";
+import { MinigameExGame } from "@/games/MinigameExGame";
 import { ModooMarbleGame } from "@/games/ModooMarbleGame";
 import type { Microgame } from "@/data/microgames";
 import { PianoMelodyGame } from "@/games/PianoMelodyGame";
@@ -87,6 +88,10 @@ function renderGameCanvas(microgame: Microgame) {
 
   if (microgame.canvas === "maplestoryRune") {
     return <MaplestoryRuneGame microgame={microgame} />;
+  }
+
+  if (microgame.canvas === "minigameExBearMeat") {
+    return <MinigameExGame microgame={microgame} />;
   }
 
   if (microgame.canvas === "laytonShapeMatch") {
