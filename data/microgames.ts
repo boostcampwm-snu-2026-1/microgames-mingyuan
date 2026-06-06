@@ -23,6 +23,7 @@ export type MicrogameCanvas =
   | "courseRegistrationNumber"
   | "crazyArcade"
   | "default"
+  | "flappyBird"
   | "geometryDashSpikes"
   | "gomokuWhiteStone"
   | "halliGalliBoss"
@@ -183,6 +184,22 @@ export const MICROGAMES = [
     id: "jump-gap",
     startPrompt: "점프해라!",
     title: "크롬 공룡게임",
+    type: "normal",
+  },
+
+  {
+    beatCount: 8,
+    canvas: "flappyBird",
+    microscope: {
+      description:
+        "플래피버드, 스페이스 한 번에 목숨이 걸린 게임입니다. 파이프 사이를 통과하려고 누르다 보면 손이 자꾸 급해져요.",
+      imageAlt: "플래피버드",
+      imageSrc: "/games/flappy-bird/images/bird.png",
+    },
+    control: "space",
+    id: "flappy-bird-pipe-dodge",
+    startPrompt: "파이프를 피해라!",
+    title: "플래피버드",
     type: "normal",
   },
 
