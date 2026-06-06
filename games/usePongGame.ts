@@ -14,11 +14,11 @@ const DEFAULT_BEAT_DURATION_MS = 500;
 const MAX_DELTA_MS = 48;
 const MIN_CANVAS_HEIGHT = 360;
 const MIN_CANVAS_WIDTH = 640;
-const OPPONENT_X = 604;
+const OPPONENT_X = 28;
 const PADDLE_HEIGHT = 78;
 const PADDLE_SPEED = 292;
 const PADDLE_WIDTH = 12;
-const PLAYER_X = 28;
+const PLAYER_X = 604;
 
 type GameState = {
   ballVX: number;
@@ -48,9 +48,9 @@ function dispatchFailure() {
 
 function createInitialState() {
   return {
-    ballVX: -252,
+    ballVX: 252,
     ballVY: 84,
-    ballX: 430,
+    ballX: 198,
     ballY: 112,
     elapsedMs: 0,
     hasCleared: false,
@@ -152,33 +152,33 @@ function stepState(state: GameState, keyState: KeyState, deltaMs: number) {
   }
 
   if (
-    state.ballVX < 0 &&
-    state.ballX <= PLAYER_X + PADDLE_WIDTH &&
+    state.ballVX > 0 &&
     state.ballX + BALL_SIZE >= PLAYER_X &&
+    state.ballX <= PLAYER_X + PADDLE_WIDTH &&
     isBallOverPaddle(state.ballY, state.playerY)
   ) {
-    state.ballX = PLAYER_X + PADDLE_WIDTH;
-    bounceFromPaddle(state, state.playerY, "right");
+    state.ballX = PLAYER_X - BALL_SIZE;
+    bounceFromPaddle(state, state.playerY, "left");
   }
 
   if (
-    state.ballVX > 0 &&
-    state.ballX + BALL_SIZE >= OPPONENT_X &&
+    state.ballVX < 0 &&
     state.ballX <= OPPONENT_X + PADDLE_WIDTH &&
+    state.ballX + BALL_SIZE >= OPPONENT_X &&
     isBallOverPaddle(state.ballY, state.opponentY)
   ) {
-    state.ballX = OPPONENT_X - BALL_SIZE;
-    bounceFromPaddle(state, state.opponentY, "left");
+    state.ballX = OPPONENT_X + PADDLE_WIDTH;
+    bounceFromPaddle(state, state.opponentY, "right");
   }
 
   if (state.ballX + BALL_SIZE < 0) {
-    state.hasFailed = true;
-    dispatchFailure();
+    state.ballX = OPPONENT_X + PADDLE_WIDTH;
+    bounceFromPaddle(state, state.opponentY, "right");
   }
 
   if (state.ballX > COURT_WIDTH) {
-    state.ballX = OPPONENT_X - BALL_SIZE;
-    bounceFromPaddle(state, state.opponentY, "left");
+    state.hasFailed = true;
+    dispatchFailure();
   }
 }
 
@@ -196,6 +196,28 @@ function drawCourt(context: CanvasRenderingContext2D) {
   context.textBaseline = "middle";
   context.fillText("0", COURT_WIDTH / 2 - 78, 62);
   context.fillText("0", COURT_WIDTH / 2 + 78, 62);
+}
+
+function drawPlayerIndicator(
+  context: CanvasRenderingContext2D,
+  playerY: number,
+) {
+  const indicatorY = clamp(playerY + PADDLE_HEIGHT / 2, 36, COURT_HEIGHT - 36);
+
+  context.save();
+  context.fillStyle = "rgba(248, 250, 252, 0.9)";
+  context.font = "700 16px monospace";
+  context.textAlign = "right";
+  context.textBaseline = "middle";
+  context.fillText("YOU", PLAYER_X - 26, indicatorY);
+
+  context.beginPath();
+  context.moveTo(PLAYER_X - 7, indicatorY);
+  context.lineTo(PLAYER_X - 15, indicatorY - 6);
+  context.lineTo(PLAYER_X - 15, indicatorY + 6);
+  context.closePath();
+  context.fill();
+  context.restore();
 }
 
 function drawScene(
@@ -218,6 +240,7 @@ function drawScene(
   context.scale(scale, scale);
 
   drawCourt(context);
+  drawPlayerIndicator(context, state.playerY);
 
   context.fillStyle = "#f8fafc";
   context.fillRect(PLAYER_X, state.playerY, PADDLE_WIDTH, PADDLE_HEIGHT);
