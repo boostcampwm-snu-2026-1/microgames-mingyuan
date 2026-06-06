@@ -3,13 +3,18 @@
 import { useGameScreenFlow } from "@/hooks/useGameScreenFlow";
 import { GameScreen } from "./GameScreen";
 import {
+  type HomeView,
   GameOverScreen,
   LoadingScreen,
   MainScreen,
   SetupScreen,
 } from "./flowScreens";
 
-export function GameFlowExperience() {
+export function GameFlowExperience({
+  homeView,
+}: Readonly<{
+  homeView: HomeView;
+}>) {
   const {
     completeSetup,
     finalClearedRound,
@@ -69,6 +74,10 @@ export function GameFlowExperience() {
   }
 
   return (
-    <MainScreen highestClearedRound={highestClearedRound} onStart={startGame} />
+    <MainScreen
+      highestClearedRound={highestClearedRound}
+      homeView={homeView}
+      onStart={startGame}
+    />
   );
 }

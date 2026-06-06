@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { PreloadStatus } from "@/hooks/useGameScreenFlow";
 import { useBgmTrack } from "@/hooks/useBgmTrack";
@@ -52,10 +53,184 @@ const LOADING_MESSAGES = [
   "결과 화면 준비 중...",
 ] as const;
 
+export type HomeView = "home" | "howToPlay";
+
+const HOME_NAV_ITEMS = [
+  { href: "/", label: "홈", view: "home" },
+  { href: "/how-to-play", label: "게임 방법", view: "howToPlay" },
+] as const;
+
+function HomeHeader({
+  homeView,
+  isStarting,
+}: Readonly<{
+  homeView: HomeView;
+  isStarting: boolean;
+}>) {
+  return (
+    <header
+      className={`fixed inset-x-0 top-0 z-30 ${
+        isStarting ? "main-screen-exit-up" : ""
+      }`}
+    >
+      <nav className="w-full bg-white/10 px-4 py-3 shadow-[0_0_28px_rgba(103,232,249,0.18)] backdrop-blur-xl sm:px-6">
+        <div className="flex items-center justify-between gap-3">
+          <Link
+            className="shrink-0 px-2 text-sm font-black tracking-normal text-cyan-50 drop-shadow-[0_0_12px_rgba(103,232,249,0.72)] sm:px-3 sm:text-base"
+            href="/"
+          >
+            캣타워 오르기
+          </Link>
+          <div className="grid grid-cols-2 gap-1 rounded-md border border-white/10 bg-black/20 p-1">
+            {HOME_NAV_ITEMS.map((item) => {
+              const isActive = homeView === item.view;
+
+              return (
+                <Link
+                  className={`rounded px-3 py-2 text-center text-xs font-black transition sm:min-w-24 sm:text-sm ${
+                    isActive
+                      ? "bg-cyan-100 text-black shadow-[0_0_18px_rgba(103,232,249,0.38)]"
+                      : "text-cyan-50/78 hover:bg-white/10 hover:text-white"
+                  }`}
+                  href={item.href}
+                  key={item.view}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </nav>
+    </header>
+  );
+}
+
+function HomePanel({
+  highestClearedRound,
+  isStarting,
+  startGame,
+}: Readonly<{
+  highestClearedRound: number;
+  isStarting: boolean;
+  startGame: () => void;
+}>) {
+  return (
+    <div className="grid gap-7 lg:grid-cols-[1fr_260px] lg:items-center">
+      <div className="space-y-7">
+        <p className="text-sm font-black uppercase tracking-[0.32em] text-cyan-100">
+          마이크로게임 천국
+        </p>
+        <div className="space-y-4">
+          <h1 className="max-w-3xl text-5xl font-black leading-none tracking-normal text-white drop-shadow-[0_0_18px_rgba(103,232,249,0.7)] sm:text-7xl">
+            캣타워 오르기
+          </h1>
+          <p className="max-w-2xl text-lg leading-8 text-cyan-50/85">
+            고양이가 엘리베이터를 타고 캣타워를 오르는 것을 도와주세요. 과연
+            당신은 몇 층까지 올라갈 수 있을까요? 당신의 센스를 보여주세요!
+          </p>
+        </div>
+        <div className="max-w-xs rounded-md border border-cyan-100/55 bg-black/45 p-4 shadow-[0_0_24px_rgba(103,232,249,0.16)]">
+          <p className="text-xs font-black uppercase tracking-[0.24em] text-white/60">
+            최고 기록
+          </p>
+          <p className="mt-2 flex items-end gap-2 text-cyan-100 drop-shadow-[0_0_16px_rgba(103,232,249,0.68)]">
+            <span className="text-4xl font-black leading-none">
+              {highestClearedRound.toString().padStart(2, "0")}
+            </span>
+            <span className="pb-1 text-lg font-black leading-none">층</span>
+          </p>
+        </div>
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <NeonButton onClick={startGame}>
+            {isStarting ? "준비 중" : "게임 시작"}
+          </NeonButton>
+        </div>
+      </div>
+      <div className="mx-auto w-full max-w-48 lg:max-w-none">
+        <Image
+          src="/games/game-flow/images/game-main-logo.png"
+          alt="캣타워 오르기 로고"
+          width={880}
+          height={1268}
+          priority
+          className="main-logo-bounce h-auto w-full object-contain drop-shadow-[0_0_24px_rgba(103,232,249,0.45)]"
+          unoptimized
+        />
+      </div>
+    </div>
+  );
+}
+
+function HowToPlayPanel() {
+  const rules = [
+    "짧은 명령을 보고 제한 시간 안에 마이크로게임을 클리어합니다.",
+    "라운드마다 조작법이 바뀌며, 안내 화면에서 필요한 입력을 먼저 보여줍니다.",
+    "보스 라운드는 더 길고, 성공하면 다음 구간을 버틸 여유가 생깁니다.",
+    "목숨이 모두 사라지기 전까지 더 높은 층을 노리면 됩니다.",
+  ] as const;
+
+  return (
+    <div className="space-y-7">
+      <div className="space-y-4">
+        <p className="text-sm font-black uppercase tracking-[0.32em] text-cyan-100">
+          How to Play
+        </p>
+        <h1 className="text-4xl font-black leading-none text-white drop-shadow-[0_0_18px_rgba(103,232,249,0.65)] sm:text-6xl">
+          빠르게 보고, 바로 움직이기
+        </h1>
+        <p className="max-w-3xl text-lg leading-8 text-cyan-50/82">
+          게임은 짧고 빠르게 이어집니다. 화면에 뜨는 한 줄 명령과 조작 안내를
+          보고, 다음 순간에 바로 해결하세요.
+        </p>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {rules.map((rule, index) => (
+          <div
+            className="rounded-md border border-cyan-100/25 bg-black/38 p-4 shadow-[0_0_18px_rgba(103,232,249,0.1)]"
+            key={rule}
+          >
+            <p className="text-xs font-black text-cyan-100/60">
+              STEP {index + 1}
+            </p>
+            <p className="mt-2 text-base font-black leading-7 text-cyan-50">
+              {rule}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function renderHomeView(
+  homeView: HomeView,
+  highestClearedRound: number,
+  isStarting: boolean,
+  startGame: () => void,
+) {
+  if (homeView === "howToPlay") {
+    return <HowToPlayPanel />;
+  }
+
+  return (
+    <HomePanel
+      highestClearedRound={highestClearedRound}
+      isStarting={isStarting}
+      startGame={startGame}
+    />
+  );
+}
+
 export function MainScreen({
   highestClearedRound,
+  homeView,
   onStart,
-}: Readonly<{ highestClearedRound: number; onStart: () => void }>) {
+}: Readonly<{
+  highestClearedRound: number;
+  homeView: HomeView;
+  onStart: () => void;
+}>) {
   useBgmTrack("resultsAndMain", "loop", "now");
   const [isStarting, setIsStarting] = useState(false);
   const { rhythmStyle } = useSynchronizedRhythm();
@@ -96,54 +271,13 @@ export function MainScreen({
 
   return (
     <NeonShell rhythmStyle={rhythmStyle}>
+      <HomeHeader homeView={homeView} isStarting={isStarting} />
       <div
-        className={`rounded-lg border border-cyan-100/70 bg-black/55 p-6 shadow-[0_0_32px_rgba(103,232,249,0.18)] backdrop-blur-sm sm:p-8 ${
+        className={`mt-16 rounded-lg border border-cyan-100/70 bg-black/55 p-6 shadow-[0_0_32px_rgba(103,232,249,0.18)] backdrop-blur-sm sm:p-8 ${
           isStarting ? "main-screen-exit-up" : ""
         }`}
       >
-        <div className="grid gap-7 lg:grid-cols-[1fr_260px] lg:items-center">
-          <div className="space-y-7">
-            <p className="text-sm font-black uppercase tracking-[0.32em] text-cyan-100">
-              마이크로게임 천국
-            </p>
-            <div className="space-y-4">
-              <h1 className="max-w-3xl text-5xl font-black leading-none tracking-normal text-white drop-shadow-[0_0_18px_rgba(103,232,249,0.7)] sm:text-7xl">
-                캣타워 오르기
-              </h1>
-              <p className="max-w-2xl text-lg leading-8 text-cyan-50/85">
-                고양이가 엘리베이터를 타고 캣타워를 오르는 것을 도와주세요. 과연
-                당신은 몇 층까지 올라갈 수 있을까요? 당신의 센스를 보여주세요!
-              </p>
-            </div>
-            <div className="max-w-xs rounded-md border border-cyan-100/55 bg-black/45 p-4 shadow-[0_0_24px_rgba(103,232,249,0.16)]">
-              <p className="text-xs font-black uppercase tracking-[0.24em] text-white/60">
-                최고 기록
-              </p>
-              <p className="mt-2 flex items-end gap-2 text-cyan-100 drop-shadow-[0_0_16px_rgba(103,232,249,0.68)]">
-                <span className="text-4xl font-black leading-none">
-                  {highestClearedRound.toString().padStart(2, "0")}
-                </span>
-                <span className="pb-1 text-lg font-black leading-none">층</span>
-              </p>
-            </div>
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <NeonButton onClick={startGame}>
-                {isStarting ? "준비 중" : "게임 시작"}
-              </NeonButton>
-            </div>
-          </div>
-          <div className="mx-auto w-full max-w-48 lg:max-w-none">
-            <Image
-              src="/games/game-flow/images/game-main-logo.png"
-              alt="캣타워 오르기 로고"
-              width={880}
-              height={1268}
-              priority
-              className="main-logo-bounce h-auto w-full object-contain drop-shadow-[0_0_24px_rgba(103,232,249,0.45)]"
-              unoptimized
-            />
-          </div>
-        </div>
+        {renderHomeView(homeView, highestClearedRound, isStarting, startGame)}
       </div>
     </NeonShell>
   );
