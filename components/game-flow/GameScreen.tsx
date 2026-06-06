@@ -240,7 +240,6 @@ export function GameScreen({
     [getMicrogameForRound, roundNumber],
   );
 
-  const canRecordResult = phase === "game";
   const backdropTone =
     phase === "bossStage" || phase === "speedUp" ? "warning" : "default";
   const shouldShowCanvasTransition =
@@ -543,10 +542,8 @@ export function GameScreen({
       {phase === "game" || shouldShowCanvasTransition ? (
         <MicrogameRoundScreen
           beatsLeft={beatsLeft}
-          canRecordResult={canRecordResult}
           isTransitioning={shouldShowCanvasTransition}
           microgame={microgame}
-          onFinish={onFinish}
           roundNumber={roundNumber}
         />
       ) : phase === "speedUp" ? (
