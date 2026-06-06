@@ -141,6 +141,62 @@ function isOccupied(point: GomokuPoint, stones: readonly GomokuStone[]) {
   return stones.some((stone) => isSamePoint(stone, point));
 }
 
+function hasStoneAt(
+  point: GomokuPoint,
+  stones: readonly GomokuStone[],
+  color: GomokuStoneColor,
+) {
+  return stones.some(
+    (stone) => stone.color === color && isSamePoint(stone, point),
+  );
+}
+
+function countContiguousStones(
+  origin: GomokuPoint,
+  stones: readonly GomokuStone[],
+  color: GomokuStoneColor,
+  deltaColumn: number,
+  deltaRow: number,
+) {
+  let count = 0;
+  let point = {
+    column: origin.column + deltaColumn,
+    row: origin.row + deltaRow,
+  } satisfies GomokuPoint;
+
+  while (hasStoneAt(point, stones, color)) {
+    count += 1;
+    point = {
+      column: point.column + deltaColumn,
+      row: point.row + deltaRow,
+    };
+  }
+
+  return count;
+}
+
+function createsFiveInARow(
+  point: GomokuPoint,
+  stones: readonly GomokuStone[],
+  color: GomokuStoneColor,
+) {
+  const directions = [
+    { column: 1, row: 0 },
+    { column: 0, row: 1 },
+    { column: 1, row: 1 },
+    { column: 1, row: -1 },
+  ] satisfies GomokuPoint[];
+
+  return directions.some(({ column, row }) => {
+    const lineLength =
+      1 +
+      countContiguousStones(point, stones, color, column, row) +
+      countContiguousStones(point, stones, color, -column, -row);
+
+    return lineLength >= 5;
+  });
+}
+
 function playStoneSound(audioRef: RefObject<HTMLAudioElement | null>) {
   if (!audioRef.current) {
     audioRef.current = new Audio(STONE_PLACED_SOUND_SRC);
@@ -181,11 +237,13 @@ export function useGomokuGame() {
       setPlacedStone(nextStone);
       playStoneSound(audioRef);
 
-      if (isSamePoint(point, gomokuCase.target)) {
+      if (
+        createsFiveInARow(point, [...gomokuCase.stones, nextStone], "white")
+      ) {
         dispatchClear();
       }
     },
-    [gomokuCase.stones, gomokuCase.target],
+    [gomokuCase.stones],
   );
 
   return {
