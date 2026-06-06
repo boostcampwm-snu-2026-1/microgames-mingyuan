@@ -7,6 +7,7 @@ import { MICROGAMES, getMicrogameFormInstruction } from "@/data/microgames";
 import type { PreloadStatus } from "@/hooks/useGameScreenFlow";
 import { useBgmTrack } from "@/hooks/useBgmTrack";
 import { useGameSetupTransition } from "@/hooks/useGameSetupTransition";
+import { useLoadingScreenCarousel } from "@/hooks/useLoadingScreenCarousel";
 import { useSynchronizedRhythm } from "@/hooks/useSynchronizedRhythm";
 import {
   bgmLibrary,
@@ -52,6 +53,29 @@ const LOADING_MESSAGES = [
   "클리어 판정 준비 중...",
   "다음 게임 순서 섞는 중...",
   "결과 화면 준비 중...",
+] as const;
+
+const LOADING_GAMEPLAY_TIPS = [
+  {
+    body: "각 라운드가 시작되기 전에 필요한 입력 방식이 먼저 나옵니다. 그 안내를 보고 바로 준비하면 됩니다.",
+    title: "라운드마다 안내",
+  },
+  {
+    body: "마이크로게임은 아주 짧게 지나갑니다. 대부분 4~8초 안에 보고, 판단하고, 입력해야 합니다.",
+    title: "빠른 판정",
+  },
+  {
+    body: "처음 목숨은 4개입니다. 실패할 때마다 하나씩 줄어드니, 헷갈리는 라운드일수록 침착하게 입력하세요.",
+    title: "목숨 4개",
+  },
+  {
+    body: "보스 라운드는 더 길고 까다롭습니다. 대신 클리어하면 목숨을 하나 더 얻어 다음 층을 버틸 여유가 생깁니다.",
+    title: "보스 보상",
+  },
+  {
+    body: "게임은 계속 빨라지고 라운드도 섞입니다. 외우기보다 화면에 뜨는 한 줄 명령을 바로 따라가는 게 핵심입니다.",
+    title: "명령 확인",
+  },
 ] as const;
 
 export type HomeView = "home" | "howToPlay" | "microscope";
@@ -179,7 +203,7 @@ function HowToPlayPanel() {
           How to Play
         </p>
         <h1 className="text-4xl font-black leading-none text-white drop-shadow-[0_0_18px_rgba(103,232,249,0.65)] sm:text-6xl">
-          빠르게 보고, 바로 움직이기
+          눈치껏 하세요...
         </h1>
         <p className="max-w-3xl text-lg leading-8 text-cyan-50/82">
           게임은 짧고 빠르게 이어집니다. 화면에 뜨는 한 줄 명령과 조작 안내를
@@ -203,6 +227,12 @@ function HowToPlayPanel() {
       </div>
     </div>
   );
+}
+
+function maskMicroscopeText(value: string) {
+  return Array.from(value)
+    .map((character) => (character.trim() ? "?" : character))
+    .join("");
 }
 
 function MicroscopePanel({
@@ -233,13 +263,20 @@ function MicroscopePanel({
         {MICROGAMES.map((microgame) => {
           const formInstruction = getMicrogameFormInstruction(microgame);
           const isSeen = seenMicrogameIds.includes(microgame.id);
+          const displayTitle = isSeen
+            ? microgame.title
+            : maskMicroscopeText(microgame.title);
+          const displayControlTitle = isSeen
+            ? formInstruction.title
+            : maskMicroscopeText(formInstruction.title);
+          const displayDescription = isSeen
+            ? microgame.microscope.description
+            : maskMicroscopeText(microgame.microscope.description);
 
           return (
             <article
               className={`grid min-h-24 grid-cols-[72px_1fr] gap-3 border-b border-white/10 p-3 last:border-b-0 sm:grid-cols-[84px_1fr_auto] sm:items-center sm:gap-4 ${
-                isSeen
-                  ? "bg-white/[0.03]"
-                  : "bg-black/24 text-white/62"
+                isSeen ? "bg-white/[0.03]" : "bg-black/24 text-white/62"
               }`}
               key={microgame.id}
             >
@@ -266,7 +303,7 @@ function MicroscopePanel({
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
                   <h2 className="min-w-0 text-lg font-black leading-tight text-white">
-                    {microgame.title}
+                    {displayTitle}
                   </h2>
                   <span
                     className={`rounded border px-2 py-0.5 text-[0.68rem] font-black ${
@@ -279,10 +316,10 @@ function MicroscopePanel({
                   </span>
                 </div>
                 <p className="mt-1 truncate text-sm font-black text-cyan-50/82">
-                  {formInstruction.title}
+                  {displayControlTitle}
                 </p>
                 <p className="mt-1 line-clamp-2 text-sm font-bold leading-5 text-cyan-50/68">
-                  {microgame.microscope.description}
+                  {displayDescription}
                 </p>
               </div>
               {microgame.type === "boss" ? (
@@ -384,9 +421,7 @@ export function MainScreen({
           homeView === "microscope"
             ? "max-h-[calc(100vh-6rem)] overflow-y-auto"
             : "backdrop-blur-sm"
-        } ${
-          isStarting ? "main-screen-exit-up" : ""
-        }`}
+        } ${isStarting ? "main-screen-exit-up" : ""}`}
       >
         {renderHomeView(
           homeView,
@@ -444,95 +479,124 @@ export function LoadingScreen({
   preloadStatus: PreloadStatus;
 }>) {
   useBgmTrack("resultsAndMain", "loop", "now");
-  const [messageIndex, setMessageIndex] = useState(0);
   const progress =
     preloadStatus.total > 0
       ? Math.round((preloadStatus.loaded / preloadStatus.total) * 100)
       : 0;
   const isFailed = preloadStatus.phase === "failed";
+  const { messageIndex, tipIndex } = useLoadingScreenCarousel({
+    isPaused: isFailed,
+    messageCount: LOADING_MESSAGES.length,
+    tipCount: LOADING_GAMEPLAY_TIPS.length,
+  });
   const loadingMessage = LOADING_MESSAGES[messageIndex];
-
-  useEffect(() => {
-    if (isFailed) {
-      return;
-    }
-
-    const messageTimer = window.setInterval(() => {
-      setMessageIndex(
-        (currentMessageIndex) =>
-          (currentMessageIndex + 1) % LOADING_MESSAGES.length,
-      );
-    }, 1400);
-
-    return () => {
-      window.clearInterval(messageTimer);
-    };
-  }, [isFailed]);
+  const gameplayTip = LOADING_GAMEPLAY_TIPS[tipIndex];
 
   return (
     <NeonShell>
-      <div className="mx-auto w-full max-w-2xl rounded-lg border border-cyan-100/70 bg-black/65 p-6 text-center shadow-[0_0_36px_rgba(103,232,249,0.22)] backdrop-blur-sm sm:p-8">
-        <p className="mb-4 text-sm font-black uppercase tracking-[0.32em] text-cyan-100">
-          Cat Tower
-        </p>
-        <h1 className="text-4xl font-black text-white drop-shadow-[0_0_18px_rgba(103,232,249,0.65)] sm:text-6xl">
-          잠시만 기다려 주세요
-        </h1>
-        <div className="loading-spinner-vital mx-auto mt-8 grid size-32 place-items-center sm:size-40">
-          <Image
-            src="/games/game-flow/images/loading-spinner.png"
-            alt=""
-            width={180}
-            height={151}
-            priority
-            className="h-auto w-full object-contain drop-shadow-[0_0_22px_rgba(103,232,249,0.75)]"
-            unoptimized
-          />
-        </div>
-        <p className="mt-5 text-sm font-black text-cyan-50/80">
-          {isFailed ? "로딩을 멈췄어요" : loadingMessage}
-        </p>
-        <div className="mx-auto my-8 h-4 max-w-md overflow-hidden rounded-full border border-cyan-100/70 bg-black">
-          <div
-            className="h-full rounded-full bg-cyan-200 shadow-[0_0_18px_rgba(103,232,249,0.9)] transition-[width] duration-200 ease-out"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-        <div className="mx-auto max-w-xl rounded-md border border-cyan-100/25 bg-black/35 p-3 text-left text-xs leading-5 text-cyan-50/75">
-          <div className="flex items-center justify-between gap-3 font-black text-cyan-100">
-            <span>{isFailed ? "프리로딩 실패" : "프리로딩 중"}</span>
-            <span>
-              {preloadStatus.loaded}/{preloadStatus.total} · {progress}%
-            </span>
-          </div>
-          {isFailed ? (
-            <div className="mt-2 space-y-1 text-red-100">
-              <p>
-                실패 asset:{" "}
-                <span className="break-all font-black">
-                  {getDisplayAssetPath(preloadStatus.failedAsset ?? "")}
-                </span>
+      <div className="mx-auto grid w-full max-w-4xl gap-4 rounded-lg border border-cyan-100/70 bg-black/65 p-4 shadow-[0_0_36px_rgba(103,232,249,0.22)] backdrop-blur-sm sm:p-5 lg:grid-cols-2 lg:items-stretch">
+        <div className="flex min-h-72 flex-col rounded-md border border-cyan-100/25 bg-black/38 p-5 text-left">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.28em] text-cyan-100">
+                Cat Tower
               </p>
-              <p className="break-all text-red-100/75">
-                {preloadStatus.errorMessage}
-              </p>
-              <button
-                className="mt-2 rounded border border-red-100/45 px-3 py-1 text-xs font-black text-red-50 transition hover:bg-red-500/20"
-                onClick={onRetry}
-                type="button"
-              >
-                다시 시도
-              </button>
+              <h1 className="mt-3 text-3xl font-black leading-none text-white drop-shadow-[0_0_16px_rgba(103,232,249,0.58)] sm:text-4xl">
+                잠시만 기다려 주세요
+              </h1>
             </div>
-          ) : (
-            <p className="mt-2 break-all text-cyan-50/65">
-              현재 로드:{" "}
-              <span className="font-black">
-                {getDisplayAssetPath(preloadStatus.currentAsset)}
-              </span>
-            </p>
-          )}
+            <div className="loading-spinner-vital grid size-11 shrink-0 place-items-center sm:size-12">
+              <Image
+                src="/games/game-flow/images/loading-spinner.png"
+                alt=""
+                width={64}
+                height={54}
+                priority
+                className="h-auto w-full object-contain drop-shadow-[0_0_14px_rgba(103,232,249,0.58)]"
+                unoptimized
+              />
+            </div>
+          </div>
+          <div className="mt-auto pt-8">
+            <div className="flex items-end justify-between gap-4">
+              <div className="min-w-0">
+                <p className="text-sm font-black text-cyan-50/85">
+                  {isFailed ? "로딩을 멈췄어요" : loadingMessage}
+                </p>
+                <p className="mt-1 text-xs font-black text-cyan-100/62">
+                  {preloadStatus.loaded}/{preloadStatus.total}
+                </p>
+              </div>
+              <p className="shrink-0 text-3xl font-black leading-none text-cyan-100">
+                {progress}%
+              </p>
+            </div>
+            <div className="mt-4 h-3 overflow-hidden rounded-full border border-cyan-100/55 bg-black">
+              <div
+                className="h-full rounded-full bg-cyan-200 shadow-[0_0_16px_rgba(103,232,249,0.85)] transition-[width] duration-200 ease-out"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+            <div className="mt-4 h-16 rounded border border-cyan-100/18 bg-black/35 px-3 py-2 text-xs leading-5 text-cyan-50/68">
+              <div className="font-black text-cyan-100">
+                {isFailed ? "프리로딩 실패" : "프리로딩 중"}
+              </div>
+              {isFailed ? (
+                <div className="mt-1 flex min-w-0 items-center gap-2 text-red-100">
+                  <span className="shrink-0 font-black">실패 asset:</span>
+                  <span className="truncate">
+                    {getDisplayAssetPath(preloadStatus.failedAsset ?? "")}
+                  </span>
+                  <button
+                    className="ml-auto shrink-0 rounded border border-red-100/45 px-2 py-0.5 text-xs font-black text-red-50 transition hover:bg-red-500/20"
+                    onClick={onRetry}
+                    type="button"
+                  >
+                    다시 시도
+                  </button>
+                </div>
+              ) : (
+                <div className="mt-1 flex min-w-0 items-center gap-2">
+                  <span className="shrink-0 font-black">현재 로드:</span>
+                  <span className="truncate">
+                    {getDisplayAssetPath(preloadStatus.currentAsset)}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
+        {gameplayTip ? (
+          <section className="flex min-h-72 flex-col rounded-md border border-cyan-100/25 bg-white/[0.04] p-5">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-xs font-black uppercase tracking-[0.24em] text-cyan-100/72">
+                게임 방법
+              </p>
+              <p className="text-xs font-black text-cyan-50/55">
+                {tipIndex + 1}/{LOADING_GAMEPLAY_TIPS.length}
+              </p>
+            </div>
+            <div className="my-auto min-w-0 py-8">
+              <h2 className="text-3xl font-black leading-tight text-white sm:text-4xl">
+                {gameplayTip.title}
+              </h2>
+              <p className="mt-4 text-base font-bold leading-7 text-cyan-50/78">
+                {gameplayTip.body}
+              </p>
+            </div>
+            <div className="flex gap-1.5">
+              {LOADING_GAMEPLAY_TIPS.map((tip, index) => (
+                <span
+                  aria-hidden="true"
+                  className={`h-1.5 flex-1 rounded-full ${
+                    index === tipIndex ? "bg-cyan-100" : "bg-cyan-100/18"
+                  }`}
+                  key={tip.title}
+                />
+              ))}
+            </div>
+          </section>
+        ) : null}
       </div>
     </NeonShell>
   );

@@ -112,7 +112,7 @@ export const MICROGAMES = [
     control: "mouseClick",
     id: "animal-crossing-stamp-card",
     startPrompt: "찍어라!",
-    title: "동물의 숲",
+    title: "모여봐요 동물의 숲",
     type: "normal",
   },
 
@@ -352,7 +352,7 @@ export const MICROGAMES = [
     control: "numberKeys",
     id: "layton-shape-match",
     startPrompt: "같은 모양을 찾아라!",
-    title: "레이튼 교수",
+    title: "레이튼 교수와 이상한 마을",
     type: "normal",
   },
 
@@ -424,7 +424,7 @@ export const MICROGAMES = [
     canvas: "kartriderCourse",
     microscope: {
       description:
-        "카트라이더는 속도보다 라인을 잡는 게 더 어렵죠. 벽에 박지 말고 운하 코스를 끝까지 달려야 합니다.",
+        "카트라이더는 속도보다 라인을 잡는 게 더 어렵죠. 벽에 박지 말고 빌리지 운하 코스를 끝까지 달려야 합니다.",
       imageAlt: "카트라이더 운하 코스",
       imageSrc: "/games/kartrider/images/track.png",
     },
