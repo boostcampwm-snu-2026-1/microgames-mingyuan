@@ -39,6 +39,7 @@ export type MicrogameCanvas =
   | "pokemonTyping"
   | "superMarioCoins"
   | "tetrisLineClear"
+  | "twoThousandFortyEightBoss"
   | "undertaleMouse"
   | "zeldaCircleDraw";
 
@@ -451,6 +452,22 @@ export const MICROGAMES = [
     id: "halli-galli-bell-boss",
     startPrompt: "과일이 5개일 때 종을 쳐라!",
     title: "할리갈리",
+    type: "boss",
+  },
+
+  {
+    beatCount: 42,
+    canvas: "twoThousandFortyEightBoss",
+    microscope: {
+      description:
+        "2048은 한 번 밀면 판이 확 바뀌죠. 같은 숫자를 합쳐 32를 만들어야 하는데, 판이 꽉 막히면 바로 끝입니다.",
+      imageAlt: "2048 보드",
+      imageSrc: "/games/two-thousand-forty-eight/images/thumbnail.svg",
+    },
+    control: "arrowKeys",
+    id: "two-thousand-forty-eight-boss",
+    startPrompt: "32를 만들어라!",
+    title: "2048",
     type: "boss",
   },
 

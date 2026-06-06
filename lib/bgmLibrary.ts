@@ -51,7 +51,8 @@ export type SoundEffectTrack =
   | "modooDiceRoll"
   | "pongHit"
   | "leagueChampionSelect"
-  | "runeEffect";
+  | "runeEffect"
+  | "twentyFortyEightSwipe";
 
 const BGM_TRACK_PATHS = {
   animalCrossing: "/games/animal-crossing/sounds/animal-crossing-bgm.mp3",
@@ -105,6 +106,7 @@ const SOUND_EFFECT_TRACK_PATHS = {
   modooDiceRoll: "/games/modoo-marble/sounds/dice-roll.mp3",
   pongHit: "/games/pong/sounds/pong-hit.mp3",
   runeEffect: "/games/maple-story-rune/sounds/rune-effect.mp3",
+  twentyFortyEightSwipe: "/games/two-thousand-forty-eight/sounds/swipe.mp3",
 } satisfies Record<SoundEffectTrack, string>;
 
 const AUDIO_TRACK_PATHS = {

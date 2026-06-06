@@ -27,6 +27,7 @@ import { PongGame } from "@/games/PongGame";
 import { PokemonTypingGame } from "@/games/PokemonTypingGame";
 import { SuperMarioCoinGame } from "@/games/SuperMarioCoinGame";
 import { TetrisLineClearGame } from "@/games/TetrisLineClearGame";
+import { TwoThousandFortyEightBossGame } from "@/games/TwoThousandFortyEightBossGame";
 import { UndertaleMouseGame } from "@/games/UndertaleMouseGame";
 import { ZeldaCircleDrawGame } from "@/games/ZeldaCircleDrawGame";
 
@@ -133,6 +134,10 @@ function renderGameCanvas(microgame: Microgame) {
 
   if (microgame.canvas === "tetrisLineClear") {
     return <TetrisLineClearGame microgame={microgame} />;
+  }
+
+  if (microgame.canvas === "twoThousandFortyEightBoss") {
+    return <TwoThousandFortyEightBossGame microgame={microgame} />;
   }
 
   if (microgame.canvas === "courseRegistrationNumber") {

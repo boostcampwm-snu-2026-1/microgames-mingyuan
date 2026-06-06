@@ -73,6 +73,7 @@ export function useMicrogameInput({
         microgame.canvas === "pokemonTyping" ||
         microgame.canvas === "superMarioCoins" ||
         microgame.canvas === "tetrisLineClear" ||
+        microgame.canvas === "twoThousandFortyEightBoss" ||
         microgame.canvas === "undertaleMouse" ||
         microgame.canvas === "modooMarble"
       ) {

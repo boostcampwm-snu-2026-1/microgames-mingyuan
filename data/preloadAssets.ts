@@ -134,6 +134,7 @@ export const ALL_GAME_PRELOAD_ASSETS = [
   "/games/supermario/images/coin.png",
   "/games/supermario/images/mario.png",
   "/games/tetris/images/thumbnail.svg",
+  "/games/two-thousand-forty-eight/images/thumbnail.svg",
   "/games/zelda/images/background.png",
   "/games/zelda/images/cursor.png",
   ...FORM_INSTRUCTIONS.map(({ imageSrc }) => imageSrc),
@@ -191,6 +192,7 @@ export const ALL_GAME_PRELOAD_ASSETS = [
   "/games/tetris/sounds/lateralmove.mp3",
   "/games/tetris/sounds/rotate.mp3",
   "/games/tetris/sounds/tetris-bgm.mp3",
+  "/games/two-thousand-forty-eight/sounds/swipe.mp3",
   "/games/undertale/sounds/undertale-bgm.mp3",
   "/games/zelda/sounds/zelda-bgm.mp3",
 ];
