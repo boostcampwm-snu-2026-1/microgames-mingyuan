@@ -10,7 +10,6 @@ import {
 const MIN_CANVAS_HEIGHT = 360;
 const MIN_CANVAS_WIDTH = 640;
 const TURN_DURATION_MS = 3000;
-const DEAL_ANIMATION_MS = 420;
 const ROUND_END_SAFETY_MS = 32;
 const PLAYER_COUNT = 4;
 const FRUITS = ["banana", "lime", "plum", "strawberry"] as const;
@@ -37,11 +36,6 @@ type Card = Readonly<{
   fruit: Fruit;
   imageSrc: string;
 }>;
-
-type CardLayout = Point &
-  Readonly<{
-    angle: number;
-  }>;
 
 type Turn = Readonly<{
   cards: readonly Card[];
@@ -412,73 +406,54 @@ function drawBackground(
 
 function drawCard(
   context: CanvasRenderingContext2D,
+  card: Card,
   image: HTMLImageElement | undefined,
-  layout: CardLayout,
+  point: Point,
   width: number,
+  angle: number,
   scale: number,
   isChanged: boolean,
   playerIndex: number,
-  alpha = 1,
 ) {
-  if (!image) {
-    return;
-  }
-
   const cardWidth = width * scale;
   const cardHeight = cardWidth * 1.4;
 
   context.save();
-  context.globalAlpha = alpha;
-  context.translate(layout.x, layout.y);
-  context.rotate(layout.angle);
+  context.translate(point.x, point.y);
+  context.rotate(angle);
   context.shadowBlur = isChanged ? 32 : 20;
   context.shadowColor = isChanged
     ? "rgba(250,204,21,0.58)"
     : "rgba(38,20,7,0.36)";
-  context.fillStyle = "rgba(255,255,255,0.9)";
-  context.roundRect(-cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight, 10);
-  context.fill();
-  context.drawImage(
-    image,
-    -cardWidth / 2,
-    -cardHeight / 2,
-    cardWidth,
-    cardHeight,
-  );
+  context.fillStyle = "rgba(255,255,255,0.96)";
+  context.fillRect(-cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight);
+  context.strokeStyle = isChanged ? "#facc15" : "rgba(58,30,13,0.42)";
+  context.lineWidth = isChanged ? 5 : 3;
+  context.strokeRect(-cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight);
+
+  if (image) {
+    context.drawImage(
+      image,
+      -cardWidth / 2,
+      -cardHeight / 2,
+      cardWidth,
+      cardHeight,
+    );
+  } else {
+    context.fillStyle = "#422006";
+    context.font = `900 ${Math.max(24, cardWidth * 0.18)}px Arial, Helvetica, sans-serif`;
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.fillText(card.fruit, 0, -cardHeight * 0.08);
+    context.fillText(`${card.count}`, 0, cardHeight * 0.18);
+  }
+
   context.font = "900 18px Arial, Helvetica, sans-serif";
   context.fillStyle = "rgba(58,30,13,0.78)";
   context.textAlign = "center";
   context.textBaseline = "middle";
   context.fillText(`P${playerIndex + 1}`, 0, cardHeight / 2 + 22);
   context.restore();
-}
-
-function easeOutBack(value: number) {
-  const overshoot = 1.42;
-  const shiftedValue = value - 1;
-
-  return (
-    1 +
-    shiftedValue * shiftedValue * ((overshoot + 1) * shiftedValue + overshoot)
-  );
-}
-
-function mix(from: number, to: number, progress: number) {
-  return from + (to - from) * progress;
-}
-
-function getDealtCardLayout(
-  targetLayout: CardLayout,
-  deckLayout: CardLayout,
-  progress: number,
-) {
-  const easedProgress = easeOutBack(progress);
-
-  return {
-    angle: mix(deckLayout.angle, targetLayout.angle, easedProgress),
-    x: mix(deckLayout.x, targetLayout.x, easedProgress),
-    y: mix(deckLayout.y, targetLayout.y, easedProgress),
-  } satisfies CardLayout;
 }
 
 function drawBell(
@@ -539,44 +514,31 @@ function drawScene(
     state.startTimestamp === null
       ? 0
       : Math.max(timestamp - state.startTimestamp, 0) % TURN_DURATION_MS;
-  const dealProgress = Math.min(elapsedInTurn / DEAL_ANIMATION_MS, 1);
+  const popProgress = Math.max(0, 1 - elapsedInTurn / 260);
   const cardPositions = [
     { angle: -0.12, x: width * 0.24, y: height * 0.27 },
     { angle: 0.11, x: width * 0.76, y: height * 0.27 },
     { angle: 0.13, x: width * 0.24, y: height * 0.73 },
     { angle: -0.1, x: width * 0.76, y: height * 0.73 },
   ] as const;
-  const deckPosition = {
-    angle: -0.34,
-    x: width * 0.5,
-    y: height * 0.08,
-  } satisfies CardLayout;
 
   if (turn) {
     turn.cards.forEach((card, index) => {
       const position = cardPositions[index];
       const isChanged =
         turn.changedPlayerIndex === null || turn.changedPlayerIndex === index;
-      const cardLayout =
-        isChanged && turn.changedPlayerIndex !== null && dealProgress < 1
-          ? getDealtCardLayout(position, deckPosition, dealProgress)
-          : position;
-      const cardScale =
-        0.16 + (isChanged ? (1 - Math.min(dealProgress, 1)) * 0.028 : 0);
-      const cardAlpha =
-        isChanged && turn.changedPlayerIndex !== null
-          ? Math.min(0.18 + dealProgress * 0.82, 1)
-          : 1;
+      const cardScale = 0.2 + (isChanged ? popProgress * 0.024 : 0);
 
       drawCard(
         context,
+        card,
         images?.cards[card.imageSrc],
-        cardLayout,
+        position,
         Math.min(width, height),
+        position.angle,
         cardScale,
         isChanged,
         index,
-        cardAlpha,
       );
     });
   }
