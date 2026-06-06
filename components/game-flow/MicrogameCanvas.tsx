@@ -8,6 +8,7 @@ import { ChromeDinoSpaceGame } from "@/games/ChromeDinoSpaceGame";
 import { CourseRegistrationNumberGame } from "@/games/CourseRegistrationNumberGame";
 import { DefaultMicrogameCanvas } from "@/games/DefaultMicrogameCanvas";
 import { GeometryDashGame } from "@/games/GeometryDashGame";
+import { HancomTypingGame } from "@/games/HancomTypingGame";
 import { KartriderBossGame } from "@/games/KartriderBossGame";
 import { LaytonShapeMatchGame } from "@/games/LaytonShapeMatchGame";
 import { LeagueChampionBanGame } from "@/games/LeagueChampionBanGame";
@@ -84,6 +85,10 @@ function renderGameCanvas(microgame: Microgame) {
 
   if (microgame.canvas === "geometryDashSpikes") {
     return <GeometryDashGame microgame={microgame} />;
+  }
+
+  if (microgame.canvas === "hancomTyping") {
+    return <HancomTypingGame microgame={microgame} />;
   }
 
   if (microgame.canvas === "kartriderCourse") {

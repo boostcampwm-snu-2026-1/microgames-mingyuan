@@ -22,6 +22,7 @@ export type MicrogameCanvas =
   | "courseRegistrationNumber"
   | "default"
   | "geometryDashSpikes"
+  | "hancomTyping"
   | "kartriderCourse"
   | "laytonShapeMatch"
   | "leagueChampionBan"
@@ -114,6 +115,16 @@ export const MICROGAMES = [
     id: "geometry-dash-spike-dodge",
     startPrompt: "가시를 피해라!",
     title: "Geometry Dash",
+    type: "normal",
+  },
+
+  {
+    beatCount: 12,
+    canvas: "hancomTyping",
+    control: "koreanKeyboard",
+    id: "hancom-word-typing",
+    startPrompt: "단어를 입력해라!",
+    title: "한컴",
     type: "normal",
   },
 

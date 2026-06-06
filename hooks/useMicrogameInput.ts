@@ -60,6 +60,7 @@ export function useMicrogameInput({
         microgame.canvas === "animalFarmReverseTyping" ||
         microgame.canvas === "brainAcademyBlocks" ||
         microgame.canvas === "geometryDashSpikes" ||
+        microgame.canvas === "hancomTyping" ||
         microgame.canvas === "kartriderCourse" ||
         microgame.canvas === "laytonShapeMatch" ||
         microgame.canvas === "leagueChampionBan" ||

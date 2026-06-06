@@ -10,6 +10,7 @@ export type BgmTrack =
   | "fail"
   | "gameOver"
   | "geometryDash"
+  | "hancom"
   | "intermission"
   | "kartrider"
   | "layton"
@@ -47,6 +48,7 @@ const BGM_TRACK_PATHS = {
   fail: "/games/game-flow/sounds/fail.mp3",
   gameOver: "/games/game-flow/sounds/game-over.mp3",
   geometryDash: "/games/geometry-dash/sounds/geometry-dash-bgm.mp3",
+  hancom: "/games/hancom/sounds/hancom-bgm.mp3",
   intermission: "/games/game-flow/sounds/intermission.mp3",
   kartrider: "/games/kartrider/sounds/kartrider-bgm.mp3",
   layton: "/games/layton/sounds/layton-bgm.mp3",
@@ -104,6 +106,7 @@ const BGM_TRACK_BEATS = {
   brainAcademy: 12,
   fail: 4,
   geometryDash: 12,
+  hancom: 12,
   intermission: 8,
   kartrider: 36,
   layton: 8,
