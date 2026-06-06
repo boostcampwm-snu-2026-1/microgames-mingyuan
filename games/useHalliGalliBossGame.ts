@@ -9,7 +9,7 @@ import {
 
 const MIN_CANVAS_HEIGHT = 360;
 const MIN_CANVAS_WIDTH = 640;
-const TURN_DURATION_MS = 3000;
+const TURN_DURATION_MS = 2000;
 const ROUND_END_SAFETY_MS = 32;
 const PLAYER_COUNT = 4;
 const FRUITS = ["banana", "lime", "plum", "strawberry"] as const;
