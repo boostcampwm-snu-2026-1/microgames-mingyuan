@@ -312,6 +312,13 @@ export function GameScreen({
         return;
       }
 
+      if (microgame.canvas === "appleNumberSum") {
+        bgmLibrary.play("appleGame", "once", "now").catch((error: unknown) => {
+          console.error(error);
+        });
+        return;
+      }
+
       if (microgame.canvas === "geometryDashSpikes") {
         bgmLibrary
           .play("geometryDash", "once", "now")

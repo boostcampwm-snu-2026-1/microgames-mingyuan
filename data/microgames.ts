@@ -15,6 +15,7 @@ export type MicrogameType = "boss" | "normal";
 export type MicrogameCanvas =
   | "animalCrossingStamps"
   | "animalFarmReverseTyping"
+  | "appleNumberSum"
   | "amongUsWires"
   | "brainAcademyBlocks"
   | "chromeDinoSpace"
@@ -99,6 +100,22 @@ export const MICROGAMES = [
     id: "among-us-wire-task",
     startPrompt: "연결해라!",
     title: "어몽어스",
+    type: "normal",
+  },
+
+  {
+    beatCount: 12,
+    canvas: "appleNumberSum",
+    microscope: {
+      description:
+        "사과게임, 한때 시간 순삭이었죠. 숫자가 적힌 사과들을 드래그해서 딱 10을 만들면 되는데, 급하면 꼭 하나를 더 잡습니다.",
+      imageAlt: "사과게임 보드",
+      imageSrc: "/games/apple-game/images/apple.png",
+    },
+    control: "mouseDrag",
+    id: "apple-game-number-sum",
+    startPrompt: "10을 만들어라!",
+    title: "사과게임",
     type: "normal",
   },
 

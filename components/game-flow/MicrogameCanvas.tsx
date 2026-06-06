@@ -2,6 +2,7 @@
 
 import { AnimalCrossingStampGame } from "@/games/AnimalCrossingStampGame";
 import { AnimalFarmBossGame } from "@/games/AnimalFarmBossGame";
+import { AppleGame } from "@/games/AppleGame";
 import { AmongUsWireGame } from "@/games/AmongUsWireGame";
 import { BrainAcademyBlockGame } from "@/games/BrainAcademyBlockGame";
 import { ChromeDinoSpaceGame } from "@/games/ChromeDinoSpaceGame";
@@ -40,6 +41,10 @@ function renderGameCanvas(microgame: Microgame) {
 
   if (microgame.canvas === "animalFarmReverseTyping") {
     return <AnimalFarmBossGame microgame={microgame} />;
+  }
+
+  if (microgame.canvas === "appleNumberSum") {
+    return <AppleGame microgame={microgame} />;
   }
 
   if (microgame.canvas === "amongUsWires") {
