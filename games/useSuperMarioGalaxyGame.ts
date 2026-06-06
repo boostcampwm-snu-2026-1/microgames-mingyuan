@@ -51,27 +51,6 @@ function startOneShotSound(src: string) {
   });
 }
 
-function playOneShotSoundToEnd(src: string) {
-  const audio = new Audio(src);
-
-  audio.volume = 0.92;
-
-  return new Promise<void>((resolve) => {
-    const finish = () => {
-      audio.removeEventListener("ended", finish);
-      audio.removeEventListener("error", finish);
-      resolve();
-    };
-
-    audio.addEventListener("ended", finish);
-    audio.addEventListener("error", finish);
-    audio.play().catch((error: unknown) => {
-      console.error(error);
-      finish();
-    });
-  });
-}
-
 function shuffleItems<T>(items: readonly T[]) {
   const nextItems = [...items];
 
@@ -150,15 +129,9 @@ export function useSuperMarioGalaxyGame(): Readonly<{
 
         if (isFinalBit) {
           hasClearedRef.current = true;
-          playOneShotSoundToEnd(DRAGGED_SOUND_SRC)
-            .then(() => {
-              startOneShotSound(SUCCESS_SOUND_SRC);
-              dispatchClear();
-            })
-            .catch((error: unknown) => {
-              console.error(error);
-              dispatchClear();
-            });
+          startOneShotSound(DRAGGED_SOUND_SRC);
+          startOneShotSound(SUCCESS_SOUND_SRC);
+          dispatchClear();
           return nextBitIds;
         }
 

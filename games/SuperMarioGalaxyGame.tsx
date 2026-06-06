@@ -23,7 +23,10 @@ export function SuperMarioGalaxyGame({
 
   return (
     <div
-      className="relative h-screen w-screen cursor-grab touch-none overflow-hidden bg-[#050816] active:cursor-grabbing"
+      className="relative h-screen w-screen cursor-grab touch-none select-none overflow-hidden bg-[#050816] active:cursor-grabbing"
+      onDragStart={(event) => {
+        event.preventDefault();
+      }}
       onPointerCancel={handlePointerCancel}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
@@ -32,8 +35,12 @@ export function SuperMarioGalaxyGame({
     >
       <Image
         alt=""
-        className="object-cover"
+        className="select-none object-cover"
+        draggable={false}
         fill
+        onDragStart={(event) => {
+          event.preventDefault();
+        }}
         priority
         sizes="100vw"
         src={BACKGROUND_SRC}
@@ -59,8 +66,12 @@ export function SuperMarioGalaxyGame({
           >
             <Image
               alt=""
-              className="animate-spin object-contain"
+              className="animate-spin select-none object-contain"
+              draggable={false}
               fill
+              onDragStart={(event) => {
+                event.preventDefault();
+              }}
               sizes="86px"
               src={bit.imageSrc}
               style={{
