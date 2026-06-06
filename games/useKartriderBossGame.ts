@@ -18,6 +18,7 @@ const MAX_MOVE_SPEED = 720;
 const CHECKPOINT_RADIUS = 82;
 const CAR_COLLISION_RADIUS = 13;
 const COLLISION_EFFECT_SECONDS = 0.22;
+const FINAL_LAP_BANNER_SECONDS = 1.35;
 const TOTAL_LAPS = 2;
 const KARTRIDER_ASSETS = {
   kart: "/games/kartrider/images/kart.png",
@@ -32,7 +33,6 @@ const CHECKPOINTS = [
   { x: 0.745, y: 0.74 },
   { x: 0.61, y: 0.755 },
   { x: 0.475, y: 0.755 },
-  { x: 0.47, y: 0.85 },
   { x: 0.39, y: 0.785 },
   { x: 0.245, y: 0.775 },
   { x: 0.23, y: 0.64 },
@@ -71,6 +71,7 @@ type GameState = {
   collisionEffectX: number;
   collisionEffectY: number;
   elapsedMs: number;
+  finalLapBannerSeconds: number;
   hasCleared: boolean;
   lapCount: number;
   lastTimestamp: number | null;
@@ -101,6 +102,7 @@ function createInitialState() {
     collisionEffectX: start.x,
     collisionEffectY: start.y,
     elapsedMs: 0,
+    finalLapBannerSeconds: 0,
     hasCleared: false,
     lapCount: 0,
     lastTimestamp: null,
@@ -271,6 +273,10 @@ function updateCheckpoints(state: GameState) {
     state.lapCount = nextLapCount;
 
     if (nextLapCount < TOTAL_LAPS) {
+      if (nextLapCount === TOTAL_LAPS - 1) {
+        state.finalLapBannerSeconds = FINAL_LAP_BANNER_SECONDS;
+      }
+
       state.nextCheckpointIndex = 0;
       return;
     }
@@ -545,6 +551,36 @@ function drawCollisionEffect(
   context.restore();
 }
 
+function drawFinalLapBanner(
+  context: CanvasRenderingContext2D,
+  state: GameState,
+  width: number,
+  height: number,
+) {
+  if (state.finalLapBannerSeconds <= 0) {
+    return;
+  }
+
+  const effectRatio = state.finalLapBannerSeconds / FINAL_LAP_BANNER_SECONDS;
+  const scale = 0.92 + (1 - effectRatio) * 0.18;
+
+  context.save();
+  context.globalAlpha = Math.min(effectRatio * 1.35, 1);
+  context.translate(width / 2, height * 0.24);
+  context.scale(scale, scale);
+  context.textAlign = "center";
+  context.textBaseline = "middle";
+  context.font = `900 ${Math.min(72, width * 0.075)}px Arial, Helvetica, sans-serif`;
+  context.lineWidth = 8;
+  context.strokeStyle = "rgba(88, 28, 135, 0.95)";
+  context.strokeText("FINAL LAP", 0, 0);
+  context.fillStyle = "#f9a8d4";
+  context.shadowColor = "rgba(244, 114, 182, 0.92)";
+  context.shadowBlur = 26;
+  context.fillText("FINAL LAP", 0, 0);
+  context.restore();
+}
+
 function drawHud(
   context: CanvasRenderingContext2D,
   state: GameState,
@@ -616,6 +652,7 @@ function drawScene(
   drawCheckpoint(context, state, layout);
   drawKart(context, images.kart, state, layout);
   drawCollisionEffect(context, state, layout);
+  drawFinalLapBanner(context, state, width, height);
 
   if (state.hasCleared) {
     context.fillStyle = "rgba(34, 197, 94, 0.16)";
@@ -737,6 +774,10 @@ export function useKartriderBossGameCanvas(gameBeatCount: number) {
 
       state.collisionEffectSeconds = Math.max(
         state.collisionEffectSeconds - deltaSeconds,
+        0,
+      );
+      state.finalLapBannerSeconds = Math.max(
+        state.finalLapBannerSeconds - deltaSeconds,
         0,
       );
 
