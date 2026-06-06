@@ -8,37 +8,33 @@ const MAPLESTORY_LIE_DETECTOR_OPTIONS = [
   {
     answer: "루팡주황버섯",
     imageSrc:
-      "/games/maplestory-lie-detector/images/%E1%84%85%E1%85%AE%E1%84%91%E1%85%A1%E1%86%BC%E1%84%8C%E1%85%AE%E1%84%92%E1%85%AA%E1%86%BC%E1%84%87%E1%85%A5%E1%84%89%E1%85%A5%E1%86%BA.png",
+      "/games/maplestory-lie-detector/images/lupang-orange-mushroom.png",
   },
   {
     answer: "리본돼지옥토퍼스",
-    imageSrc:
-      "/games/maplestory-lie-detector/images/%E1%84%85%E1%85%B5%E1%84%87%E1%85%A9%E1%86%AB%E1%84%83%E1%85%AB%E1%84%8C%E1%85%B5%E1%84%8B%E1%85%A9%E1%86%A8%E1%84%90%E1%85%A9%E1%84%91%E1%85%A5%E1%84%89%E1%85%B3.png",
+    imageSrc: "/games/maplestory-lie-detector/images/ribbon-pig-octopus.png",
   },
   {
     answer: "빨간달팽이슬라임",
-    imageSrc:
-      "/games/maplestory-lie-detector/images/%E1%84%88%E1%85%A1%E1%86%AF%E1%84%80%E1%85%A1%E1%86%AB%E1%84%83%E1%85%A1%E1%86%AF%E1%84%91%E1%85%A2%E1%86%BC%E1%84%8B%E1%85%B5%E1%84%89%E1%85%B3%E1%86%AF%E1%84%85%E1%85%A1%E1%84%8B%E1%85%B5%E1%86%B7.png",
+    imageSrc: "/games/maplestory-lie-detector/images/red-snail-slime.png",
   },
   {
     answer: "뿔버섯페어리루팡",
     imageSrc:
-      "/games/maplestory-lie-detector/images/%E1%84%88%E1%85%AE%E1%86%AF%E1%84%87%E1%85%A5%E1%84%89%E1%85%A5%E1%86%BA%E1%84%91%E1%85%A6%E1%84%8B%E1%85%A5%E1%84%85%E1%85%B5%E1%84%85%E1%85%AE%E1%84%91%E1%85%A1%E1%86%BC.png",
+      "/games/maplestory-lie-detector/images/horn-mushroom-fairy-lupang.png",
   },
   {
     answer: "슬라임스텀프",
-    imageSrc:
-      "/games/maplestory-lie-detector/images/%E1%84%89%E1%85%B3%E1%86%AF%E1%84%85%E1%85%A1%E1%84%8B%E1%85%B5%E1%86%B7%E1%84%89%E1%85%B3%E1%84%90%E1%85%A5%E1%86%B7%E1%84%91%E1%85%B3.png",
+    imageSrc: "/games/maplestory-lie-detector/images/slime-stump.png",
   },
   {
     answer: "초록버섯이블아이",
     imageSrc:
-      "/games/maplestory-lie-detector/images/%E1%84%8E%E1%85%A9%E1%84%85%E1%85%A9%E1%86%A8%E1%84%87%E1%85%A5%E1%84%89%E1%85%A5%E1%86%BA%E1%84%8B%E1%85%B5%E1%84%87%E1%85%B3%E1%86%AF%E1%84%8B%E1%85%A1%E1%84%8B%E1%85%B5.png",
+      "/games/maplestory-lie-detector/images/green-mushroom-evil-eye.png",
   },
   {
     answer: "파란달팽이슬라임",
-    imageSrc:
-      "/games/maplestory-lie-detector/images/%E1%84%91%E1%85%A1%E1%84%85%E1%85%A1%E1%86%AB%E1%84%83%E1%85%A1%E1%86%AF%E1%84%91%E1%85%A2%E1%86%BC%E1%84%8B%E1%85%B5%E1%84%89%E1%85%B3%E1%86%AF%E1%84%85%E1%85%A1%E1%84%8B%E1%85%B5%E1%86%B7.png",
+    imageSrc: "/games/maplestory-lie-detector/images/blue-snail-slime.png",
   },
 ] as const;
 

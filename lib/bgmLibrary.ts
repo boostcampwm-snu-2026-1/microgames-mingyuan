@@ -7,9 +7,13 @@ export type BgmTrack =
   | "animalFarm"
   | "bossStage"
   | "brainAcademy"
+  | "cookieRun"
+  | "crazyArcade"
   | "fail"
   | "gameOver"
   | "geometryDash"
+  | "halliGalli"
+  | "hancom"
   | "intermission"
   | "kartrider"
   | "layton"
@@ -17,6 +21,7 @@ export type BgmTrack =
   | "maplestory"
   | "mapleRune"
   | "minecraft"
+  | "modooMarble"
   | "oneUp"
   | "pokemon"
   | "resultsAndMain"
@@ -25,7 +30,8 @@ export type BgmTrack =
   | "superMario"
   | "success"
   | "tetris"
-  | "undertale";
+  | "undertale"
+  | "zelda";
 
 export type SoundEffectTrack =
   | "clear1"
@@ -34,8 +40,14 @@ export type SoundEffectTrack =
   | "clear4"
   | "clear5"
   | "animalCrossingStamp"
+  | "cookieRunJump"
+  | "cookieRunSlide"
+  | "crazyArcadeBombInstall"
+  | "halliGalliBell"
+  | "halliGalliCard"
   | "minecraftDig1"
   | "minecraftDig2"
+  | "modooDiceRoll"
   | "leagueChampionSelect"
   | "runeEffect";
 
@@ -44,9 +56,13 @@ const BGM_TRACK_PATHS = {
   animalFarm: "/games/animal-farm/sounds/animal-farm-bgm.mp3",
   bossStage: "/games/game-flow/sounds/boss-stage.mp3",
   brainAcademy: "/games/brain-academy/sounds/brain-academy-bgm.mp3",
+  cookieRun: "/games/cookie-run/sounds/cookie-run-bgm.mp3",
+  crazyArcade: "/games/crazy-arcade/sounds/crazy-arcade-bgm.mp3",
   fail: "/games/game-flow/sounds/fail.mp3",
   gameOver: "/games/game-flow/sounds/game-over.mp3",
   geometryDash: "/games/geometry-dash/sounds/geometry-dash-bgm.mp3",
+  halliGalli: "/games/halli-galli/sounds/halli-galli-bgm.mp3",
+  hancom: "/games/hancom/sounds/hancom-bgm.mp3",
   intermission: "/games/game-flow/sounds/intermission.mp3",
   kartrider: "/games/kartrider/sounds/kartrider-bgm.mp3",
   layton: "/games/layton/sounds/layton-bgm.mp3",
@@ -54,6 +70,7 @@ const BGM_TRACK_PATHS = {
   maplestory: "/games/maplestory-lie-detector/sounds/maplestory-bgm.mp3",
   mapleRune: "/games/maple-story-rune/sounds/maple-rune-bgm.mp3",
   minecraft: "/games/minecraft/sounds/minecraft-bgm.mp3",
+  modooMarble: "/games/modoo-marble/sounds/modoo-bgm.mp3",
   oneUp: "/games/game-flow/sounds/1-up.mp3",
   pokemon: "/games/pokemon/sounds/pokemon-bgm.mp3",
   resultsAndMain: "/games/game-flow/sounds/results-and-main.mp3",
@@ -63,6 +80,7 @@ const BGM_TRACK_PATHS = {
   success: "/games/game-flow/sounds/success.mp3",
   tetris: "/games/tetris/sounds/tetris-bgm.mp3",
   undertale: "/games/undertale/sounds/undertale-bgm.mp3",
+  zelda: "/games/zelda/sounds/zelda-bgm.mp3",
 } satisfies Record<BgmTrack, string>;
 
 const SOUND_EFFECT_TRACK_PATHS = {
@@ -72,9 +90,16 @@ const SOUND_EFFECT_TRACK_PATHS = {
   clear4: "/games/game-flow/sounds/clear-4.mp3",
   clear5: "/games/game-flow/sounds/clear-5.mp3",
   animalCrossingStamp: "/games/animal-crossing/sounds/stamp.mp3",
+  cookieRunJump: "/games/cookie-run/sounds/cookie-jump.mp3",
+  cookieRunSlide: "/games/cookie-run/sounds/cookie-slide.mp3",
+  crazyArcadeBombInstall:
+    "/games/crazy-arcade/sounds/crazy-arcade-bomb-install.mp3",
+  halliGalliBell: "/games/halli-galli/sounds/bell-chime.mp3",
+  halliGalliCard: "/games/halli-galli/sounds/card-draw.mp3",
   leagueChampionSelect: "/games/league-of-legend/sounds/champ-select.mp3",
   minecraftDig1: "/games/minecraft/sounds/dig-1.mp3",
   minecraftDig2: "/games/minecraft/sounds/dig-2.mp3",
+  modooDiceRoll: "/games/modoo-marble/sounds/dice-roll.mp3",
   runeEffect: "/games/maple-story-rune/sounds/rune-effect.mp3",
 } satisfies Record<SoundEffectTrack, string>;
 
@@ -86,9 +111,14 @@ const AUDIO_TRACK_PATHS = {
 const DEFAULT_BEAT_DURATION_SECONDS = RHYTHM_DURATION_MS / 1000;
 const BGM_GAIN = 0.72;
 const BGM_TRACK_GAINS: Partial<Record<BgmTrack, number>> = {
+  kartrider: 0.94,
+  mapleRune: 0.94,
   undertale: 0.52,
 };
 const SOUND_EFFECT_GAIN = 0.86;
+const SOUND_EFFECT_TRACK_GAINS: Partial<Record<SoundEffectTrack, number>> = {
+  runeEffect: 1,
+};
 const ATTACK_FADE_SECONDS = 0.012;
 const RELEASE_FADE_SECONDS = 0.045;
 
@@ -97,8 +127,12 @@ const BGM_TRACK_BEATS = {
   animalFarm: 36,
   bossStage: 8,
   brainAcademy: 12,
+  cookieRun: 12,
+  crazyArcade: 12,
   fail: 4,
   geometryDash: 12,
+  halliGalli: 36,
+  hancom: 12,
   intermission: 8,
   kartrider: 36,
   layton: 8,
@@ -106,6 +140,7 @@ const BGM_TRACK_BEATS = {
   maplestory: 12,
   mapleRune: 8,
   minecraft: 8,
+  modooMarble: 8,
   oneUp: 8,
   pokemon: 12,
   resultsAndMain: 83,
@@ -115,6 +150,7 @@ const BGM_TRACK_BEATS = {
   success: 4,
   tetris: 12,
   undertale: 8,
+  zelda: 12,
 } satisfies Record<Exclude<BgmTrack, "gameOver">, number>;
 
 export const GAME_OVER_DURATION_MS = 5208;
@@ -199,7 +235,10 @@ class BgmLibrary {
     source.buffer = buffer;
     source.connect(gainNode);
     gainNode.connect(audioContext.destination);
-    gainNode.gain.setValueAtTime(SOUND_EFFECT_GAIN, audioContext.currentTime);
+    gainNode.gain.setValueAtTime(
+      this.getSoundEffectGain(track),
+      audioContext.currentTime,
+    );
     source.start(audioContext.currentTime);
   }
 
@@ -451,6 +490,10 @@ class BgmLibrary {
 
   private getTrackGain(track: BgmTrack) {
     return BGM_TRACK_GAINS[track] ?? BGM_GAIN;
+  }
+
+  private getSoundEffectGain(track: SoundEffectTrack) {
+    return SOUND_EFFECT_TRACK_GAINS[track] ?? SOUND_EFFECT_GAIN;
   }
 
   private isCurrentSource(

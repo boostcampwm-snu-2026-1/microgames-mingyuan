@@ -5,12 +5,11 @@ export type MicrogameControl =
   | "arrowAndSpace"
   | "arrowKeys"
   | "koreanKeyboard"
-  | "microphone"
   | "mouseClick"
+  | "mouseDrag"
+  | "mouseHold"
   | "numberKeys"
-  | "scroll"
-  | "space"
-  | "wasd";
+  | "space";
 
 export type MicrogameType = "boss" | "normal";
 export type MicrogameCanvas =
@@ -19,20 +18,26 @@ export type MicrogameCanvas =
   | "amongUsWires"
   | "brainAcademyBlocks"
   | "chromeDinoSpace"
+  | "cookieRun"
   | "courseRegistrationNumber"
+  | "crazyArcade"
   | "default"
   | "geometryDashSpikes"
+  | "halliGalliBoss"
+  | "hancomTyping"
   | "kartriderCourse"
   | "laytonShapeMatch"
   | "leagueChampionBan"
   | "maplestoryLieDetector"
   | "maplestoryRune"
   | "minecraftMining"
+  | "modooMarble"
   | "pianoMelody"
   | "pokemonTyping"
   | "superMarioCoins"
   | "tetrisLineClear"
-  | "undertaleMouse";
+  | "undertaleMouse"
+  | "zeldaCircleDraw";
 
 export type Microgame = Readonly<{
   beatCount: number;
@@ -45,15 +50,14 @@ export type Microgame = Readonly<{
 }>;
 
 const FORM_INSTRUCTIONS_BY_CONTROL = {
-  arrowAndSpace: FORM_INSTRUCTIONS[3],
-  arrowKeys: FORM_INSTRUCTIONS[1],
-  koreanKeyboard: FORM_INSTRUCTIONS[7],
-  microphone: FORM_INSTRUCTIONS[8],
-  mouseClick: FORM_INSTRUCTIONS[4],
-  numberKeys: FORM_INSTRUCTIONS[6],
-  scroll: FORM_INSTRUCTIONS[5],
-  space: FORM_INSTRUCTIONS[0],
-  wasd: FORM_INSTRUCTIONS[2],
+  arrowAndSpace: getFormInstructionByControl("arrowAndSpace"),
+  arrowKeys: getFormInstructionByControl("arrowKeys"),
+  koreanKeyboard: getFormInstructionByControl("koreanKeyboard"),
+  mouseClick: getFormInstructionByControl("mouseClick"),
+  mouseDrag: getFormInstructionByControl("mouseDrag"),
+  mouseHold: getFormInstructionByControl("mouseHold"),
+  numberKeys: getFormInstructionByControl("numberKeys"),
+  space: getFormInstructionByControl("space"),
 } satisfies Record<MicrogameControl, FormInstruction>;
 
 export const MICROGAMES = [
@@ -70,9 +74,9 @@ export const MICROGAMES = [
   {
     beatCount: 14,
     canvas: "amongUsWires",
-    control: "mouseClick",
+    control: "mouseDrag",
     id: "among-us-wire-task",
-    startPrompt: "전선을 연결해라!",
+    startPrompt: "연결해라!",
     title: "어몽어스",
     type: "normal",
   },
@@ -82,7 +86,7 @@ export const MICROGAMES = [
     canvas: "animalCrossingStamps",
     control: "mouseClick",
     id: "animal-crossing-stamp-card",
-    startPrompt: "도장을 세 번 찍어라!",
+    startPrompt: "찍어라!",
     title: "동물의 숲",
     type: "normal",
   },
@@ -109,11 +113,41 @@ export const MICROGAMES = [
 
   {
     beatCount: 12,
+    canvas: "cookieRun",
+    control: "arrowAndSpace",
+    id: "cookie-run-obstacle-dodge",
+    startPrompt: "달려라!",
+    title: "Cookie Run",
+    type: "normal",
+  },
+
+  {
+    beatCount: 12,
     canvas: "geometryDashSpikes",
     control: "space",
     id: "geometry-dash-spike-dodge",
     startPrompt: "가시를 피해라!",
     title: "Geometry Dash",
+    type: "normal",
+  },
+
+  {
+    beatCount: 12,
+    canvas: "hancomTyping",
+    control: "koreanKeyboard",
+    id: "hancom-word-typing",
+    startPrompt: "단어를 입력해라!",
+    title: "한컴",
+    type: "normal",
+  },
+
+  {
+    beatCount: 12,
+    canvas: "zeldaCircleDraw",
+    control: "mouseDrag",
+    id: "zelda-circle-draw",
+    startPrompt: "동그라미를 그려라!",
+    title: "Zelda",
     type: "normal",
   },
 
@@ -128,12 +162,32 @@ export const MICROGAMES = [
   },
 
   {
+    beatCount: 12,
+    canvas: "crazyArcade",
+    control: "arrowAndSpace",
+    id: "crazy-arcade-water-bomb",
+    startPrompt: "물폭탄을 설치해라!",
+    title: "Crazy Arcade",
+    type: "normal",
+  },
+
+  {
     beatCount: 8,
     canvas: "minecraftMining",
-    control: "mouseClick",
+    control: "mouseHold",
     id: "minecraft-diamond-mining",
     startPrompt: "다이아몬드를 캐라!",
     title: "Minecraft",
+    type: "normal",
+  },
+
+  {
+    beatCount: 8,
+    canvas: "modooMarble",
+    control: "mouseHold",
+    id: "modoo-marble-big-number",
+    startPrompt: "큰 수를 굴려라!",
+    title: "모두의마블",
     type: "normal",
   },
 
@@ -142,7 +196,7 @@ export const MICROGAMES = [
     canvas: "pianoMelody",
     control: "numberKeys",
     id: "piano-melody-repeat",
-    startPrompt: "멜로디를 연주해라!",
+    startPrompt: "연주해라!",
     title: "Piano",
     type: "normal",
   },
@@ -162,7 +216,7 @@ export const MICROGAMES = [
     canvas: "maplestoryLieDetector",
     control: "koreanKeyboard",
     id: "maplestory-lie-detector",
-    startPrompt: "보이는 대로 입력해라!",
+    startPrompt: "입력해라!",
     title: "MapleStory",
     type: "normal",
   },
@@ -192,7 +246,7 @@ export const MICROGAMES = [
     canvas: "leagueChampionBan",
     control: "mouseClick",
     id: "league-of-legend-champion-ban",
-    startPrompt: "타겟 챔피언을 밴해라!",
+    startPrompt: "챔피언을 밴해라!",
     title: "League of Legend",
     type: "normal",
   },
@@ -205,6 +259,16 @@ export const MICROGAMES = [
     startPrompt: "피해라!",
     title: "언더테일",
     type: "normal",
+  },
+
+  {
+    beatCount: 36,
+    canvas: "halliGalliBoss",
+    control: "mouseClick",
+    id: "halli-galli-bell-boss",
+    startPrompt: "과일이 5개일 때 종을 쳐라!",
+    title: "Halli Galli",
+    type: "boss",
   },
 
   {
@@ -268,6 +332,18 @@ export function getMicrogameFormInstruction(microgame: Microgame) {
   return FORM_INSTRUCTIONS_BY_CONTROL[microgame.control];
 }
 
+function getFormInstructionByControl(control: MicrogameControl) {
+  const formInstruction = FORM_INSTRUCTIONS.find(
+    (instruction) => instruction.control === control,
+  );
+
+  if (!formInstruction) {
+    throw new Error(`Missing form instruction for control: ${control}`);
+  }
+
+  return formInstruction;
+}
+
 export function isMicrogameClearKey(
   control: MicrogameControl,
   event: KeyboardEvent,
@@ -280,13 +356,6 @@ export function isMicrogameClearKey(
 
   if (control === "space") {
     return event.code === "Space";
-  }
-
-  if (control === "wasd") {
-    return (
-      ["KeyA", "KeyD", "KeyS", "KeyW"].includes(event.code) ||
-      ["a", "d", "s", "w"].includes(event.key.toLowerCase())
-    );
   }
 
   if (control === "arrowAndSpace") {
@@ -302,10 +371,6 @@ export function isMicrogameClearKey(
 
   if (control === "koreanKeyboard") {
     return /^[ㄱ-ㅎㅏ-ㅣ가-힣]$/.test(event.key);
-  }
-
-  if (control === "microphone") {
-    return event.key.length > 0;
   }
 
   return false;
