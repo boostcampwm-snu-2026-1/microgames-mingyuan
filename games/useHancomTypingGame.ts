@@ -78,6 +78,15 @@ function resolveTypedProgress(
   );
 }
 
+function clearInput(input: HTMLInputElement | null) {
+  if (!input) {
+    return;
+  }
+
+  input.value = "";
+  input.setSelectionRange(0, 0);
+}
+
 export function useHancomTypingGame(): Readonly<{
   completedCount: number;
   fallingWords: readonly FallingWord[];
@@ -102,19 +111,24 @@ export function useHancomTypingGame(): Readonly<{
       targetWords,
       completedCount,
     );
+    const hasCompletedWord = nextProgress.completedCount > completedCount;
+    const nextInputValue = hasCompletedWord ? "" : nextProgress.remainingValue;
 
-    if (
-      inputRef.current &&
-      inputRef.current.value !== nextProgress.remainingValue
-    ) {
-      inputRef.current.value = nextProgress.remainingValue;
+    if (inputRef.current && inputRef.current.value !== nextInputValue) {
+      inputRef.current.value = nextInputValue;
     }
 
     if (nextProgress.completedCount === completedCount) {
       return;
     }
 
+    const completedInput = inputRef.current;
+
     setCompletedCount(nextProgress.completedCount);
+    clearInput(completedInput);
+    window.requestAnimationFrame(() => {
+      clearInput(completedInput);
+    });
 
     if (nextProgress.completedCount < targetWords.length) {
       return;
@@ -185,6 +199,12 @@ export function useHancomTypingGame(): Readonly<{
       window.removeEventListener("keydown", handleKeyDown, { capture: true });
     };
   }, []);
+
+  useEffect(() => {
+    if (!hasClearedRef.current) {
+      inputRef.current?.focus({ preventScroll: true });
+    }
+  }, [completedCount]);
 
   const fallingWords = targetWords.map((word, index) => ({
     id: `${word}-${index}`,

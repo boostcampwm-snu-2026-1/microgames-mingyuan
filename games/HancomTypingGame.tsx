@@ -9,7 +9,8 @@ export function HancomTypingGame({
 }: Readonly<{ microgame: Microgame }>) {
   void microgame;
 
-  const { fallingWords, inputHandlers, inputRef } = useHancomTypingGame();
+  const { completedCount, fallingWords, inputHandlers, inputRef } =
+    useHancomTypingGame();
 
   return (
     <div className="relative grid h-screen w-screen place-items-center overflow-hidden bg-black">
@@ -40,6 +41,7 @@ export function HancomTypingGame({
           ))}
         </div>
         <input
+          key={completedCount}
           ref={inputRef}
           aria-label="한컴 단어 입력"
           autoCapitalize="off"
