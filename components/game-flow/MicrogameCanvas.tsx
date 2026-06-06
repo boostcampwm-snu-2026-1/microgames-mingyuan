@@ -22,6 +22,7 @@ import { MinecraftMiningGame } from "@/games/MinecraftMiningGame";
 import { ModooMarbleGame } from "@/games/ModooMarbleGame";
 import type { Microgame } from "@/data/microgames";
 import { PianoMelodyGame } from "@/games/PianoMelodyGame";
+import { PongGame } from "@/games/PongGame";
 import { PokemonTypingGame } from "@/games/PokemonTypingGame";
 import { SuperMarioCoinGame } from "@/games/SuperMarioCoinGame";
 import { TetrisLineClearGame } from "@/games/TetrisLineClearGame";
@@ -87,6 +88,10 @@ function renderGameCanvas(microgame: Microgame) {
 
   if (microgame.canvas === "pianoMelody") {
     return <PianoMelodyGame microgame={microgame} />;
+  }
+
+  if (microgame.canvas === "pongSurvival") {
+    return <PongGame microgame={microgame} />;
   }
 
   if (microgame.canvas === "chromeDinoSpace") {

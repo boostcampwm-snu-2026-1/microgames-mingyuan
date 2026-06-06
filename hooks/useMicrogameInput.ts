@@ -69,6 +69,7 @@ export function useMicrogameInput({
         microgame.canvas === "maplestoryLieDetector" ||
         microgame.canvas === "maplestoryRune" ||
         microgame.canvas === "pianoMelody" ||
+        microgame.canvas === "pongSurvival" ||
         microgame.canvas === "pokemonTyping" ||
         microgame.canvas === "superMarioCoins" ||
         microgame.canvas === "tetrisLineClear" ||

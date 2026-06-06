@@ -48,6 +48,7 @@ export type SoundEffectTrack =
   | "minecraftDig1"
   | "minecraftDig2"
   | "modooDiceRoll"
+  | "pongHit"
   | "leagueChampionSelect"
   | "runeEffect";
 
@@ -100,6 +101,7 @@ const SOUND_EFFECT_TRACK_PATHS = {
   minecraftDig1: "/games/minecraft/sounds/dig-1.mp3",
   minecraftDig2: "/games/minecraft/sounds/dig-2.mp3",
   modooDiceRoll: "/games/modoo-marble/sounds/dice-roll.mp3",
+  pongHit: "/games/pong/sounds/pong-hit.mp3",
   runeEffect: "/games/maple-story-rune/sounds/rune-effect.mp3",
 } satisfies Record<SoundEffectTrack, string>;
 

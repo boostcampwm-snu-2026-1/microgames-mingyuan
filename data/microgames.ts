@@ -34,6 +34,7 @@ export type MicrogameCanvas =
   | "minecraftMining"
   | "modooMarble"
   | "pianoMelody"
+  | "pongSurvival"
   | "pokemonTyping"
   | "superMarioCoins"
   | "tetrisLineClear"
@@ -258,6 +259,22 @@ export const MICROGAMES = [
     id: "gomoku-white-five",
     startPrompt: "흰돌을 놓아 이겨라!",
     title: "오목",
+    type: "normal",
+  },
+
+  {
+    beatCount: 8,
+    canvas: "pongSurvival",
+    microscope: {
+      description:
+        "퐁은 공 하나가 전부인 게임인데, 놓치는 순간 바로 끝입니다. 위아래로 패들을 움직여 짧은 랠리를 버텨보세요.",
+      imageAlt: "퐁 게임 화면",
+      imageSrc: "/games/pong/images/thumbnail.svg",
+    },
+    control: "arrowKeys",
+    id: "pong-survival",
+    startPrompt: "버텨라!",
+    title: "퐁",
     type: "normal",
   },
 
