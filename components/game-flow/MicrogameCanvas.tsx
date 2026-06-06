@@ -25,6 +25,7 @@ import type { Microgame } from "@/data/microgames";
 import { PianoMelodyGame } from "@/games/PianoMelodyGame";
 import { PongGame } from "@/games/PongGame";
 import { PokemonTypingGame } from "@/games/PokemonTypingGame";
+import { SuperMarioGalaxyGame } from "@/games/SuperMarioGalaxyGame";
 import { SuperMarioCoinGame } from "@/games/SuperMarioCoinGame";
 import { TetrisLineClearGame } from "@/games/TetrisLineClearGame";
 import { TwoThousandFortyEightBossGame } from "@/games/TwoThousandFortyEightBossGame";
@@ -62,6 +63,10 @@ function renderGameCanvas(microgame: Microgame) {
 
   if (microgame.canvas === "superMarioCoins") {
     return <SuperMarioCoinGame microgame={microgame} />;
+  }
+
+  if (microgame.canvas === "superMarioGalaxyStarBits") {
+    return <SuperMarioGalaxyGame microgame={microgame} />;
   }
 
   if (microgame.canvas === "pokemonTyping") {

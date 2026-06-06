@@ -348,6 +348,15 @@ export function GameScreen({
         return;
       }
 
+      if (microgame.canvas === "superMarioGalaxyStarBits") {
+        bgmLibrary
+          .play("superMarioGalaxy", "once", "now")
+          .catch((error: unknown) => {
+            console.error(error);
+          });
+        return;
+      }
+
       if (microgame.canvas === "tetrisLineClear") {
         bgmLibrary.play("tetris", "once", "now").catch((error: unknown) => {
           console.error(error);

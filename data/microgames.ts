@@ -37,6 +37,7 @@ export type MicrogameCanvas =
   | "pianoMelody"
   | "pongSurvival"
   | "pokemonTyping"
+  | "superMarioGalaxyStarBits"
   | "superMarioCoins"
   | "tetrisLineClear"
   | "twoThousandFortyEightBoss"
@@ -149,6 +150,22 @@ export const MICROGAMES = [
     id: "super-mario-coin-count",
     startPrompt: "코인을 정확히 모아라!",
     title: "슈퍼 마리오",
+    type: "normal",
+  },
+
+  {
+    beatCount: 12,
+    canvas: "superMarioGalaxyStarBits",
+    microscope: {
+      description:
+        "슈퍼마리오 갤럭시에서 반짝이는 스타구슬 보이면 그냥 지나칠 수 없죠. 손을 떼지 말고 쭉 끌어서 여섯 개를 모아야 해요.",
+      imageAlt: "슈퍼마리오 갤럭시 스타구슬",
+      imageSrc: "/games/super-mario-galaxy/images/blue-bits.png",
+    },
+    control: "mouseDrag",
+    id: "super-mario-galaxy-star-bits",
+    startPrompt: "스타구슬을 모아라!",
+    title: "슈퍼마리오 갤럭시",
     type: "normal",
   },
 

@@ -28,6 +28,7 @@ export type BgmTrack =
   | "resultsAndMain"
   | "setup"
   | "speedUp"
+  | "superMarioGalaxy"
   | "superMario"
   | "success"
   | "tetris"
@@ -80,6 +81,8 @@ const BGM_TRACK_PATHS = {
   resultsAndMain: "/games/game-flow/sounds/results-and-main.mp3",
   setup: "/games/game-flow/sounds/setup.mp3",
   speedUp: "/games/game-flow/sounds/speed-up.mp3",
+  superMarioGalaxy:
+    "/games/super-mario-galaxy/sounds/super-mario-galaxy-bgm.mp3",
   superMario: "/games/supermario/sounds/overworld-theme.mp3",
   success: "/games/game-flow/sounds/success.mp3",
   tetris: "/games/tetris/sounds/tetris-bgm.mp3",
@@ -153,6 +156,7 @@ const BGM_TRACK_BEATS = {
   resultsAndMain: 83,
   setup: 4,
   speedUp: 8,
+  superMarioGalaxy: 12,
   superMario: 8,
   success: 4,
   tetris: 12,
