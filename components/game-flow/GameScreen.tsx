@@ -348,6 +348,31 @@ export function GameScreen({
         return;
       }
 
+      if (microgame.canvas === "modooMarble") {
+        bgmLibrary
+          .play("modooMarble", "once", "now")
+          .catch((error: unknown) => {
+            console.error(error);
+          });
+        return;
+      }
+
+      if (microgame.canvas === "cookieRun") {
+        bgmLibrary.play("cookieRun", "once", "now").catch((error: unknown) => {
+          console.error(error);
+        });
+        return;
+      }
+
+      if (microgame.canvas === "crazyArcade") {
+        bgmLibrary
+          .play("crazyArcade", "once", "now")
+          .catch((error: unknown) => {
+            console.error(error);
+          });
+        return;
+      }
+
       if (microgame.canvas === "maplestoryLieDetector") {
         bgmLibrary.play("maplestory", "once", "now").catch((error: unknown) => {
           console.error(error);
@@ -368,6 +393,27 @@ export function GameScreen({
           .catch((error: unknown) => {
             console.error(error);
           });
+        return;
+      }
+
+      if (microgame.canvas === "hancomTyping") {
+        bgmLibrary.play("hancom", "once", "now").catch((error: unknown) => {
+          console.error(error);
+        });
+        return;
+      }
+
+      if (microgame.canvas === "zeldaCircleDraw") {
+        bgmLibrary.play("zelda", "once", "now").catch((error: unknown) => {
+          console.error(error);
+        });
+        return;
+      }
+
+      if (microgame.canvas === "halliGalliBoss") {
+        bgmLibrary.play("halliGalli", "once", "now").catch((error: unknown) => {
+          console.error(error);
+        });
         return;
       }
 
