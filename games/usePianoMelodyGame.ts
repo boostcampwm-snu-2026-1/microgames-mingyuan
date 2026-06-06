@@ -8,7 +8,7 @@ const MIN_CANVAS_WIDTH = 640;
 const MAX_DELTA_MS = 50;
 const FEEDBACK_DURATION_MS = 360;
 const BACKGROUND_IMAGE_SRC = "/games/piano/images/background.png";
-const NOTE_VOLUME = 0.68;
+const NOTE_VOLUME = 0.92;
 
 type Note = Readonly<{
   key: string;

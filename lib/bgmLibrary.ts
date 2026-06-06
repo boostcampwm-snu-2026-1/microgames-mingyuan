@@ -86,9 +86,14 @@ const AUDIO_TRACK_PATHS = {
 const DEFAULT_BEAT_DURATION_SECONDS = RHYTHM_DURATION_MS / 1000;
 const BGM_GAIN = 0.72;
 const BGM_TRACK_GAINS: Partial<Record<BgmTrack, number>> = {
+  kartrider: 0.94,
+  mapleRune: 0.94,
   undertale: 0.52,
 };
 const SOUND_EFFECT_GAIN = 0.86;
+const SOUND_EFFECT_TRACK_GAINS: Partial<Record<SoundEffectTrack, number>> = {
+  runeEffect: 1,
+};
 const ATTACK_FADE_SECONDS = 0.012;
 const RELEASE_FADE_SECONDS = 0.045;
 
@@ -199,7 +204,10 @@ class BgmLibrary {
     source.buffer = buffer;
     source.connect(gainNode);
     gainNode.connect(audioContext.destination);
-    gainNode.gain.setValueAtTime(SOUND_EFFECT_GAIN, audioContext.currentTime);
+    gainNode.gain.setValueAtTime(
+      this.getSoundEffectGain(track),
+      audioContext.currentTime,
+    );
     source.start(audioContext.currentTime);
   }
 
@@ -451,6 +459,10 @@ class BgmLibrary {
 
   private getTrackGain(track: BgmTrack) {
     return BGM_TRACK_GAINS[track] ?? BGM_GAIN;
+  }
+
+  private getSoundEffectGain(track: SoundEffectTrack) {
+    return SOUND_EFFECT_TRACK_GAINS[track] ?? SOUND_EFFECT_GAIN;
   }
 
   private isCurrentSource(
