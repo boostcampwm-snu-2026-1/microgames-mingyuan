@@ -15,6 +15,15 @@ import { FixedLivesOverlay } from "./FixedLivesOverlay";
 import { MAIN_SCREEN_EXIT_MS } from "./gameFlowConstants";
 import { NeonButton, NeonShell } from "./NeonShell";
 
+const LOADING_MESSAGES = [
+  "식빵 굽는 중...",
+  "엘리베이터 점검 중...",
+  "도장 잉크 채우는 중...",
+  "룬 해독하는 중...",
+  "카트 예열하는 중...",
+  "챔피언 목록 펼치는 중...",
+] as const;
+
 export function MainScreen({
   highestClearedRound,
   onStart,
@@ -156,11 +165,30 @@ export function LoadingScreen({
   preloadStatus: PreloadStatus;
 }>) {
   useBgmTrack("resultsAndMain", "loop", "now");
+  const [messageIndex, setMessageIndex] = useState(0);
   const progress =
     preloadStatus.total > 0
       ? Math.round((preloadStatus.loaded / preloadStatus.total) * 100)
       : 0;
   const isFailed = preloadStatus.phase === "failed";
+  const loadingMessage = LOADING_MESSAGES[messageIndex];
+
+  useEffect(() => {
+    if (isFailed) {
+      return;
+    }
+
+    const messageTimer = window.setInterval(() => {
+      setMessageIndex(
+        (currentMessageIndex) =>
+          (currentMessageIndex + 1) % LOADING_MESSAGES.length,
+      );
+    }, 1400);
+
+    return () => {
+      window.clearInterval(messageTimer);
+    };
+  }, [isFailed]);
 
   return (
     <NeonShell>
@@ -182,8 +210,14 @@ export function LoadingScreen({
             unoptimized
           />
         </div>
+        <p className="mt-5 text-sm font-black text-cyan-50/80">
+          {isFailed ? "로딩을 멈췄어요" : loadingMessage}
+        </p>
         <div className="mx-auto my-8 h-4 max-w-md overflow-hidden rounded-full border border-cyan-100/70 bg-black">
-          <div className="neon-loading-bar h-full rounded-full bg-cyan-200" />
+          <div
+            className="h-full rounded-full bg-cyan-200 shadow-[0_0_18px_rgba(103,232,249,0.9)] transition-[width] duration-200 ease-out"
+            style={{ width: `${progress}%` }}
+          />
         </div>
         <div className="mx-auto max-w-xl rounded-md border border-cyan-100/25 bg-black/35 p-3 text-left text-xs leading-5 text-cyan-50/75">
           <div className="flex items-center justify-between gap-3 font-black text-cyan-100">
