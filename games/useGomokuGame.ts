@@ -25,11 +25,14 @@ const INITIAL_STONES = [
   { color: "white", column: 9, row: 9 },
   { color: "white", column: 10, row: 9 },
   { color: "black", column: 6, row: 8 },
-  { color: "black", column: 6, row: 10 },
+  { color: "black", column: 8, row: 8 },
+  { color: "black", column: 10, row: 8 },
   { color: "black", column: 12, row: 8 },
+  { color: "black", column: 6, row: 10 },
+  { color: "black", column: 7, row: 10 },
+  { color: "black", column: 9, row: 10 },
+  { color: "black", column: 10, row: 10 },
   { color: "black", column: 12, row: 10 },
-  { color: "black", column: 4, row: 5 },
-  { color: "black", column: 14, row: 13 },
 ] satisfies GomokuStone[];
 
 function dispatchClear() {
