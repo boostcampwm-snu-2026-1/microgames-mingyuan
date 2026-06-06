@@ -8,6 +8,7 @@ export type BgmTrack =
   | "bossStage"
   | "brainAcademy"
   | "cookieRun"
+  | "crazyArcade"
   | "fail"
   | "gameOver"
   | "geometryDash"
@@ -41,6 +42,7 @@ export type SoundEffectTrack =
   | "animalCrossingStamp"
   | "cookieRunJump"
   | "cookieRunSlide"
+  | "crazyArcadeBombInstall"
   | "halliGalliBell"
   | "halliGalliCard"
   | "minecraftDig1"
@@ -55,6 +57,7 @@ const BGM_TRACK_PATHS = {
   bossStage: "/games/game-flow/sounds/boss-stage.mp3",
   brainAcademy: "/games/brain-academy/sounds/brain-academy-bgm.mp3",
   cookieRun: "/games/cookie-run/sounds/cookie-run-bgm.mp3",
+  crazyArcade: "/games/crazy-arcade/sounds/crazy-arcade-bgm.mp3",
   fail: "/games/game-flow/sounds/fail.mp3",
   gameOver: "/games/game-flow/sounds/game-over.mp3",
   geometryDash: "/games/geometry-dash/sounds/geometry-dash-bgm.mp3",
@@ -89,6 +92,8 @@ const SOUND_EFFECT_TRACK_PATHS = {
   animalCrossingStamp: "/games/animal-crossing/sounds/stamp.mp3",
   cookieRunJump: "/games/cookie-run/sounds/cookie-jump.mp3",
   cookieRunSlide: "/games/cookie-run/sounds/cookie-slide.mp3",
+  crazyArcadeBombInstall:
+    "/games/crazy-arcade/sounds/crazy-arcade-bomb-install.mp3",
   halliGalliBell: "/games/halli-galli/sounds/bell-chime.mp3",
   halliGalliCard: "/games/halli-galli/sounds/card-draw.mp3",
   leagueChampionSelect: "/games/league-of-legend/sounds/champ-select.mp3",
@@ -123,6 +128,7 @@ const BGM_TRACK_BEATS = {
   bossStage: 8,
   brainAcademy: 12,
   cookieRun: 12,
+  crazyArcade: 12,
   fail: 4,
   geometryDash: 12,
   halliGalli: 36,

@@ -20,6 +20,7 @@ export type MicrogameCanvas =
   | "chromeDinoSpace"
   | "cookieRun"
   | "courseRegistrationNumber"
+  | "crazyArcade"
   | "default"
   | "geometryDashSpikes"
   | "halliGalliBoss"
@@ -157,6 +158,16 @@ export const MICROGAMES = [
     id: "tetris-four-line-clear",
     startPrompt: "4줄 없애라!",
     title: "Tetris",
+    type: "normal",
+  },
+
+  {
+    beatCount: 12,
+    canvas: "crazyArcade",
+    control: "arrowAndSpace",
+    id: "crazy-arcade-water-bomb",
+    startPrompt: "물폭탄을 설치해라!",
+    title: "Crazy Arcade",
     type: "normal",
   },
 

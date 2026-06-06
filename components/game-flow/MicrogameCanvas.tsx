@@ -7,6 +7,7 @@ import { BrainAcademyBlockGame } from "@/games/BrainAcademyBlockGame";
 import { ChromeDinoSpaceGame } from "@/games/ChromeDinoSpaceGame";
 import { CookieRunGame } from "@/games/CookieRunGame";
 import { CourseRegistrationNumberGame } from "@/games/CourseRegistrationNumberGame";
+import { CrazyArcadeGame } from "@/games/CrazyArcadeGame";
 import { DefaultMicrogameCanvas } from "@/games/DefaultMicrogameCanvas";
 import { GeometryDashGame } from "@/games/GeometryDashGame";
 import { HalliGalliBossGame } from "@/games/HalliGalliBossGame";
@@ -93,6 +94,10 @@ function renderGameCanvas(microgame: Microgame) {
 
   if (microgame.canvas === "cookieRun") {
     return <CookieRunGame microgame={microgame} />;
+  }
+
+  if (microgame.canvas === "crazyArcade") {
+    return <CrazyArcadeGame microgame={microgame} />;
   }
 
   if (microgame.canvas === "geometryDashSpikes") {

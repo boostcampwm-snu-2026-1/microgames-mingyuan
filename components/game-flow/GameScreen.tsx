@@ -364,6 +364,15 @@ export function GameScreen({
         return;
       }
 
+      if (microgame.canvas === "crazyArcade") {
+        bgmLibrary
+          .play("crazyArcade", "once", "now")
+          .catch((error: unknown) => {
+            console.error(error);
+          });
+        return;
+      }
+
       if (microgame.canvas === "maplestoryLieDetector") {
         bgmLibrary.play("maplestory", "once", "now").catch((error: unknown) => {
           console.error(error);
