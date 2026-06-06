@@ -18,6 +18,7 @@ const MAX_MOVE_SPEED = 720;
 const CHECKPOINT_RADIUS = 82;
 const CAR_COLLISION_RADIUS = 13;
 const COLLISION_EFFECT_SECONDS = 0.22;
+const TOTAL_LAPS = 2;
 const KARTRIDER_ASSETS = {
   kart: "/games/kartrider/images/kart.png",
   track: "/games/kartrider/images/track.png",
@@ -71,6 +72,7 @@ type GameState = {
   collisionEffectY: number;
   elapsedMs: number;
   hasCleared: boolean;
+  lapCount: number;
   lastTimestamp: number | null;
   nextCheckpointIndex: number;
   velocityX: number;
@@ -100,6 +102,7 @@ function createInitialState() {
     collisionEffectY: start.y,
     elapsedMs: 0,
     hasCleared: false,
+    lapCount: 0,
     lastTimestamp: null,
     nextCheckpointIndex: 0,
     velocityX: 0,
@@ -263,6 +266,15 @@ function updateCheckpoints(state: GameState) {
   state.nextCheckpointIndex += 1;
 
   if (state.nextCheckpointIndex >= CHECKPOINTS.length) {
+    const nextLapCount = state.lapCount + 1;
+
+    state.lapCount = nextLapCount;
+
+    if (nextLapCount < TOTAL_LAPS) {
+      state.nextCheckpointIndex = 0;
+      return;
+    }
+
     state.hasCleared = true;
     state.velocityX = 0;
     state.velocityY = 0;
@@ -539,14 +551,28 @@ function drawHud(
   width: number,
   remainingMs: number,
 ) {
-  const progress = state.nextCheckpointIndex / CHECKPOINTS.length;
+  const progress =
+    (state.lapCount + state.nextCheckpointIndex / CHECKPOINTS.length) /
+    TOTAL_LAPS;
   const progressWidth = Math.min(320, width * 0.34);
   const progressX = width - progressWidth - 28;
   const progressY = 34;
+  const lapLabel = `${Math.min(state.lapCount + 1, TOTAL_LAPS)}/${TOTAL_LAPS} LAP`;
 
   drawCenteredText(context, "완주해라!", width / 2, 54, 38, "#f8fafc");
 
   context.save();
+  context.fillStyle = "rgba(2, 6, 23, 0.78)";
+  context.fillRect(progressX, progressY - 32, progressWidth, 26);
+  context.strokeStyle = "rgba(255, 255, 255, 0.62)";
+  context.lineWidth = 2;
+  context.strokeRect(progressX, progressY - 32, progressWidth, 26);
+  context.fillStyle = "#fde68a";
+  context.font = "900 18px Arial, Helvetica, sans-serif";
+  context.textAlign = "center";
+  context.textBaseline = "middle";
+  context.fillText(lapLabel, progressX + progressWidth / 2, progressY - 19);
+
   context.fillStyle = "rgba(2, 6, 23, 0.72)";
   context.fillRect(progressX, progressY, progressWidth, 20);
   context.fillStyle = "#22d3ee";
