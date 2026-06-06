@@ -64,8 +64,8 @@ function createInitialPipes() {
 
 function createInitialState() {
   return {
-    birdVelocityY: 0,
-    birdY: 146,
+    birdVelocityY: FLAP_VELOCITY,
+    birdY: 132,
     elapsedMs: 0,
     hasCleared: false,
     hasFailed: false,
