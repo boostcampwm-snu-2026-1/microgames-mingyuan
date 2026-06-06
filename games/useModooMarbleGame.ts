@@ -99,7 +99,7 @@ function isPointInRect(point: Point, rect: Rect) {
 }
 
 function getButtonRect(width: number, height: number) {
-  const buttonWidth = Math.min(width * 0.34, 250);
+  const buttonWidth = Math.min(width * 0.46, 360);
   const buttonHeight = buttonWidth * 0.62;
 
   return {

@@ -14,6 +14,8 @@ const MAX_DELTA_SECONDS = 1 / 30;
 const ROUND_END_SAFETY_MS = 90;
 const GRID_COLUMNS = 17;
 const GRID_ROWS = 11;
+const PLAYER_RADIUS_IN_CELLS = 0.38;
+const PLAYER_SPEED_CELLS_PER_SECOND = 5.6;
 const SOURCE_GRID_X = 67;
 const SOURCE_GRID_Y = 70;
 const SOURCE_CELL_SIZE = 73;
@@ -34,6 +36,11 @@ type Cell = Readonly<{
   row: number;
 }>;
 
+type GridPosition = Readonly<{
+  column: number;
+  row: number;
+}>;
+
 type BackgroundLayout = Readonly<{
   height: number;
   scale: number;
@@ -48,7 +55,9 @@ type GameState = {
   hasResolved: boolean;
   lastDirection: Direction;
   lastTimestamp: number | null;
-  playerCell: Cell;
+  passableBombCells: Set<string>;
+  playerPosition: GridPosition;
+  pressedDirections: Set<Direction>;
   targetCell: Cell;
 };
 
@@ -114,7 +123,9 @@ function createInitialState() {
     hasResolved: false,
     lastDirection: "down",
     lastTimestamp: null,
-    playerCell,
+    passableBombCells: new Set<string>(),
+    playerPosition: clampPlayerPosition(playerCell),
+    pressedDirections: new Set<Direction>(),
     targetCell,
   } satisfies GameState;
 }
@@ -171,11 +182,18 @@ function getGridLayout(layout: BackgroundLayout) {
 }
 
 function getCellCenter(cell: Cell, layout: BackgroundLayout) {
+  return getGridPositionCenter(cell, layout);
+}
+
+function getGridPositionCenter(
+  position: GridPosition,
+  layout: BackgroundLayout,
+) {
   const grid = getGridLayout(layout);
 
   return {
-    x: grid.x + (cell.column + 0.5) * grid.cellSize,
-    y: grid.y + (cell.row + 0.5) * grid.cellSize,
+    x: grid.x + (position.column + 0.5) * grid.cellSize,
+    y: grid.y + (position.row + 0.5) * grid.cellSize,
   };
 }
 
@@ -248,7 +266,7 @@ function drawBomb(
 ) {
   const grid = getGridLayout(layout);
   const center = getCellCenter(cell, layout);
-  const width = grid.cellSize * 0.58;
+  const width = grid.cellSize * 0.78;
   const height = width * 1.64;
 
   context.save();
@@ -290,8 +308,8 @@ function drawPlayer(
             : "playerDown"
     ];
   const grid = getGridLayout(layout);
-  const center = getCellCenter(state.playerCell, layout);
-  const width = grid.cellSize * 0.68;
+  const center = getGridPositionCenter(state.playerPosition, layout);
+  const width = grid.cellSize * 0.9;
   const height = width * 1.18;
 
   context.save();
@@ -343,28 +361,119 @@ function drawScene(
   drawPlayer(context, images, state, layout);
 }
 
-function getMovedCell(cell: Cell, direction: Direction) {
-  if (direction === "up") {
-    return { ...cell, row: cell.row - 1 };
-  }
-
-  if (direction === "down") {
-    return { ...cell, row: cell.row + 1 };
-  }
-
-  if (direction === "left") {
-    return { ...cell, column: cell.column - 1 };
-  }
-
-  return { ...cell, column: cell.column + 1 };
+function clampPlayerPosition(position: GridPosition) {
+  return {
+    column: Math.min(
+      Math.max(position.column, PLAYER_RADIUS_IN_CELLS),
+      GRID_COLUMNS - 1 - PLAYER_RADIUS_IN_CELLS,
+    ),
+    row: Math.min(
+      Math.max(position.row, PLAYER_RADIUS_IN_CELLS),
+      GRID_ROWS - 1 - PLAYER_RADIUS_IN_CELLS,
+    ),
+  } satisfies GridPosition;
 }
 
-function isCellInBounds(cell: Cell) {
+function getNearestCell(position: GridPosition) {
+  return {
+    column: Math.min(
+      Math.max(Math.round(position.column), 0),
+      GRID_COLUMNS - 1,
+    ),
+    row: Math.min(Math.max(Math.round(position.row), 0), GRID_ROWS - 1),
+  } satisfies Cell;
+}
+
+function isCircleOverCell(position: GridPosition, cell: Cell) {
+  const cellLeft = cell.column - 0.5;
+  const cellRight = cell.column + 0.5;
+  const cellTop = cell.row - 0.5;
+  const cellBottom = cell.row + 0.5;
+  const closestX = Math.min(Math.max(position.column, cellLeft), cellRight);
+  const closestY = Math.min(Math.max(position.row, cellTop), cellBottom);
+  const distanceX = position.column - closestX;
+  const distanceY = position.row - closestY;
+
   return (
-    cell.column >= 0 &&
-    cell.column < GRID_COLUMNS &&
-    cell.row >= 0 &&
-    cell.row < GRID_ROWS
+    distanceX * distanceX + distanceY * distanceY <
+    PLAYER_RADIUS_IN_CELLS * PLAYER_RADIUS_IN_CELLS
+  );
+}
+
+function isPositionBlocked(
+  position: GridPosition,
+  bombCells: ReadonlySet<string>,
+  passableBombCells: ReadonlySet<string>,
+) {
+  return Array.from(bombCells).some((cellKey) => {
+    const [column, row] = cellKey.split(":").map(Number);
+    const bombCell = { column, row } satisfies Cell;
+
+    if (passableBombCells.has(cellKey)) {
+      return false;
+    }
+
+    return isCircleOverCell(position, bombCell);
+  });
+}
+
+function getMovementVector(pressedDirections: ReadonlySet<Direction>) {
+  const x =
+    (pressedDirections.has("right") ? 1 : 0) -
+    (pressedDirections.has("left") ? 1 : 0);
+  const y =
+    (pressedDirections.has("down") ? 1 : 0) -
+    (pressedDirections.has("up") ? 1 : 0);
+  const length = Math.hypot(x, y);
+
+  if (length === 0) {
+    return { x: 0, y: 0 };
+  }
+
+  return {
+    x: x / length,
+    y: y / length,
+  };
+}
+
+function getMovedPosition(state: GameState, deltaSeconds: number) {
+  const movement = getMovementVector(state.pressedDirections);
+  const distance = PLAYER_SPEED_CELLS_PER_SECOND * deltaSeconds;
+  const nextColumnPosition = clampPlayerPosition({
+    ...state.playerPosition,
+    column: state.playerPosition.column + movement.x * distance,
+  });
+  const columnPosition = isPositionBlocked(
+    nextColumnPosition,
+    state.bombCells,
+    state.passableBombCells,
+  )
+    ? state.playerPosition
+    : nextColumnPosition;
+  const nextRowPosition = clampPlayerPosition({
+    ...columnPosition,
+    row: columnPosition.row + movement.y * distance,
+  });
+
+  if (
+    isPositionBlocked(nextRowPosition, state.bombCells, state.passableBombCells)
+  ) {
+    return columnPosition;
+  }
+
+  return nextRowPosition;
+}
+
+function getNextPassableBombCells(
+  playerPosition: GridPosition,
+  passableBombCells: ReadonlySet<string>,
+) {
+  return new Set(
+    [...passableBombCells].filter((cellKey) => {
+      const [column, row] = cellKey.split(":").map(Number);
+
+      return isCircleOverCell(playerPosition, { column, row });
+    }),
   );
 }
 
@@ -451,12 +560,17 @@ export function useCrazyArcadeGameCanvas(gameBeatCount: number) {
         event.preventDefault();
         event.stopImmediatePropagation();
 
-        const cellKey = getCellKey(stateRef.current.playerCell);
+        const bombCell = getNearestCell(stateRef.current.playerPosition);
+        const cellKey = getCellKey(bombCell);
 
         if (!stateRef.current.bombCells.has(cellKey)) {
           stateRef.current = {
             ...stateRef.current,
             bombCells: new Set([...stateRef.current.bombCells, cellKey]),
+            passableBombCells: new Set([
+              ...stateRef.current.passableBombCells,
+              cellKey,
+            ]),
           };
           playBombInstallSound();
         }
@@ -472,23 +586,33 @@ export function useCrazyArcadeGameCanvas(gameBeatCount: number) {
       event.preventDefault();
       event.stopImmediatePropagation();
 
-      const nextCell = getMovedCell(stateRef.current.playerCell, direction);
-
       stateRef.current = {
         ...stateRef.current,
         lastDirection: direction,
+        pressedDirections: new Set([
+          ...stateRef.current.pressedDirections,
+          direction,
+        ]),
       };
+    };
 
-      if (
-        !isCellInBounds(nextCell) ||
-        stateRef.current.bombCells.has(getCellKey(nextCell))
-      ) {
+    const handleKeyUp = (event: KeyboardEvent) => {
+      if (!isDirectionKey(event.key)) {
         return;
       }
 
+      event.preventDefault();
+      event.stopImmediatePropagation();
+
+      const direction = KEY_TO_DIRECTION[event.key];
+
       stateRef.current = {
         ...stateRef.current,
-        playerCell: nextCell,
+        pressedDirections: new Set(
+          [...stateRef.current.pressedDirections].filter(
+            (pressedDirection) => pressedDirection !== direction,
+          ),
+        ),
       };
     };
 
@@ -502,11 +626,18 @@ export function useCrazyArcadeGameCanvas(gameBeatCount: number) {
         MAX_DELTA_SECONDS,
       );
       const elapsedMs = stateRef.current.elapsedMs + deltaSeconds * 1000;
+      const playerPosition = getMovedPosition(stateRef.current, deltaSeconds);
+      const passableBombCells = getNextPassableBombCells(
+        playerPosition,
+        stateRef.current.passableBombCells,
+      );
 
       stateRef.current = {
         ...stateRef.current,
         elapsedMs,
         lastTimestamp: timestamp,
+        passableBombCells,
+        playerPosition,
       };
 
       drawScene(context, imagesRef.current, stateRef.current, width, height);
@@ -521,6 +652,7 @@ export function useCrazyArcadeGameCanvas(gameBeatCount: number) {
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
     window.addEventListener("keydown", handleKeyDown, { capture: true });
+    window.addEventListener("keyup", handleKeyUp, { capture: true });
     frameRef.current = window.requestAnimationFrame(render);
 
     return () => {
@@ -530,6 +662,7 @@ export function useCrazyArcadeGameCanvas(gameBeatCount: number) {
 
       window.removeEventListener("resize", resizeCanvas);
       window.removeEventListener("keydown", handleKeyDown, { capture: true });
+      window.removeEventListener("keyup", handleKeyUp, { capture: true });
     };
   }, [gameBeatCount]);
 
