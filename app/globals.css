@@ -578,7 +578,6 @@ body {
 }
 
 .microgame-start-prompt > p {
-  -webkit-text-stroke: 2px rgb(0 0 0 / 0.82);
   color: white;
   font-size: clamp(3.5rem, 9vw, 8rem);
   font-weight: 900;
@@ -586,6 +585,10 @@ body {
   max-width: min(90vw, 72rem);
   text-align: center;
   text-shadow:
+    0 4px 0 rgb(0 0 0 / 0.82),
+    0 -2px 0 rgb(0 0 0 / 0.58),
+    2px 0 0 rgb(0 0 0 / 0.62),
+    -2px 0 0 rgb(0 0 0 / 0.62),
     0 6px 0 rgb(0 0 0 / 0.78),
     0 0 32px rgb(103 232 249 / 0.76);
 }
