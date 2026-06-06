@@ -10,6 +10,7 @@ export type BgmTrack =
   | "fail"
   | "gameOver"
   | "geometryDash"
+  | "halliGalli"
   | "hancom"
   | "intermission"
   | "kartrider"
@@ -36,6 +37,8 @@ export type SoundEffectTrack =
   | "clear4"
   | "clear5"
   | "animalCrossingStamp"
+  | "halliGalliBell"
+  | "halliGalliCard"
   | "minecraftDig1"
   | "minecraftDig2"
   | "leagueChampionSelect"
@@ -49,6 +52,7 @@ const BGM_TRACK_PATHS = {
   fail: "/games/game-flow/sounds/fail.mp3",
   gameOver: "/games/game-flow/sounds/game-over.mp3",
   geometryDash: "/games/geometry-dash/sounds/geometry-dash-bgm.mp3",
+  halliGalli: "/games/halli-galli/sounds/halli-galli-bgm.mp3",
   hancom: "/games/hancom/sounds/hancom-bgm.mp3",
   intermission: "/games/game-flow/sounds/intermission.mp3",
   kartrider: "/games/kartrider/sounds/kartrider-bgm.mp3",
@@ -76,6 +80,8 @@ const SOUND_EFFECT_TRACK_PATHS = {
   clear4: "/games/game-flow/sounds/clear-4.mp3",
   clear5: "/games/game-flow/sounds/clear-5.mp3",
   animalCrossingStamp: "/games/animal-crossing/sounds/stamp.mp3",
+  halliGalliBell: "/games/halli-galli/sounds/bell-chime.mp3",
+  halliGalliCard: "/games/halli-galli/sounds/card-draw.mp3",
   leagueChampionSelect: "/games/league-of-legend/sounds/champ-select.mp3",
   minecraftDig1: "/games/minecraft/sounds/dig-1.mp3",
   minecraftDig2: "/games/minecraft/sounds/dig-2.mp3",
@@ -108,6 +114,7 @@ const BGM_TRACK_BEATS = {
   brainAcademy: 12,
   fail: 4,
   geometryDash: 12,
+  halliGalli: 36,
   hancom: 12,
   intermission: 8,
   kartrider: 36,

@@ -385,6 +385,13 @@ export function GameScreen({
         return;
       }
 
+      if (microgame.canvas === "halliGalliBoss") {
+        bgmLibrary.play("halliGalli", "once", "now").catch((error: unknown) => {
+          console.error(error);
+        });
+        return;
+      }
+
       if (microgame.canvas === "maplestoryRune") {
         bgmLibrary.play("mapleRune", "once", "now").catch((error: unknown) => {
           console.error(error);

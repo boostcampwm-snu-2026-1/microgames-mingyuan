@@ -21,6 +21,7 @@ export type MicrogameCanvas =
   | "courseRegistrationNumber"
   | "default"
   | "geometryDashSpikes"
+  | "halliGalliBoss"
   | "hancomTyping"
   | "kartriderCourse"
   | "laytonShapeMatch"
@@ -72,7 +73,7 @@ export const MICROGAMES = [
     canvas: "amongUsWires",
     control: "mouseDrag",
     id: "among-us-wire-task",
-    startPrompt: "전선을 연결해라!",
+    startPrompt: "연결해라!",
     title: "어몽어스",
     type: "normal",
   },
@@ -82,7 +83,7 @@ export const MICROGAMES = [
     canvas: "animalCrossingStamps",
     control: "mouseClick",
     id: "animal-crossing-stamp-card",
-    startPrompt: "도장을 세 번 찍어라!",
+    startPrompt: "찍어라!",
     title: "동물의 숲",
     type: "normal",
   },
@@ -162,7 +163,7 @@ export const MICROGAMES = [
     canvas: "pianoMelody",
     control: "numberKeys",
     id: "piano-melody-repeat",
-    startPrompt: "멜로디를 연주해라!",
+    startPrompt: "연주해라!",
     title: "Piano",
     type: "normal",
   },
@@ -182,7 +183,7 @@ export const MICROGAMES = [
     canvas: "maplestoryLieDetector",
     control: "koreanKeyboard",
     id: "maplestory-lie-detector",
-    startPrompt: "보이는 대로 입력해라!",
+    startPrompt: "입력해라!",
     title: "MapleStory",
     type: "normal",
   },
@@ -212,7 +213,7 @@ export const MICROGAMES = [
     canvas: "leagueChampionBan",
     control: "mouseClick",
     id: "league-of-legend-champion-ban",
-    startPrompt: "타겟 챔피언을 밴해라!",
+    startPrompt: "챔피언을 밴해라!",
     title: "League of Legend",
     type: "normal",
   },
@@ -225,6 +226,16 @@ export const MICROGAMES = [
     startPrompt: "피해라!",
     title: "언더테일",
     type: "normal",
+  },
+
+  {
+    beatCount: 36,
+    canvas: "halliGalliBoss",
+    control: "mouseClick",
+    id: "halli-galli-bell-boss",
+    startPrompt: "과일이 5개일 때 종을 쳐라!",
+    title: "Halli Galli",
+    type: "boss",
   },
 
   {
