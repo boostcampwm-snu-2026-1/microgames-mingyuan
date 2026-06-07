@@ -45,7 +45,8 @@ export type MicrogameCanvas =
   | "tetrisLineClear"
   | "twoThousandFortyEightBoss"
   | "undertaleMouse"
-  | "zeldaCircleDraw";
+  | "zeldaCircleDraw"
+  | "zeldaOcarinaOfTime";
 
 export type MicrogameMicroscope = Readonly<{
   description: string;
@@ -344,6 +345,22 @@ export const MICROGAMES = [
     id: "zelda-circle-draw",
     startPrompt: "동그라미를 그려라!",
     title: "젤다의 전설: 스카이워드 소드",
+    type: "normal",
+  },
+
+  {
+    beatCount: 12,
+    canvas: "zeldaOcarinaOfTime",
+    microscope: {
+      description:
+        "시간의 오카리나에서는 짧은 멜로디 하나가 문을 열고 날씨도 바꿉니다. 악보를 보고 정확히 연주해보세요.",
+      imageAlt: "시간의 오카리나 악보",
+      imageSrc: "/games/zelda-ocarina-of-time/images/zeldas_lullaby.png",
+    },
+    control: "arrowAndSpace",
+    id: "zelda-ocarina-song",
+    startPrompt: "연주해라!",
+    title: "젤다의 전설: 시간의 오카리나",
     type: "normal",
   },
 

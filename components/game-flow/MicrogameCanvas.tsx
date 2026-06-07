@@ -34,6 +34,7 @@ import { TetrisLineClearGame } from "@/games/TetrisLineClearGame";
 import { TwoThousandFortyEightBossGame } from "@/games/TwoThousandFortyEightBossGame";
 import { UndertaleMouseGame } from "@/games/UndertaleMouseGame";
 import { ZeldaCircleDrawGame } from "@/games/ZeldaCircleDrawGame";
+import { ZeldaOcarinaGame } from "@/games/ZeldaOcarinaGame";
 
 type GameCanvasProps = Readonly<{
   microgame: Microgame;
@@ -166,6 +167,10 @@ function renderGameCanvas(microgame: Microgame) {
 
   if (microgame.canvas === "zeldaCircleDraw") {
     return <ZeldaCircleDrawGame microgame={microgame} />;
+  }
+
+  if (microgame.canvas === "zeldaOcarinaOfTime") {
+    return <ZeldaOcarinaGame microgame={microgame} />;
   }
 
   return <DefaultMicrogameCanvas microgame={microgame} />;

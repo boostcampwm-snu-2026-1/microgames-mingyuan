@@ -77,7 +77,8 @@ export function useMicrogameInput({
         microgame.canvas === "tetrisLineClear" ||
         microgame.canvas === "twoThousandFortyEightBoss" ||
         microgame.canvas === "undertaleMouse" ||
-        microgame.canvas === "modooMarble"
+        microgame.canvas === "modooMarble" ||
+        microgame.canvas === "zeldaOcarinaOfTime"
       ) {
         return;
       }
