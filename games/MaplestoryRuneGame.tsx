@@ -60,10 +60,10 @@ export function MaplestoryRuneGame({
           ) : null}
         </div>
       </div>
-      <div className="absolute left-1/2 top-[12%] flex -translate-x-1/2 items-center gap-[clamp(0.7rem,1.5vw,1.25rem)] rounded-md border border-white/30 bg-black/45 px-[clamp(0.8rem,1.8vw,1.5rem)] py-[clamp(0.55rem,1.4vw,1rem)] shadow-[0_0_24px_rgba(168,85,247,0.24)] backdrop-blur-sm">
+      <div className="absolute left-1/2 top-[12%] flex -translate-x-1/2 items-center gap-[clamp(0.75rem,1.7vw,1.45rem)] rounded-md border border-white/30 bg-black/45 px-[clamp(0.9rem,2vw,1.7rem)] py-[clamp(0.65rem,1.6vw,1.15rem)] shadow-[0_0_24px_rgba(168,85,247,0.24)] backdrop-blur-sm">
         {pattern.map((direction, index) => (
           <div
-            className={`relative aspect-square w-[clamp(4rem,9vw,7.4rem)] transition duration-150 ${
+            className={`relative aspect-square w-[clamp(5.2rem,11vw,9.2rem)] transition duration-150 ${
               index < progress
                 ? "scale-90 opacity-35"
                 : index === progress

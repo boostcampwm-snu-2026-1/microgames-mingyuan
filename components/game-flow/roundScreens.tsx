@@ -13,7 +13,6 @@ import {
   getRandomSpeedUpMessage,
 } from "./gameFlowConstants";
 import { MicrogameCanvas } from "./MicrogameCanvas";
-import { NeonButton } from "./NeonShell";
 
 function CurrentFloorDisplay({
   beatDurationMs,
@@ -154,17 +153,13 @@ export function InstructionRoundScreen({
 
 export function MicrogameRoundScreen({
   beatsLeft,
-  canRecordResult,
   isTransitioning = false,
   microgame,
-  onFinish,
   roundNumber,
 }: Readonly<{
   beatsLeft: number;
-  canRecordResult: boolean;
   isTransitioning?: boolean;
   microgame: Microgame;
-  onFinish: () => void;
   roundNumber: number;
 }>) {
   return (
@@ -192,14 +187,6 @@ export function MicrogameRoundScreen({
             <p className="timer-beat-number absolute inset-0 grid place-items-center pt-2 text-4xl font-black leading-none text-white sm:text-5xl">
               {beatsLeft}
             </p>
-          </div>
-          <div className="absolute bottom-5 right-5 flex items-center gap-3">
-            <p className="min-h-12 rounded-md border border-white/40 bg-black/55 px-6 py-3 text-center text-base font-black uppercase tracking-[0.18em] text-white/75">
-              {canRecordResult ? "입력 대기" : "판정 종료"}
-            </p>
-            <NeonButton onClick={onFinish} variant="secondary">
-              게임 종료
-            </NeonButton>
           </div>
         </>
       )}

@@ -6,6 +6,7 @@ import { FORM_INSTRUCTIONS } from "@/data/formInstructions";
 import { getMicrogamePoolForRound, type Microgame } from "@/data/microgames";
 import { useBeatGameRound } from "@/hooks/useBeatGameRound";
 import { useMicrogameInput } from "@/hooks/useMicrogameInput";
+import { useRecordSeenMicrogame } from "@/hooks/useRecordSeenMicrogame";
 import { useSynchronizedRhythm } from "@/hooks/useSynchronizedRhythm";
 import { bgmLibrary, type SoundEffectTrack } from "@/lib/bgmLibrary";
 import { FixedLivesOverlay } from "./FixedLivesOverlay";
@@ -189,6 +190,7 @@ export function GameScreen({
   onGainLife,
   onLoseLife,
   onResetResult,
+  onSeenMicrogame,
   onSuccess,
 }: Readonly<{
   lives: number;
@@ -197,6 +199,7 @@ export function GameScreen({
   onGainLife: () => void;
   onLoseLife: () => void;
   onResetResult: () => void;
+  onSeenMicrogame: (microgameId: string) => void;
   onSuccess: (roundNumber: number) => void;
 }>) {
   const oneUpAppliedRoundRef = useRef<number | null>(null);
@@ -237,7 +240,6 @@ export function GameScreen({
     [getMicrogameForRound, roundNumber],
   );
 
-  const canRecordResult = phase === "game";
   const backdropTone =
     phase === "bossStage" || phase === "speedUp" ? "warning" : "default";
   const shouldShowCanvasTransition =
@@ -266,6 +268,11 @@ export function GameScreen({
     onClear: recordSuccessWithClearSound,
     onFailure: recordFailure,
     roundNumber,
+  });
+  useRecordSeenMicrogame({
+    isActive: phase === "game",
+    microgameId: microgame.id,
+    onSeen: onSeenMicrogame,
   });
 
   useEffect(() => {
@@ -304,6 +311,13 @@ export function GameScreen({
         return;
       }
 
+      if (microgame.canvas === "appleNumberSum") {
+        bgmLibrary.play("appleGame", "once", "now").catch((error: unknown) => {
+          console.error(error);
+        });
+        return;
+      }
+
       if (microgame.canvas === "geometryDashSpikes") {
         bgmLibrary
           .play("geometryDash", "once", "now")
@@ -327,10 +341,26 @@ export function GameScreen({
         return;
       }
 
+      if (microgame.canvas === "wiiSportsDualPress") {
+        bgmLibrary.play("wiiSports", "once", "now").catch((error: unknown) => {
+          console.error(error);
+        });
+        return;
+      }
+
       if (microgame.canvas === "superMarioCoins") {
         bgmLibrary.play("superMario", "once", "now").catch((error: unknown) => {
           console.error(error);
         });
+        return;
+      }
+
+      if (microgame.canvas === "superMarioGalaxyStarBits") {
+        bgmLibrary
+          .play("superMarioGalaxy", "once", "now")
+          .catch((error: unknown) => {
+            console.error(error);
+          });
         return;
       }
 
@@ -424,8 +454,22 @@ export function GameScreen({
         return;
       }
 
+      if (microgame.canvas === "minigameExBearMeat") {
+        bgmLibrary.play("minigameEx", "once", "now").catch((error: unknown) => {
+          console.error(error);
+        });
+        return;
+      }
+
       if (microgame.canvas === "kartriderCourse") {
         bgmLibrary.play("kartrider", "once", "now").catch((error: unknown) => {
+          console.error(error);
+        });
+        return;
+      }
+
+      if (microgame.canvas === "kirbyInhale") {
+        bgmLibrary.play("kirby", "once", "now").catch((error: unknown) => {
           console.error(error);
         });
         return;
@@ -528,10 +572,8 @@ export function GameScreen({
       {phase === "game" || shouldShowCanvasTransition ? (
         <MicrogameRoundScreen
           beatsLeft={beatsLeft}
-          canRecordResult={canRecordResult}
           isTransitioning={shouldShowCanvasTransition}
           microgame={microgame}
-          onFinish={onFinish}
           roundNumber={roundNumber}
         />
       ) : phase === "speedUp" ? (

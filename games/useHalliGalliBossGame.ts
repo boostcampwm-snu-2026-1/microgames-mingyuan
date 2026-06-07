@@ -9,7 +9,7 @@ import {
 
 const MIN_CANVAS_HEIGHT = 360;
 const MIN_CANVAS_WIDTH = 640;
-const TURN_DURATION_MS = 3000;
+const TURN_DURATION_MS = 2000;
 const ROUND_END_SAFETY_MS = 32;
 const PLAYER_COUNT = 4;
 const FRUITS = ["banana", "lime", "plum", "strawberry"] as const;
@@ -224,11 +224,17 @@ function createNextTurn(
 }
 
 function createTurns(turnCount: number) {
-  const targetPattern = Array.from({ length: turnCount - 1 }, (_, index) => {
-    return index % 2 === 0;
-  });
+  const targetPattern = Array.from(
+    { length: Math.max(turnCount - 2, 0) },
+    (_, index) => {
+      return index % 2 === 0;
+    },
+  );
   const playerOffset = Math.floor(Math.random() * PLAYER_COUNT);
-  const shouldCreateFivePattern = [false, ...shuffle(targetPattern)];
+  const shouldCreateFivePattern =
+    turnCount <= 2
+      ? Array.from({ length: turnCount }, () => false)
+      : [false, ...shuffle(targetPattern), false];
 
   return shouldCreateFivePattern.reduce<readonly Turn[]>(
     (turns, shouldCreateFive, index) => {

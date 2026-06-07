@@ -2,10 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { RHYTHM_DURATION_MS } from "@/hooks/useSynchronizedRhythm";
-import {
-  MICROGAME_CLEAR_EVENT,
-  MICROGAME_FAILURE_EVENT,
-} from "@/hooks/useMicrogameInput";
+import { MICROGAME_CLEAR_EVENT } from "@/hooks/useMicrogameInput";
 
 const MIN_CANVAS_HEIGHT = 360;
 const MIN_CANVAS_WIDTH = 640;
@@ -19,11 +16,11 @@ const GROUND_Y_RATIO = 0.78;
 const JUMP_VELOCITY = -1060;
 const OBSTACLE_TRAVEL_PER_BEAT = 335;
 const OBSTACLE_GROUPS = [
-  { beatOffset: 2.15, type: "bottom" },
-  { beatOffset: 4.35, type: "top" },
-  { beatOffset: 6.65, type: "bottom" },
-  { beatOffset: 8.7, type: "top" },
-  { beatOffset: 10.15, type: "bottom" },
+  { beatOffset: 3.35, type: "bottom" },
+  { beatOffset: 5.2, type: "top" },
+  { beatOffset: 7.05, type: "bottom" },
+  { beatOffset: 8.9, type: "top" },
+  { beatOffset: 10.45, type: "bottom" },
 ] as const;
 const COOKIE_RUN_ASSETS = {
   background: "/games/cookie-run/images/background.png",
@@ -48,6 +45,7 @@ type Obstacle = {
 
 type GameState = {
   elapsedMs: number;
+  hasCrashed: boolean;
   hasResolved: boolean;
   isSlideHeld: boolean;
   jumpCount: number;
@@ -72,10 +70,6 @@ function dispatchClear() {
   window.dispatchEvent(new CustomEvent(MICROGAME_CLEAR_EVENT));
 }
 
-function dispatchFailure() {
-  window.dispatchEvent(new CustomEvent(MICROGAME_FAILURE_EVENT));
-}
-
 function getBeatDurationMs(canvas: HTMLCanvasElement) {
   const rawDuration = window
     .getComputedStyle(canvas)
@@ -93,6 +87,7 @@ function createInitialState(width: number) {
 
   return {
     elapsedMs: 0,
+    hasCrashed: false,
     hasResolved: false,
     isSlideHeld: false,
     jumpCount: 0,
@@ -259,6 +254,7 @@ function drawPlayer(
   images: LoadedImages | null,
   rect: DOMRectReadOnly,
   elapsedMs: number,
+  hasCrashed: boolean,
   isAirborne: boolean,
   isSliding: boolean,
 ) {
@@ -272,7 +268,10 @@ function drawPlayer(
 
   context.save();
   context.shadowBlur = 18;
-  context.shadowColor = "rgba(250,204,21,0.36)";
+  context.globalAlpha = hasCrashed ? 0.58 : 1;
+  context.shadowColor = hasCrashed
+    ? "rgba(239,68,68,0.5)"
+    : "rgba(250,204,21,0.36)";
 
   if (image) {
     context.drawImage(image, rect.x, rect.y, rect.width, rect.height);
@@ -326,9 +325,15 @@ function drawScene(
     images,
     playerRect,
     state.elapsedMs,
+    state.hasCrashed,
     isAirborne,
     isSliding,
   );
+
+  if (state.hasCrashed) {
+    context.fillStyle = "rgba(239, 68, 68, 0.32)";
+    context.fillRect(0, 0, width, height);
+  }
 }
 
 function collides(state: GameState, width: number, height: number) {
@@ -399,20 +404,12 @@ export function useCookieRunGameCanvas(gameBeatCount: number) {
       dispatchClear();
     };
 
-    const resolveFailure = () => {
-      if (stateRef.current.hasResolved) {
-        return;
-      }
-
-      stateRef.current = {
-        ...stateRef.current,
-        hasResolved: true,
-      };
-      dispatchFailure();
-    };
-
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (stateRef.current.hasResolved || event.repeat) {
+      if (
+        stateRef.current.hasCrashed ||
+        stateRef.current.hasResolved ||
+        event.repeat
+      ) {
         return;
       }
 
@@ -469,21 +466,26 @@ export function useCookieRunGameCanvas(gameBeatCount: number) {
         (timestamp - previousTimestamp) / 1000,
         MAX_DELTA_SECONDS,
       );
+      const nextElapsedMs = stateRef.current.elapsedMs + deltaSeconds * 1000;
       const isOnGround = stateRef.current.playerY >= 0;
-      const nextPlayerVelocityY =
-        isOnGround && stateRef.current.playerVelocityY > 0
+      const nextPlayerVelocityY = stateRef.current.hasCrashed
+        ? 0
+        : isOnGround && stateRef.current.playerVelocityY > 0
           ? 0
           : stateRef.current.playerVelocityY + GRAVITY * deltaSeconds;
-      const nextPlayerY = Math.min(
-        stateRef.current.playerY + nextPlayerVelocityY * deltaSeconds,
-        0,
-      );
+      const nextPlayerY = stateRef.current.hasCrashed
+        ? stateRef.current.playerY
+        : Math.min(
+            stateRef.current.playerY + nextPlayerVelocityY * deltaSeconds,
+            0,
+          );
       const nextJumpCount = nextPlayerY >= 0 ? 0 : stateRef.current.jumpCount;
-      const nextElapsedMs = stateRef.current.elapsedMs + deltaSeconds * 1000;
-      const nextObstacles = stateRef.current.obstacles.map((obstacle) => ({
-        ...obstacle,
-        x: obstacle.x - obstacleSpeed * deltaSeconds,
-      }));
+      const nextObstacles = stateRef.current.hasCrashed
+        ? stateRef.current.obstacles
+        : stateRef.current.obstacles.map((obstacle) => ({
+            ...obstacle,
+            x: obstacle.x - obstacleSpeed * deltaSeconds,
+          }));
 
       stateRef.current = {
         ...stateRef.current,
@@ -499,13 +501,19 @@ export function useCookieRunGameCanvas(gameBeatCount: number) {
 
       if (
         !stateRef.current.hasResolved &&
+        !stateRef.current.hasCrashed &&
         collides(stateRef.current, width, height)
       ) {
-        resolveFailure();
+        stateRef.current = {
+          ...stateRef.current,
+          hasCrashed: true,
+          isSlideHeld: false,
+        };
       }
 
       if (
         !stateRef.current.hasResolved &&
+        !stateRef.current.hasCrashed &&
         stateRef.current.elapsedMs >= roundDurationMs
       ) {
         resolveClear();

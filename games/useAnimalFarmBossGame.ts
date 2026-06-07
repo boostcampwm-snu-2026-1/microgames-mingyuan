@@ -5,19 +5,19 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { MICROGAME_CLEAR_EVENT } from "@/hooks/useMicrogameInput";
 
 const STAGE_ADVANCE_DELAY_MS = 420;
-const EASY_WORDS = ["바나나", "네이버", "토마토", "기러기", "우유", "나무"];
+const EASY_WORDS = ["바나나", "네이버", "토마토", "기러기", "우윳빛", "나뭇잎"];
 const MEDIUM_WORDS = [
-  "프론트엔드",
-  "아르마딜로",
-  "서울대학교",
-  "캥거루농장",
-  "엘리베이터",
+  "프론트엔드개발",
+  "코모도왕도마뱀",
+  "국립서울대학교",
+  "아이스아메리카노",
+  "고장난엘리베이터",
 ];
 const HARD_WORDS = [
-  "서울대학교전기정보공학부",
-  "쥬니어네이버동물농장",
-  "샤르릉뿌뿡뿍짝뿍짝",
-  "와플스튜디오개발자",
+  "서울대학교전기정보공학부생",
+  "쥬니어네이버동물농장게임",
+  "샤르릉뿌뿡뿍짝뿍짝사람이돼라",
+  "와플스튜디오루키개발자",
 ];
 
 type BossStage = Readonly<{
