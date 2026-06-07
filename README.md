@@ -101,15 +101,26 @@
 ## 조작 안내
 
 <p>
-  <img src="./public/games/forms/images/space.png" alt="스페이스바 조작 안내" width="23%" />
-  <img src="./public/games/forms/images/arrow-keys.png" alt="방향키 조작 안내" width="23%" />
-  <img src="./public/games/forms/images/arrow-and-space.png" alt="방향키와 스페이스바 조작 안내" width="23%" />
-  <img src="./public/games/forms/images/click.png" alt="마우스 클릭 조작 안내" width="23%" />
-  <img src="./public/games/forms/images/drag.png" alt="마우스 드래그 조작 안내" width="23%" />
-  <img src="./public/games/forms/images/hold.png" alt="마우스 홀드 조작 안내" width="23%" />
+  <img src="./public/games/forms/images/space.png" alt="스페이스바 조작 안내" width="22%" />
+  <img src="./public/games/forms/images/arrow-keys.png" alt="방향키 조작 안내" width="22%" />
+  <img src="./public/games/forms/images/arrow-and-space.png" alt="방향키와 스페이스바 조작 안내" width="22%" />
+  <img src="./public/games/forms/images/click.png" alt="마우스 클릭 조작 안내" width="22%" />
+  <img src="./public/games/forms/images/drag.png" alt="마우스 드래그 조작 안내" width="22%" />
+  <img src="./public/games/forms/images/hold.png" alt="마우스 홀드 조작 안내" width="22%" />
+  <img src="./public/games/forms/images/number-keys.png" alt="숫자키 조작 안내" width="22%" />
+  <img src="./public/games/forms/images/korean-keyboard.png" alt="한글 키보드 조작 안내" width="22%" />
 </p>
 
-지원 control type은 `space`, `arrowKeys`, `arrowAndSpace`, `mouseClick`, `mouseDrag`, `mouseHold`, `koreanKeyboard`, `numberKeys`입니다.
+| 조작 타입        | 기본 조작                                                  |
+| ---------------- | ---------------------------------------------------------- |
+| `space`          | 스페이스바를 눌러 점프, flap, 타이밍 입력을 처리합니다.    |
+| `arrowKeys`      | 방향키로 이동하거나 화면의 방향 지시를 입력합니다.         |
+| `arrowAndSpace`  | 방향키와 스페이스바를 함께 사용합니다.                     |
+| `mouseClick`     | 마우스로 정답, 버튼, 종, 말 위치를 클릭합니다.             |
+| `mouseDrag`      | 마우스를 누른 채 끌어서 연결, 선택, 조준, 그리기를 합니다. |
+| `mouseHold`      | 마우스를 누른 채 유지해 게이지나 진행도를 채웁니다.        |
+| `koreanKeyboard` | 한글 IME 입력으로 제시된 글자나 단어를 입력합니다.         |
+| `numberKeys`     | 숫자키로 보기 번호, 곰 번호, 멜로디 음을 입력합니다.       |
 
 ## 기술 스택
 
