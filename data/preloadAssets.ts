@@ -137,6 +137,7 @@ export const ALL_GAME_PRELOAD_ASSETS = [
   "/games/pokemon/images/venusaur.png",
   "/games/super-mario-galaxy/images/background.png",
   "/games/super-mario-galaxy/images/blue-bits.png",
+  "/games/super-mario-galaxy/images/cursor.png",
   "/games/super-mario-galaxy/images/green-bits.png",
   "/games/super-mario-galaxy/images/purple-bits.png",
   "/games/super-mario-galaxy/images/red-bits.png",
