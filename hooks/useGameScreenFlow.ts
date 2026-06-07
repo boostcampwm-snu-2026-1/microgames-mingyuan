@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { ALL_GAME_PRELOAD_ASSETS } from "@/data/preloadAssets";
-import { useHighestClearedRound } from "@/hooks/useHighestClearedRound";
+import { useHighestReachedRound } from "@/hooks/useHighestReachedRound";
 import { bgmLibrary } from "@/lib/bgmLibrary";
 
 const MIN_LOADING_TIME_MS = 900;
@@ -176,9 +176,9 @@ export function useGameScreenFlow() {
   const [screen, setScreen] = useState<GameScreen>("loading");
   const [lives, setLives] = useState(MAX_LIVES);
   const [roundResult, setRoundResult] = useState<GameRoundResult>("idle");
-  const [finalClearedRound, setFinalClearedRound] = useState(0);
-  const { highestClearedRound, recordHighestClearedRound } =
-    useHighestClearedRound();
+  const [finalReachedRound, setFinalReachedRound] = useState(0);
+  const { highestReachedRound, recordHighestReachedRound } =
+    useHighestReachedRound();
 
   useEffect(() => {
     if (screen !== "loading") {
@@ -214,7 +214,7 @@ export function useGameScreenFlow() {
   }, []);
 
   const startGame = useCallback(() => {
-    setFinalClearedRound(0);
+    setFinalReachedRound(0);
     setLives(MAX_LIVES);
     setRoundResult("idle");
     setScreen("setup");
@@ -230,28 +230,34 @@ export function useGameScreenFlow() {
   }, []);
 
   const restartGame = useCallback(() => {
-    setFinalClearedRound(0);
+    setFinalReachedRound(0);
     setLives(MAX_LIVES);
     setRoundResult("idle");
     setScreen("setup");
   }, []);
 
   const returnToMain = useCallback(() => {
-    setFinalClearedRound(0);
+    setFinalReachedRound(0);
     setLives(MAX_LIVES);
     setRoundResult("idle");
     setScreen("main");
   }, []);
 
-  const recordSuccess = useCallback(
+  const recordReachedRound = useCallback(
     (roundNumber: number) => {
-      recordHighestClearedRound(roundNumber);
-      setFinalClearedRound((currentFinalClearedRound) =>
-        Math.max(currentFinalClearedRound, roundNumber),
+      recordHighestReachedRound(roundNumber);
+      setFinalReachedRound((currentFinalReachedRound) =>
+        Math.max(currentFinalReachedRound, roundNumber),
       );
+    },
+    [recordHighestReachedRound],
+  );
+
+  const recordSuccess = useCallback(
+    () => {
       setRoundResult("success");
     },
-    [recordHighestClearedRound],
+    [],
   );
 
   const resetRoundResult = useCallback(() => {
@@ -277,14 +283,15 @@ export function useGameScreenFlow() {
 
   return {
     completeSetup,
-    finalClearedRound,
+    finalReachedRound,
     finishGame,
     gainLife,
-    highestClearedRound,
+    highestReachedRound,
     lives,
     loseLife,
     maxLives: MAX_LIVES,
     preloadStatus,
+    recordReachedRound,
     recordSuccess,
     resetRoundResult,
     restartGame,

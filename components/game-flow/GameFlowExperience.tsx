@@ -19,14 +19,15 @@ export function GameFlowExperience({
   const { recordSeenMicrogameId, seenMicrogameIds } = useSeenMicrogames();
   const {
     completeSetup,
-    finalClearedRound,
+    finalReachedRound,
     finishGame,
     gainLife,
-    highestClearedRound,
+    highestReachedRound,
     lives,
     loseLife,
     maxLives,
     preloadStatus,
+    recordReachedRound,
     recordSuccess,
     resetRoundResult,
     returnToMain,
@@ -59,6 +60,7 @@ export function GameFlowExperience({
         onFinish={finishGame}
         onGainLife={gainLife}
         onLoseLife={loseLife}
+        onReachRound={recordReachedRound}
         onResetResult={resetRoundResult}
         onSeenMicrogame={recordSeenMicrogameId}
         onSuccess={recordSuccess}
@@ -69,8 +71,8 @@ export function GameFlowExperience({
   if (screen === "gameOver") {
     return (
       <GameOverScreen
-        finalClearedRound={finalClearedRound}
-        highestClearedRound={highestClearedRound}
+        finalReachedRound={finalReachedRound}
+        highestReachedRound={highestReachedRound}
         onReturnToMain={returnToMain}
       />
     );
@@ -78,7 +80,7 @@ export function GameFlowExperience({
 
   return (
     <MainScreen
-      highestClearedRound={highestClearedRound}
+      highestReachedRound={highestReachedRound}
       homeView={homeView}
       onStart={startGame}
       seenMicrogameIds={seenMicrogameIds}
