@@ -17,6 +17,7 @@ export type BgmTrack =
   | "hancom"
   | "intermission"
   | "kartrider"
+  | "kirby"
   | "layton"
   | "leagueOfLegend"
   | "maplestory"
@@ -71,6 +72,7 @@ const BGM_TRACK_PATHS = {
   hancom: "/games/hancom/sounds/hancom-bgm.mp3",
   intermission: "/games/game-flow/sounds/intermission.mp3",
   kartrider: "/games/kartrider/sounds/kartrider-bgm.mp3",
+  kirby: "/games/kirby/sounds/kirby-bgm.mp3",
   layton: "/games/layton/sounds/layton-bgm.mp3",
   leagueOfLegend: "/games/league-of-legend/sounds/league-of-legend-ban-bgm.mp3",
   maplestory: "/games/maplestory-lie-detector/sounds/maplestory-bgm.mp3",
@@ -147,6 +149,7 @@ const BGM_TRACK_BEATS = {
   hancom: 12,
   intermission: 8,
   kartrider: 36,
+  kirby: 8,
   layton: 8,
   leagueOfLegend: 12,
   maplestory: 12,

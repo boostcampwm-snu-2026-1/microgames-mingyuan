@@ -29,6 +29,7 @@ export type MicrogameCanvas =
   | "halliGalliBoss"
   | "hancomTyping"
   | "kartriderCourse"
+  | "kirbyInhale"
   | "laytonShapeMatch"
   | "leagueChampionBan"
   | "maplestoryLieDetector"
@@ -216,6 +217,22 @@ export const MICROGAMES = [
     id: "minigame-ex-bear-meat",
     startPrompt: "곰을 잘봐라!",
     title: "미니게임EX",
+    type: "normal",
+  },
+
+  {
+    beatCount: 8,
+    canvas: "kirbyInhale",
+    microscope: {
+      description:
+        "별의 커비에서는 숨을 크게 들이마시는 순간이 시작입니다. 마우스를 꾹 눌러 적을 끝까지 빨아들이세요.",
+      imageAlt: "별의 커비 흡입 자세",
+      imageSrc: "/games/kirby/images/kirby-ready.png",
+    },
+    control: "mouseHold",
+    id: "kirby-inhale",
+    startPrompt: "빨아들여라!",
+    title: "별의 커비: 울트라 슈퍼 디럭스",
     type: "normal",
   },
 

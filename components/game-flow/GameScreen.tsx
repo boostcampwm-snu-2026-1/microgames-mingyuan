@@ -461,6 +461,13 @@ export function GameScreen({
         return;
       }
 
+      if (microgame.canvas === "kirbyInhale") {
+        bgmLibrary.play("kirby", "once", "now").catch((error: unknown) => {
+          console.error(error);
+        });
+        return;
+      }
+
       bgmLibrary.stop();
       return;
     }

@@ -16,6 +16,7 @@ import { GomokuGame } from "@/games/GomokuGame";
 import { HalliGalliBossGame } from "@/games/HalliGalliBossGame";
 import { HancomTypingGame } from "@/games/HancomTypingGame";
 import { KartriderBossGame } from "@/games/KartriderBossGame";
+import { KirbyInhaleGame } from "@/games/KirbyInhaleGame";
 import { LaytonShapeMatchGame } from "@/games/LaytonShapeMatchGame";
 import { LeagueChampionBanGame } from "@/games/LeagueChampionBanGame";
 import { MaplestoryLieDetectorGame } from "@/games/MaplestoryLieDetectorGame";
@@ -145,6 +146,10 @@ function renderGameCanvas(microgame: Microgame) {
 
   if (microgame.canvas === "kartriderCourse") {
     return <KartriderBossGame microgame={microgame} />;
+  }
+
+  if (microgame.canvas === "kirbyInhale") {
+    return <KirbyInhaleGame microgame={microgame} />;
   }
 
   if (microgame.canvas === "tetrisLineClear") {
