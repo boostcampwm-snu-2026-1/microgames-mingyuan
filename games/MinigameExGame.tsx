@@ -9,9 +9,9 @@ const BACKGROUND_SRC = "/games/minigame-ex/images/background.png";
 const EATING_BEAR_SRC = "/games/minigame-ex/images/eating-bear.png";
 const IDLE_BEAR_SRC = "/games/minigame-ex/images/idle-bear.png";
 const BEAR_LAYOUT = [
-  { number: 1, x: "42%", y: "64%" },
+  { number: 1, x: "39%", y: "64%" },
   { number: 2, x: "50%", y: "64%" },
-  { number: 3, x: "58%", y: "64%" },
+  { number: 3, x: "61%", y: "64%" },
 ] satisfies ReadonlyArray<{
   number: BearNumber;
   x: string;
@@ -53,7 +53,7 @@ export function MinigameExGame({
         return (
           <div
             aria-label={`${bear.number}번 곰 선택`}
-            className={`pointer-events-none absolute z-10 aspect-[3/2] w-[clamp(12rem,27vw,22rem)] -translate-x-1/2 -translate-y-1/2 transition duration-150 ${
+            className={`pointer-events-none absolute z-10 aspect-[3/2] w-[clamp(14rem,32vw,27rem)] -translate-x-1/2 -translate-y-1/2 transition duration-150 ${
               isChoosing ? "scale-105" : ""
             } ${hasFailed ? "opacity-55 grayscale" : ""} ${
               isWrong ? "scale-95" : ""
