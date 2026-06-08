@@ -7,6 +7,8 @@ import { bgmLibrary } from "@/lib/bgmLibrary";
 
 const MIN_LOADING_TIME_MS = 900;
 const MAX_LIVES = 4;
+const ENABLE_GAME_ASSET_PRELOADING =
+  process.env.NEXT_PUBLIC_ENABLE_GAME_ASSET_PRELOADING !== "false";
 
 let allGameAssetsPreloadPromise: Promise<void> | null = null;
 
@@ -173,7 +175,9 @@ export function useGameScreenFlow() {
     INITIAL_PRELOAD_STATUS,
   );
   const [preloadAttempt, setPreloadAttempt] = useState(0);
-  const [screen, setScreen] = useState<GameScreen>("loading");
+  const [screen, setScreen] = useState<GameScreen>(
+    ENABLE_GAME_ASSET_PRELOADING ? "loading" : "main",
+  );
   const [lives, setLives] = useState(MAX_LIVES);
   const [roundResult, setRoundResult] = useState<GameRoundResult>("idle");
   const [finalClearedRound, setFinalClearedRound] = useState(0);
@@ -181,6 +185,10 @@ export function useGameScreenFlow() {
     useHighestClearedRound();
 
   useEffect(() => {
+    if (!ENABLE_GAME_ASSET_PRELOADING) {
+      return;
+    }
+
     if (screen !== "loading") {
       return;
     }
@@ -207,6 +215,11 @@ export function useGameScreenFlow() {
   }, [preloadAttempt, screen]);
 
   const retryPreload = useCallback(() => {
+    if (!ENABLE_GAME_ASSET_PRELOADING) {
+      setScreen("main");
+      return;
+    }
+
     resetPreloadCache();
     setPreloadStatus(INITIAL_PRELOAD_STATUS);
     setPreloadAttempt((currentAttempt) => currentAttempt + 1);

@@ -160,6 +160,14 @@ npm run dev
 http://localhost:3000
 ```
 
+## 환경 변수
+
+```bash
+NEXT_PUBLIC_ENABLE_GAME_ASSET_PRELOADING=false
+```
+
+게임 시작 전 전체 image/sound asset 프리로딩을 끄려면 위 값을 설정합니다. 값을 생략하거나 `false`가 아닌 값으로 설정하면 프리로딩이 켜집니다.
+
 ## 스크립트
 
 ```bash
