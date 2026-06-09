@@ -43,7 +43,7 @@ type UseBeatGameRoundParams = Readonly<{
   getGameBeatCount?: (roundNumber: number) => number;
   shouldPlayOneUp: boolean;
   onFailure: () => void;
-  onFinish: () => void;
+  onFinish: (reachedRound: number) => void;
   onResetResult: () => void;
   onSuccess: (roundNumber: number) => void;
   shouldFinishAfterResult: boolean;
@@ -179,7 +179,7 @@ export function useBeatGameRound({
       }
 
       if (shouldFinishAfterResult) {
-        onFinish();
+        onFinish(roundNumber);
         return;
       }
 

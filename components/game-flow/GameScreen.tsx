@@ -195,7 +195,7 @@ export function GameScreen({
 }: Readonly<{
   lives: number;
   maxLives: number;
-  onFinish: () => void;
+  onFinish: (reachedRound: number) => void;
   onGainLife: () => void;
   onLoseLife: () => void;
   onResetResult: () => void;

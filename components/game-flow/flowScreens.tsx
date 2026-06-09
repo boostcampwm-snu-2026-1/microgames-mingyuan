@@ -80,11 +80,11 @@ const LOADING_GAMEPLAY_TIPS = [
 ] as const;
 
 function HomePanel({
-  highestClearedRound,
+  highestReachedRound,
   isStarting,
   startGame,
 }: Readonly<{
-  highestClearedRound: number;
+  highestReachedRound: number;
   isStarting: boolean;
   startGame: () => void;
 }>) {
@@ -109,7 +109,7 @@ function HomePanel({
           </p>
           <p className="mt-2 flex items-end gap-2 text-cyan-100 drop-shadow-[0_0_16px_rgba(103,232,249,0.68)]">
             <span className="text-4xl font-black leading-none">
-              {highestClearedRound.toString().padStart(2, "0")}
+              {highestReachedRound.toString().padStart(2, "0")}
             </span>
             <span className="pb-1 text-lg font-black leading-none">층</span>
           </p>
@@ -282,7 +282,7 @@ function MicroscopePanel({
 
 function renderHomeView(
   homeView: HomeView,
-  highestClearedRound: number,
+  highestReachedRound: number,
   isStarting: boolean,
   startGame: () => void,
   seenMicrogameIds: readonly string[],
@@ -297,7 +297,7 @@ function renderHomeView(
 
   return (
     <HomePanel
-      highestClearedRound={highestClearedRound}
+      highestReachedRound={highestReachedRound}
       isStarting={isStarting}
       startGame={startGame}
     />
@@ -305,12 +305,12 @@ function renderHomeView(
 }
 
 export function MainScreen({
-  highestClearedRound,
+  highestReachedRound,
   homeView,
   onStart,
   seenMicrogameIds,
 }: Readonly<{
-  highestClearedRound: number;
+  highestReachedRound: number;
   homeView: HomeView;
   onStart: () => void;
   seenMicrogameIds: readonly string[];
@@ -368,7 +368,7 @@ export function MainScreen({
       >
         {renderHomeView(
           homeView,
-          highestClearedRound,
+          highestReachedRound,
           isStarting,
           startGame,
           seenMicrogameIds,
@@ -546,12 +546,12 @@ export function LoadingScreen({
 }
 
 export function GameOverScreen({
-  finalClearedRound,
-  highestClearedRound,
+  finalReachedRound,
+  highestReachedRound,
   onReturnToMain,
 }: Readonly<{
-  finalClearedRound: number;
-  highestClearedRound: number;
+  finalReachedRound: number;
+  highestReachedRound: number;
   onReturnToMain: () => void;
 }>) {
   useEffect(() => {
@@ -596,7 +596,7 @@ export function GameOverScreen({
             </p>
             <p className="mt-3 flex items-end justify-center gap-2 text-cyan-100 drop-shadow-[0_0_18px_rgba(103,232,249,0.7)]">
               <span className="text-6xl font-black leading-none sm:text-7xl">
-                {finalClearedRound.toString().padStart(2, "0")}
+                {finalReachedRound.toString().padStart(2, "0")}
               </span>
               <span className="pb-1 text-2xl font-black leading-none">층</span>
             </p>
@@ -607,13 +607,13 @@ export function GameOverScreen({
             </p>
             <p className="mt-3 flex items-end justify-center gap-2 text-cyan-100 drop-shadow-[0_0_18px_rgba(103,232,249,0.7)]">
               <span className="text-6xl font-black leading-none sm:text-7xl">
-                {highestClearedRound.toString().padStart(2, "0")}
+                {highestReachedRound.toString().padStart(2, "0")}
               </span>
               <span className="pb-1 text-2xl font-black leading-none">층</span>
             </p>
           </div>
         </div>
-        <ScoreSubmissionPanel score={finalClearedRound} />
+        <ScoreSubmissionPanel score={finalReachedRound} />
         <div className="flex justify-center">
           <NeonButton onClick={returnToMain}>메인으로</NeonButton>
         </div>

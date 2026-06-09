@@ -123,6 +123,10 @@ const AUDIO_TRACK_PATHS = {
   ...SOUND_EFFECT_TRACK_PATHS,
 };
 
+export const BGM_LIBRARY_PRELOAD_ASSET_PATHS: ReadonlySet<string> = new Set(
+  Object.values(AUDIO_TRACK_PATHS),
+);
+
 const DEFAULT_BEAT_DURATION_SECONDS = RHYTHM_DURATION_MS / 1000;
 const BGM_GAIN = 0.72;
 const BGM_TRACK_GAINS: Partial<Record<BgmTrack, number>> = {
@@ -486,6 +490,10 @@ class BgmLibrary {
         this.loadingBuffers.delete(track);
 
         return audioBuffer;
+      })
+      .catch((error: unknown) => {
+        this.loadingBuffers.delete(track);
+        throw error;
       });
 
     this.loadingBuffers.set(track, nextLoadingBuffer);
