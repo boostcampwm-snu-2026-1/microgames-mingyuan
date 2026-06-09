@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 
 const PLAYER_ID_STORAGE_KEY = "catTower.playerId";
 const USERNAME_STORAGE_KEY = "catTower.username";
+const SUBMITTED_USERNAME_STORAGE_KEY = "catTower.submittedUsername";
 const SUBMITTED_BEST_STORAGE_KEY = "catTower.submittedBest";
 
 function readSubmittedBest() {
@@ -42,9 +43,22 @@ function readUsername() {
   return window.localStorage.getItem(USERNAME_STORAGE_KEY)?.trim() ?? "";
 }
 
+function readSubmittedUsername() {
+  if (typeof window === "undefined") {
+    return "";
+  }
+
+  return (
+    window.localStorage.getItem(SUBMITTED_USERNAME_STORAGE_KEY)?.trim() ?? ""
+  );
+}
+
 export function usePlayerIdentity() {
   const [playerId] = useState(readOrCreatePlayerId);
   const [username, setUsernameState] = useState(readUsername);
+  const [submittedUsername, setSubmittedUsername] = useState(
+    readSubmittedUsername,
+  );
   const [submittedBest, setSubmittedBest] = useState(readSubmittedBest);
 
   const saveUsername = useCallback((nextUsername: string) => {
@@ -67,12 +81,19 @@ export function usePlayerIdentity() {
     });
   }, []);
 
+  const recordSubmittedUsername = useCallback((nextUsername: string) => {
+    window.localStorage.setItem(SUBMITTED_USERNAME_STORAGE_KEY, nextUsername);
+    setSubmittedUsername(nextUsername);
+  }, []);
+
   return {
     isReady: Boolean(playerId),
     playerId,
     recordSubmittedBest,
+    recordSubmittedUsername,
     saveUsername,
     submittedBest,
+    submittedUsername,
     username,
   };
 }

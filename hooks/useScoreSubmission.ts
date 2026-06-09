@@ -18,8 +18,10 @@ export function useScoreSubmission(score: number) {
     isReady,
     playerId,
     recordSubmittedBest,
+    recordSubmittedUsername,
     saveUsername,
     submittedBest,
+    submittedUsername,
     username: storedUsername,
   } = usePlayerIdentity();
   const [username, setUsername] = useState(storedUsername);
@@ -41,7 +43,10 @@ export function useScoreSubmission(score: number) {
 
       saveUsername(normalizedUsername);
 
-      if (!playerId || score <= submittedBest) {
+      const isNewBestScore = score > submittedBest;
+      const isUsernameChanged = normalizedUsername !== submittedUsername;
+
+      if (!playerId || (!isNewBestScore && !isUsernameChanged)) {
         setStatus("skipped");
         setErrorMessage(null);
         return;
@@ -64,6 +69,7 @@ export function useScoreSubmission(score: number) {
         }
 
         recordSubmittedBest(score);
+        recordSubmittedUsername(normalizedUsername);
         setUsername(normalizedUsername);
         setStatus("submitted");
       } catch (error) {
@@ -72,7 +78,15 @@ export function useScoreSubmission(score: number) {
         setErrorMessage("기록을 전송하지 못했습니다. 다시 시도해 주세요.");
       }
     },
-    [playerId, recordSubmittedBest, saveUsername, score, submittedBest],
+    [
+      playerId,
+      recordSubmittedBest,
+      recordSubmittedUsername,
+      saveUsername,
+      score,
+      submittedBest,
+      submittedUsername,
+    ],
   );
 
   useEffect(() => {
@@ -80,7 +94,7 @@ export function useScoreSubmission(score: number) {
       status !== "idle" ||
       !isReady ||
       !storedUsername ||
-      score <= submittedBest
+      (score <= submittedBest && storedUsername === submittedUsername)
     ) {
       return;
     }
@@ -92,7 +106,15 @@ export function useScoreSubmission(score: number) {
     return () => {
       window.clearTimeout(submissionTimer);
     };
-  }, [isReady, score, status, storedUsername, submitScore, submittedBest]);
+  }, [
+    isReady,
+    score,
+    status,
+    storedUsername,
+    submitScore,
+    submittedBest,
+    submittedUsername,
+  ]);
 
   const displayStatus =
     status !== "idle"
