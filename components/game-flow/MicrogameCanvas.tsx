@@ -10,6 +10,7 @@ import { CookieRunGame } from "@/games/CookieRunGame";
 import { CourseRegistrationNumberGame } from "@/games/CourseRegistrationNumberGame";
 import { CrazyArcadeGame } from "@/games/CrazyArcadeGame";
 import { DefaultMicrogameCanvas } from "@/games/DefaultMicrogameCanvas";
+import { FireAndIceDanceGame } from "@/games/FireAndIceDanceGame";
 import { FlickingGame } from "@/games/FlickingGame";
 import { FlappyBirdGame } from "@/games/FlappyBirdGame";
 import { GeometryDashGame } from "@/games/GeometryDashGame";
@@ -142,6 +143,10 @@ function renderGameCanvas(microgame: Microgame) {
 
   if (microgame.canvas === "flickingGame") {
     return <FlickingGame microgame={microgame} />;
+  }
+
+  if (microgame.canvas === "fireAndIceDance") {
+    return <FireAndIceDanceGame microgame={microgame} />;
   }
 
   if (microgame.canvas === "gomokuWhiteStone") {

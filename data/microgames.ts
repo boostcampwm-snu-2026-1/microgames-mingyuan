@@ -23,6 +23,7 @@ export type MicrogameCanvas =
   | "courseRegistrationNumber"
   | "crazyArcade"
   | "default"
+  | "fireAndIceDance"
   | "flickingGame"
   | "flappyBird"
   | "geometryDashSpikes"
@@ -253,6 +254,22 @@ export const MICROGAMES = [
     id: "kirby-inhale",
     startPrompt: "빨아들여라!",
     title: "별의 커비: 울트라 슈퍼 디럭스",
+    type: "normal",
+  },
+
+  {
+    beatCount: 8,
+    canvas: "fireAndIceDance",
+    microscope: {
+      description:
+        "불과 얼음의 춤은 두 행성이 박자마다 다음 칸으로 회전하는 리듬 게임입니다. 준비 신호를 듣고 여섯 박자를 이어가세요.",
+      imageAlt: "불과 얼음의 춤 별빛 배경",
+      imageSrc: "/games/a-dance-of-fire-and-ice/images/background.png",
+    },
+    control: "space",
+    id: "a-dance-of-fire-and-ice",
+    startPrompt: "박자에 맞춰 눌러라!",
+    title: "불과 얼음의 춤",
     type: "normal",
   },
 

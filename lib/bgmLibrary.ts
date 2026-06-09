@@ -11,6 +11,7 @@ export type BgmTrack =
   | "cookieRun"
   | "crazyArcade"
   | "fail"
+  | "fireAndIce"
   | "gameOver"
   | "geometryDash"
   | "halliGalli"
@@ -67,6 +68,7 @@ const BGM_TRACK_PATHS = {
   cookieRun: "/games/cookie-run/sounds/cookie-run-bgm.mp3",
   crazyArcade: "/games/crazy-arcade/sounds/crazy-arcade-bgm.mp3",
   fail: "/games/game-flow/sounds/fail.mp3",
+  fireAndIce: "/games/a-dance-of-fire-and-ice/sounds/fire-and-ice-bgm.mp3",
   gameOver: "/games/game-flow/sounds/game-over.mp3",
   geometryDash: "/games/geometry-dash/sounds/geometry-dash-bgm.mp3",
   halliGalli: "/games/halli-galli/sounds/halli-galli-bgm.mp3",
@@ -150,6 +152,7 @@ const BGM_TRACK_BEATS = {
   cookieRun: 12,
   crazyArcade: 12,
   fail: 4,
+  fireAndIce: 8,
   geometryDash: 12,
   halliGalli: 36,
   hancom: 12,

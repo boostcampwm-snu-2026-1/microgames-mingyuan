@@ -61,6 +61,7 @@ export function useMicrogameInput({
         microgame.canvas === "brainAcademyBlocks" ||
         microgame.canvas === "cookieRun" ||
         microgame.canvas === "crazyArcade" ||
+        microgame.canvas === "fireAndIceDance" ||
         microgame.canvas === "flappyBird" ||
         microgame.canvas === "geometryDashSpikes" ||
         microgame.canvas === "hancomTyping" ||
