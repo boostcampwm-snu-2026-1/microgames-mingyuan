@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useState } from "react";
+import { ScoreSubmissionPanel } from "@/components/ranking/ScoreSubmissionPanel";
 import { MICROGAMES, getMicrogameFormInstruction } from "@/data/microgames";
 import type { PreloadStatus } from "@/hooks/useGameScreenFlow";
 import { useBgmTrack } from "@/hooks/useBgmTrack";
@@ -16,6 +16,7 @@ import {
 } from "@/lib/bgmLibrary";
 import { FixedLivesOverlay } from "./FixedLivesOverlay";
 import { MAIN_SCREEN_EXIT_MS } from "./gameFlowConstants";
+import { HomeHeader, type HomeView } from "./HomeHeader";
 import { NeonButton, NeonShell } from "./NeonShell";
 
 const LOADING_MESSAGES = [
@@ -78,75 +79,12 @@ const LOADING_GAMEPLAY_TIPS = [
   },
 ] as const;
 
-export type HomeView = "home" | "howToPlay" | "microscope";
-
-const HOME_NAV_ITEMS = [
-  { href: "/", label: "홈", view: "home" },
-  { href: "/how-to-play", label: "게임 방법", view: "howToPlay" },
-  { href: "/microscope", label: "도감", view: "microscope" },
-] as const;
-
-function HomeHeader({
-  homeView,
-  isStarting,
-}: Readonly<{
-  homeView: HomeView;
-  isStarting: boolean;
-}>) {
-  return (
-    <header
-      className={`fixed inset-x-0 top-0 z-30 ${
-        isStarting ? "main-screen-exit-up" : ""
-      }`}
-    >
-      <nav className="w-full bg-white/10 px-4 py-3 shadow-[0_0_28px_rgba(103,232,249,0.18)] backdrop-blur-xl sm:px-6">
-        <div className="flex items-center justify-between gap-3">
-          <Link
-            className="flex shrink-0 items-center gap-2 px-2 text-sm font-black tracking-normal text-cyan-50 drop-shadow-[0_0_12px_rgba(103,232,249,0.72)] sm:px-3 sm:text-base"
-            href="/"
-          >
-            <Image
-              alt=""
-              aria-hidden="true"
-              className="size-7 object-contain drop-shadow-[0_0_10px_rgba(103,232,249,0.5)]"
-              height={28}
-              src="/games/game-flow/images/timer.png"
-              unoptimized
-              width={28}
-            />
-            <span>캣타워 오르기</span>
-          </Link>
-          <div className="grid grid-cols-3 gap-1 rounded-md border border-white/10 bg-black/20 p-1">
-            {HOME_NAV_ITEMS.map((item) => {
-              const isActive = homeView === item.view;
-
-              return (
-                <Link
-                  className={`rounded px-3 py-2 text-center text-xs font-black transition sm:min-w-24 sm:text-sm ${
-                    isActive
-                      ? "bg-cyan-100 text-black shadow-[0_0_18px_rgba(103,232,249,0.38)]"
-                      : "text-cyan-50/78 hover:bg-white/10 hover:text-white"
-                  }`}
-                  href={item.href}
-                  key={item.view}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      </nav>
-    </header>
-  );
-}
-
 function HomePanel({
-  highestClearedRound,
+  highestReachedRound,
   isStarting,
   startGame,
 }: Readonly<{
-  highestClearedRound: number;
+  highestReachedRound: number;
   isStarting: boolean;
   startGame: () => void;
 }>) {
@@ -171,7 +109,7 @@ function HomePanel({
           </p>
           <p className="mt-2 flex items-end gap-2 text-cyan-100 drop-shadow-[0_0_16px_rgba(103,232,249,0.68)]">
             <span className="text-4xl font-black leading-none">
-              {highestClearedRound.toString().padStart(2, "0")}
+              {highestReachedRound.toString().padStart(2, "0")}
             </span>
             <span className="pb-1 text-lg font-black leading-none">층</span>
           </p>
@@ -344,7 +282,7 @@ function MicroscopePanel({
 
 function renderHomeView(
   homeView: HomeView,
-  highestClearedRound: number,
+  highestReachedRound: number,
   isStarting: boolean,
   startGame: () => void,
   seenMicrogameIds: readonly string[],
@@ -359,7 +297,7 @@ function renderHomeView(
 
   return (
     <HomePanel
-      highestClearedRound={highestClearedRound}
+      highestReachedRound={highestReachedRound}
       isStarting={isStarting}
       startGame={startGame}
     />
@@ -367,12 +305,12 @@ function renderHomeView(
 }
 
 export function MainScreen({
-  highestClearedRound,
+  highestReachedRound,
   homeView,
   onStart,
   seenMicrogameIds,
 }: Readonly<{
-  highestClearedRound: number;
+  highestReachedRound: number;
   homeView: HomeView;
   onStart: () => void;
   seenMicrogameIds: readonly string[];
@@ -420,7 +358,7 @@ export function MainScreen({
       animateBackdrop={homeView !== "microscope"}
       rhythmStyle={rhythmStyle}
     >
-      <HomeHeader homeView={homeView} isStarting={isStarting} />
+      <HomeHeader currentView={homeView} isStarting={isStarting} />
       <div
         className={`mt-16 rounded-lg border border-cyan-100/70 bg-black/55 p-6 shadow-[0_0_32px_rgba(103,232,249,0.18)] sm:p-8 ${
           homeView === "microscope"
@@ -430,7 +368,7 @@ export function MainScreen({
       >
         {renderHomeView(
           homeView,
-          highestClearedRound,
+          highestReachedRound,
           isStarting,
           startGame,
           seenMicrogameIds,
@@ -608,12 +546,12 @@ export function LoadingScreen({
 }
 
 export function GameOverScreen({
-  finalClearedRound,
-  highestClearedRound,
+  finalReachedRound,
+  highestReachedRound,
   onReturnToMain,
 }: Readonly<{
-  finalClearedRound: number;
-  highestClearedRound: number;
+  finalReachedRound: number;
+  highestReachedRound: number;
   onReturnToMain: () => void;
 }>) {
   useEffect(() => {
@@ -658,7 +596,7 @@ export function GameOverScreen({
             </p>
             <p className="mt-3 flex items-end justify-center gap-2 text-cyan-100 drop-shadow-[0_0_18px_rgba(103,232,249,0.7)]">
               <span className="text-6xl font-black leading-none sm:text-7xl">
-                {finalClearedRound.toString().padStart(2, "0")}
+                {finalReachedRound.toString().padStart(2, "0")}
               </span>
               <span className="pb-1 text-2xl font-black leading-none">층</span>
             </p>
@@ -669,12 +607,13 @@ export function GameOverScreen({
             </p>
             <p className="mt-3 flex items-end justify-center gap-2 text-cyan-100 drop-shadow-[0_0_18px_rgba(103,232,249,0.7)]">
               <span className="text-6xl font-black leading-none sm:text-7xl">
-                {highestClearedRound.toString().padStart(2, "0")}
+                {highestReachedRound.toString().padStart(2, "0")}
               </span>
               <span className="pb-1 text-2xl font-black leading-none">층</span>
             </p>
           </div>
         </div>
+        <ScoreSubmissionPanel score={finalReachedRound} />
         <div className="flex justify-center">
           <NeonButton onClick={returnToMain}>메인으로</NeonButton>
         </div>
