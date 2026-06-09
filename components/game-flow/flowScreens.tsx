@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ScoreSubmissionPanel } from "@/components/ranking/ScoreSubmissionPanel";
 import { MICROGAMES, getMicrogameFormInstruction } from "@/data/microgames";
@@ -220,12 +221,13 @@ function MicroscopePanel({
             ? microgame.microscope.description
             : maskMicroscopeText(microgame.microscope.description);
 
-          return (
+          const card = (
             <article
-              className={`grid min-h-24 grid-cols-[72px_1fr] gap-3 border-b border-white/10 p-3 last:border-b-0 sm:grid-cols-[84px_1fr_auto] sm:items-center sm:gap-4 ${
-                isSeen ? "bg-white/[0.03]" : "bg-black/24 text-white/62"
+              className={`grid min-h-24 grid-cols-[72px_1fr] gap-3 p-3 sm:grid-cols-[84px_1fr_auto] sm:items-center sm:gap-4 ${
+                isSeen
+                  ? "bg-white/[0.03] transition hover:bg-cyan-100/[0.08]"
+                  : "bg-black/24 text-white/62"
               }`}
-              key={microgame.id}
             >
               <div className="relative size-[72px] overflow-hidden rounded border border-white/12 bg-slate-950 sm:size-[84px]">
                 <Image
@@ -273,6 +275,24 @@ function MicroscopePanel({
                 </div>
               ) : null}
             </article>
+          );
+
+          return isSeen ? (
+            <Link
+              aria-label={`${microgame.title} 연습하기`}
+              className="block border-b border-white/10 last:border-b-0"
+              href={`/microscope/${microgame.id}`}
+              key={microgame.id}
+            >
+              {card}
+            </Link>
+          ) : (
+            <div
+              className="border-b border-white/10 last:border-b-0"
+              key={microgame.id}
+            >
+              {card}
+            </div>
           );
         })}
       </div>

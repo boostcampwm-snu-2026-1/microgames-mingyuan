@@ -1,0 +1,193 @@
+"use client";
+
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import type { Microgame, MicrogameCanvas } from "@/data/microgames";
+import { useMicrogameInput } from "@/hooks/useMicrogameInput";
+import { RHYTHM_DURATION_MS } from "@/hooks/useSynchronizedRhythm";
+import {
+  bgmLibrary,
+  type BgmTrack,
+  type SoundEffectTrack,
+} from "@/lib/bgmLibrary";
+
+const RESULT_BEATS = 4;
+const BEAT_PROGRESS_INTERVAL_MS = 50;
+const CLEAR_SOUND_EFFECTS = [
+  "clear1",
+  "clear2",
+  "clear3",
+  "clear4",
+  "clear5",
+] satisfies SoundEffectTrack[];
+
+const PRACTICE_BGM_BY_CANVAS: Partial<Record<MicrogameCanvas, BgmTrack>> = {
+  animalCrossingStamps: "animalCrossing",
+  animalFarmReverseTyping: "animalFarm",
+  appleNumberSum: "appleGame",
+  brainAcademyBlocks: "brainAcademy",
+  cookieRun: "cookieRun",
+  crazyArcade: "crazyArcade",
+  fireAndIceDance: "fireAndIce",
+  geometryDashSpikes: "geometryDash",
+  halliGalliBoss: "halliGalli",
+  hancomTyping: "hancom",
+  kartriderCourse: "kartrider",
+  kirbyInhale: "kirby",
+  laytonShapeMatch: "layton",
+  leagueChampionBan: "leagueOfLegend",
+  maplestoryLieDetector: "maplestory",
+  maplestoryRune: "mapleRune",
+  minigameExBearMeat: "minigameEx",
+  minecraftMining: "minecraft",
+  modooMarble: "modooMarble",
+  pokemonTyping: "pokemon",
+  superMarioCoins: "superMario",
+  superMarioGalaxyStarBits: "superMarioGalaxy",
+  tetrisLineClear: "tetris",
+  undertaleMouse: "undertale",
+  wiiSportsDualPress: "wiiSports",
+  zeldaCircleDraw: "zelda",
+};
+
+export type PracticeResult = "failure" | "success";
+export type PracticePhase = "playing" | "result";
+
+function getRandomClearSoundEffect() {
+  return CLEAR_SOUND_EFFECTS[
+    Math.floor(Math.random() * CLEAR_SOUND_EFFECTS.length)
+  ];
+}
+
+export function usePracticeMicrogame(microgame: Microgame) {
+  const router = useRouter();
+  const [beatsLeft, setBeatsLeft] = useState(microgame.beatCount);
+  const [phase, setPhase] = useState<PracticePhase>("playing");
+  const [result, setResult] = useState<PracticeResult | null>(null);
+  const hasClearedRef = useRef(false);
+  const hasResolvedRef = useRef(false);
+
+  const showResult = useCallback((nextResult: PracticeResult) => {
+    if (hasResolvedRef.current) {
+      return;
+    }
+
+    hasResolvedRef.current = true;
+    setResult(nextResult);
+    setPhase("result");
+  }, []);
+
+  const recordSuccess = useCallback(() => {
+    if (hasClearedRef.current || hasResolvedRef.current) {
+      return;
+    }
+
+    hasClearedRef.current = true;
+    bgmLibrary
+      .playSoundEffect(getRandomClearSoundEffect())
+      .catch((error: unknown) => {
+        console.error(error);
+      });
+  }, []);
+
+  const recordFailure = useCallback(() => {
+    showResult("failure");
+  }, [showResult]);
+
+  useMicrogameInput({
+    isActive: phase === "playing",
+    microgame,
+    onClear: recordSuccess,
+    onFailure: recordFailure,
+    roundNumber: 1,
+  });
+
+  useEffect(() => {
+    if (phase !== "playing") {
+      return;
+    }
+
+    const startedAt = window.performance.now();
+    const durationMs = microgame.beatCount * RHYTHM_DURATION_MS;
+    const endsAt = startedAt + durationMs;
+    const beatTimer = window.setInterval(() => {
+      const remainingMs = Math.max(endsAt - window.performance.now(), 0);
+
+      setBeatsLeft(
+        Math.min(
+          Math.ceil(remainingMs / RHYTHM_DURATION_MS),
+          microgame.beatCount,
+        ),
+      );
+    }, BEAT_PROGRESS_INTERVAL_MS);
+    const finishTimer = window.setTimeout(() => {
+      setBeatsLeft(0);
+      showResult(hasClearedRef.current ? "success" : "failure");
+    }, durationMs);
+
+    return () => {
+      window.clearInterval(beatTimer);
+      window.clearTimeout(finishTimer);
+    };
+  }, [microgame.beatCount, phase, showResult]);
+
+  useEffect(() => {
+    bgmLibrary.setBeatDurationMs(RHYTHM_DURATION_MS);
+
+    if (phase === "playing") {
+      const track = PRACTICE_BGM_BY_CANVAS[microgame.canvas];
+
+      if (!track) {
+        bgmLibrary.stop();
+        return;
+      }
+
+      bgmLibrary.play(track, "once", "now").catch((error: unknown) => {
+        console.error(error);
+      });
+      return;
+    }
+
+    if (!result) {
+      return;
+    }
+
+    const resultTrack = result === "failure" ? "fail" : "success";
+
+    bgmLibrary.play(resultTrack, "once", "now").catch((error: unknown) => {
+      console.error(error);
+    });
+  }, [microgame.canvas, phase, result]);
+
+  useEffect(() => {
+    if (phase !== "result") {
+      return;
+    }
+
+    const returnTimer = window.setTimeout(() => {
+      router.replace("/microscope");
+    }, RESULT_BEATS * RHYTHM_DURATION_MS);
+
+    return () => {
+      window.clearTimeout(returnTimer);
+    };
+  }, [phase, router]);
+
+  useEffect(
+    () => () => {
+      bgmLibrary.stop();
+    },
+    [],
+  );
+
+  const returnToMicroscope = useCallback(() => {
+    router.replace("/microscope");
+  }, [router]);
+
+  return {
+    beatsLeft,
+    phase,
+    result,
+    returnToMicroscope,
+  };
+}
