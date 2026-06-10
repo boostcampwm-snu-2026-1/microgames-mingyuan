@@ -578,7 +578,7 @@ export const MICROGAMES = [
     control: "koreanKeyboard",
     id: "pokemon-name-typing",
     startPrompt: "이 포켓몬의 이름은?",
-    title: "포켓몬",
+    title: "포켓몬스터",
     type: "normal",
   },
 
