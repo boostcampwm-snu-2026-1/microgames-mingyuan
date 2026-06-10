@@ -7,6 +7,7 @@ import { AmongUsWireGame } from "@/games/AmongUsWireGame";
 import { BrainAcademyBlockGame } from "@/games/BrainAcademyBlockGame";
 import { ChromeDinoSpaceGame } from "@/games/ChromeDinoSpaceGame";
 import { CookieRunGame } from "@/games/CookieRunGame";
+import { CookieRunKingdomGame } from "@/games/CookieRunKingdomGame";
 import { CourseRegistrationNumberGame } from "@/games/CourseRegistrationNumberGame";
 import { CrazyArcadeGame } from "@/games/CrazyArcadeGame";
 import { DefaultMicrogameCanvas } from "@/games/DefaultMicrogameCanvas";
@@ -33,6 +34,7 @@ import { PongGame } from "@/games/PongGame";
 import { PokemonTypingGame } from "@/games/PokemonTypingGame";
 import { RhythmHeavenChorusGame } from "@/games/RhythmHeavenChorusGame";
 import { SubmitAssignmentGame } from "@/games/SubmitAssignmentGame";
+import { SudokuGame } from "@/games/SudokuGame";
 import { SuperMarioGalaxyGame } from "@/games/SuperMarioGalaxyGame";
 import { SuperMarioCoinGame } from "@/games/SuperMarioCoinGame";
 import { TetrisLineClearGame } from "@/games/TetrisLineClearGame";
@@ -135,6 +137,10 @@ function renderGameCanvas(microgame: Microgame) {
     return <CookieRunGame microgame={microgame} />;
   }
 
+  if (microgame.canvas === "cookieRunKingdom") {
+    return <CookieRunKingdomGame microgame={microgame} />;
+  }
+
   if (microgame.canvas === "crazyArcade") {
     return <CrazyArcadeGame microgame={microgame} />;
   }
@@ -181,6 +187,10 @@ function renderGameCanvas(microgame: Microgame) {
 
   if (microgame.canvas === "submitAssignment") {
     return <SubmitAssignmentGame microgame={microgame} />;
+  }
+
+  if (microgame.canvas === "sudokuMissingNumber") {
+    return <SudokuGame microgame={microgame} />;
   }
 
   if (microgame.canvas === "tetrisLineClear") {

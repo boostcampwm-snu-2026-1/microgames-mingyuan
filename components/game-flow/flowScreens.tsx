@@ -426,14 +426,6 @@ export function SetupScreen({
   );
 }
 
-function getDisplayAssetPath(assetPath: string) {
-  if (!assetPath) {
-    return "";
-  }
-
-  return assetPath.length > 88 ? `...${assetPath.slice(-85)}` : assetPath;
-}
-
 export function LoadingScreen({
   onRetry,
   preloadStatus,
@@ -442,10 +434,6 @@ export function LoadingScreen({
   preloadStatus: PreloadStatus;
 }>) {
   useBgmTrack("resultsAndMain", "loop", "now");
-  const progress =
-    preloadStatus.total > 0
-      ? Math.round((preloadStatus.loaded / preloadStatus.total) * 100)
-      : 0;
   const isFailed = preloadStatus.phase === "failed";
   const { messageIndex, tipIndex } = useLoadingScreenCarousel({
     isPaused: isFailed,
@@ -487,17 +475,17 @@ export function LoadingScreen({
                   {isFailed ? "로딩을 멈췄어요" : loadingMessage}
                 </p>
                 <p className="mt-1 text-xs font-black text-cyan-100/62">
-                  {preloadStatus.loaded}/{preloadStatus.total}
+                  이미지와 오디오를 병렬로 준비하고 있습니다
                 </p>
               </div>
               <p className="shrink-0 text-3xl font-black leading-none text-cyan-100">
-                {progress}%
+                {isFailed ? "!" : `${preloadStatus.progress}%`}
               </p>
             </div>
             <div className="mt-4 h-3 overflow-hidden rounded-full border border-cyan-100/55 bg-black">
               <div
-                className="h-full rounded-full bg-cyan-200 shadow-[0_0_16px_rgba(103,232,249,0.85)] transition-[width] duration-200 ease-out"
-                style={{ width: `${progress}%` }}
+                className="h-full rounded-full bg-cyan-200 shadow-[0_0_16px_rgba(103,232,249,0.85)] transition-[width] duration-150 ease-out"
+                style={{ width: `${preloadStatus.progress}%` }}
               />
             </div>
             <div className="mt-4 h-16 rounded border border-cyan-100/18 bg-black/35 px-3 py-2 text-xs leading-5 text-cyan-50/68">
@@ -506,9 +494,8 @@ export function LoadingScreen({
               </div>
               {isFailed ? (
                 <div className="mt-1 flex min-w-0 items-center gap-2 text-red-100">
-                  <span className="shrink-0 font-black">실패 asset:</span>
                   <span className="truncate">
-                    {getDisplayAssetPath(preloadStatus.failedAsset ?? "")}
+                    {preloadStatus.errorMessage ?? "에셋 로딩에 실패했습니다."}
                   </span>
                   <button
                     className="ml-auto shrink-0 rounded border border-red-100/45 px-2 py-0.5 text-xs font-black text-red-50 transition hover:bg-red-500/20"
@@ -519,11 +506,8 @@ export function LoadingScreen({
                   </button>
                 </div>
               ) : (
-                <div className="mt-1 flex min-w-0 items-center gap-2">
-                  <span className="shrink-0 font-black">현재 로드:</span>
-                  <span className="truncate">
-                    {getDisplayAssetPath(preloadStatus.currentAsset)}
-                  </span>
+                <div className="mt-1">
+                  최대한 빠르게 한 번에 불러오고 있습니다.
                 </div>
               )}
             </div>

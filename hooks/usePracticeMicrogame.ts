@@ -29,6 +29,7 @@ const PRACTICE_BGM_BY_CANVAS: Partial<Record<MicrogameCanvas, BgmTrack>> = {
   appleNumberSum: "appleGame",
   brainAcademyBlocks: "brainAcademy",
   cookieRun: "cookieRun",
+  cookieRunKingdom: "cookieRunKingdom",
   crazyArcade: "crazyArcade",
   fireAndIceDance: "fireAndIce",
   geometryDashSpikes: "geometryDash",
@@ -44,6 +45,7 @@ const PRACTICE_BGM_BY_CANVAS: Partial<Record<MicrogameCanvas, BgmTrack>> = {
   minecraftMining: "minecraft",
   modooMarble: "modooMarble",
   pokemonTyping: "pokemon",
+  sudokuMissingNumber: "sudoku",
   superMarioCoins: "superMario",
   superMarioGalaxyStarBits: "superMarioGalaxy",
   tetrisLineClear: "tetris",
@@ -87,12 +89,17 @@ export function usePracticeMicrogame(microgame: Microgame) {
     }
 
     hasClearedRef.current = true;
+
+    if (microgame.canvas === "sudokuMissingNumber") {
+      return;
+    }
+
     bgmLibrary
       .playSoundEffect(getRandomClearSoundEffect())
       .catch((error: unknown) => {
         console.error(error);
       });
-  }, []);
+  }, [microgame.canvas]);
 
   const recordFailure = useCallback(() => {
     showResult("failure");

@@ -25,6 +25,294 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+@keyframes cookie-kingdom-target-bounce {
+  0%,
+  100% {
+    transform: translate(-50%, 0);
+  }
+
+  50% {
+    transform: translate(-50%, 18%);
+  }
+}
+
+@keyframes cookie-kingdom-wrong {
+  0%,
+  100% {
+    filter: saturate(1);
+    transform: translateX(0) rotate(0deg);
+  }
+
+  25% {
+    filter: saturate(1.8) brightness(1.25);
+    transform: translateX(-8%) rotate(-3deg);
+  }
+
+  50% {
+    filter: saturate(1.8) brightness(1.25);
+    transform: translateX(8%) rotate(3deg);
+  }
+
+  75% {
+    transform: translateX(-5%) rotate(-2deg);
+  }
+}
+
+@keyframes cookie-kingdom-skill-pop {
+  0% {
+    filter: brightness(1);
+    transform: scale(1);
+  }
+
+  45% {
+    filter: brightness(1.55);
+    transform: scale(1.24);
+  }
+
+  100% {
+    filter: brightness(1.25);
+    transform: scale(1.12);
+  }
+}
+
+@keyframes cookie-kingdom-comic-enter {
+  0% {
+    opacity: 0;
+    transform: translate(42%, -20%) rotate(13deg) scale(0.35);
+  }
+
+  58% {
+    opacity: 1;
+    transform: translate(-3%, 2%) rotate(-4deg) scale(1.08);
+  }
+
+  78% {
+    transform: translate(1%, -1%) rotate(2deg) scale(0.97);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(0) rotate(0deg) scale(1);
+  }
+}
+
+@keyframes cookie-kingdom-portrait-enter {
+  0% {
+    opacity: 0;
+    transform: translate(30%, 18%) rotate(8deg) scale(0.68);
+  }
+
+  70% {
+    opacity: 1;
+    transform: translate(-2%, -1%) rotate(-2deg) scale(1.05);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(0) rotate(0deg) scale(1);
+  }
+}
+
+@keyframes cookie-kingdom-flash {
+  0% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+
+  32% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.25;
+    transform: scale(1.35);
+  }
+}
+
+@keyframes cookie-kingdom-screen-impact {
+  0%,
+  100% {
+    transform: translate(0);
+  }
+
+  12% {
+    transform: translate(-0.7%, 0.5%);
+  }
+
+  24% {
+    transform: translate(0.6%, -0.4%);
+  }
+
+  38% {
+    transform: translate(-0.35%, -0.2%);
+  }
+}
+
+@keyframes cookie-kingdom-burst-spin {
+  0% {
+    opacity: 0;
+    transform: rotate(-24deg) scale(0.18);
+  }
+
+  36% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.62;
+    transform: rotate(8deg) scale(1.18);
+  }
+}
+
+@keyframes cookie-kingdom-aura-expand {
+  0% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+
+  42% {
+    opacity: 0.95;
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.45);
+  }
+}
+
+@keyframes cookie-kingdom-particle-fly {
+  0% {
+    opacity: 0;
+    transform: translate(0) rotate(0deg) scale(0.2);
+  }
+
+  28% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(var(--particle-x), var(--particle-y)) rotate(210deg)
+      scale(1.25);
+  }
+}
+
+.cookie-kingdom-target-arrow {
+  animation: cookie-kingdom-target-bounce 520ms ease-in-out infinite;
+}
+
+.cookie-kingdom-skill-slot {
+  transition:
+    filter 160ms ease,
+    transform 160ms ease;
+}
+
+.cookie-kingdom-skill-slot-active {
+  animation: cookie-kingdom-skill-pop 720ms ease-out both;
+}
+
+.cookie-kingdom-skill-slot-wrong {
+  animation: cookie-kingdom-wrong 300ms ease-in-out;
+}
+
+.cookie-kingdom-skill-flash {
+  animation: cookie-kingdom-flash 1750ms ease-out both;
+}
+
+.cookie-kingdom-screen-impact {
+  animation: cookie-kingdom-screen-impact 440ms linear both;
+  background: rgba(255, 247, 199, 0.16);
+}
+
+.cookie-kingdom-burst-rays,
+.cookie-kingdom-panel-burst {
+  background: repeating-conic-gradient(
+    from 8deg,
+    rgba(255, 248, 190, 0.98) 0deg 4deg,
+    rgba(255, 166, 94, 0.1) 4deg 11deg,
+    rgba(213, 102, 255, 0.9) 11deg 15deg,
+    transparent 15deg 23deg
+  );
+}
+
+.cookie-kingdom-burst-rays {
+  animation: cookie-kingdom-burst-spin 1550ms
+    cubic-bezier(0.18, 0.82, 0.28, 1.08) both;
+  border-radius: 9999px;
+  filter: blur(1px) drop-shadow(0 0 14px rgba(255, 229, 119, 0.82));
+  mask-image: radial-gradient(circle, #000 0 58%, transparent 76%);
+}
+
+.cookie-kingdom-panel-burst {
+  animation: cookie-kingdom-burst-spin 1750ms ease-out both;
+  opacity: 0.5;
+}
+
+.cookie-kingdom-aura-ring {
+  animation: cookie-kingdom-aura-expand 1250ms ease-out both;
+  box-shadow:
+    0 0 24px rgba(255, 239, 155, 0.88),
+    inset 0 0 24px rgba(224, 122, 255, 0.7);
+}
+
+.cookie-kingdom-aura-ring-two {
+  animation-delay: 160ms;
+}
+
+.cookie-kingdom-particle {
+  animation: cookie-kingdom-particle-fly 1250ms ease-out both;
+  background: #fff5ac;
+  box-shadow:
+    0 0 12px #fff4a5,
+    0 0 24px #d77cff;
+  height: clamp(9px, 1.2vw, 18px);
+  rotate: 45deg;
+  width: clamp(9px, 1.2vw, 18px);
+}
+
+.cookie-kingdom-particle-one {
+  --particle-x: -14vw;
+  --particle-y: -9vh;
+}
+
+.cookie-kingdom-particle-two {
+  --particle-x: 12vw;
+  --particle-y: -12vh;
+  animation-delay: 90ms;
+}
+
+.cookie-kingdom-particle-three {
+  --particle-x: -12vw;
+  --particle-y: 14vh;
+  animation-delay: 150ms;
+}
+
+.cookie-kingdom-particle-four {
+  --particle-x: 13vw;
+  --particle-y: 11vh;
+  animation-delay: 220ms;
+}
+
+.cookie-kingdom-speed-lines {
+  background: repeating-linear-gradient(
+    154deg,
+    transparent 0 18px,
+    rgba(255, 245, 181, 0.84) 20px 26px,
+    transparent 28px 50px
+  );
+  filter: drop-shadow(0 0 8px rgba(255, 227, 127, 0.9));
+}
+
+.cookie-kingdom-comic-panel {
+  animation: cookie-kingdom-comic-enter 1050ms
+    cubic-bezier(0.17, 0.88, 0.32, 1.28) both;
+}
+
+.cookie-kingdom-skill-portrait {
+  animation: cookie-kingdom-portrait-enter 1180ms
+    cubic-bezier(0.18, 0.82, 0.28, 1.08) both;
+}
+
 @keyframes neon-elevator-flicker {
   0%,
   44%,

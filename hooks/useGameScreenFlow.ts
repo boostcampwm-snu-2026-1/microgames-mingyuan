@@ -5,9 +5,9 @@ import { ALL_GAME_PRELOAD_ASSETS } from "@/data/preloadAssets";
 import { useHighestReachedRound } from "@/hooks/useHighestReachedRound";
 import { BGM_LIBRARY_PRELOAD_ASSET_PATHS, bgmLibrary } from "@/lib/bgmLibrary";
 
-const MIN_LOADING_TIME_MS = 900;
 const MAX_LIVES = 4;
-const PRELOAD_CONCURRENCY = 6;
+const PRELOAD_CONCURRENCY = 16;
+const PRELOAD_PROGRESS_STEP = 5;
 
 const GENERAL_PRELOAD_ASSETS = ALL_GAME_PRELOAD_ASSETS.filter(
   (assetPath) => !BGM_LIBRARY_PRELOAD_ASSET_PATHS.has(assetPath),
@@ -44,37 +44,24 @@ function getGlobalPreloadState() {
 export type GameScreen = "main" | "loading" | "setup" | "playing" | "gameOver";
 export type GameRoundResult = "idle" | "success" | "failure";
 export type PreloadStatus = Readonly<{
-  currentAsset: string;
   errorMessage: string | null;
-  failedAsset: string | null;
-  loaded: number;
   phase: "complete" | "failed" | "loading";
-  total: number;
+  progress: number;
 }>;
 
 const INITIAL_PRELOAD_STATUS = {
-  currentAsset: "",
   errorMessage: null,
-  failedAsset: null,
-  loaded: 0,
   phase: "loading",
-  total: GENERAL_PRELOAD_ASSETS.length + 2,
+  progress: 0,
 } satisfies PreloadStatus;
 
 const COMPLETE_PRELOAD_STATUS = {
-  ...INITIAL_PRELOAD_STATUS,
-  currentAsset: "",
-  loaded: INITIAL_PRELOAD_STATUS.total,
+  errorMessage: null,
   phase: "complete",
+  progress: 100,
 } satisfies PreloadStatus;
 
 type PreloadProgressHandler = (status: PreloadStatus) => void;
-
-function waitForMinimumLoadingTime() {
-  return new Promise((resolve) => {
-    window.setTimeout(resolve, MIN_LOADING_TIME_MS);
-  });
-}
 
 function isImageAsset(assetPath: string) {
   return /\.(?:avif|gif|jpe?g|png|svg|webp)$/i.test(assetPath);
@@ -84,14 +71,7 @@ function preloadImageAsset(assetPath: string) {
   return new Promise<void>((resolve, reject) => {
     const image = new Image();
 
-    image.onload = () => {
-      if (!image.decode) {
-        resolve();
-        return;
-      }
-
-      image.decode().then(resolve).catch(resolve);
-    };
+    image.onload = () => resolve();
     image.onerror = () => {
       reject(new Error(`Failed to preload image ${assetPath}`));
     };
@@ -124,100 +104,70 @@ function getErrorMessage(error: unknown) {
 }
 
 async function runPreloadTasks(onProgress: PreloadProgressHandler | undefined) {
-  let loaded = 0;
+  const totalTaskCount = GENERAL_PRELOAD_ASSETS.length + 1;
+  let completedTaskCount = 0;
   let hasFailed = false;
-
-  const reportStarted = (label: string) => {
+  let lastReportedProgress = 0;
+  const reportTaskComplete = () => {
     if (hasFailed) {
       return;
     }
 
+    completedTaskCount += 1;
+
+    const rawProgress = (completedTaskCount / totalTaskCount) * 100;
+    const progress = Math.min(
+      Math.floor(rawProgress / PRELOAD_PROGRESS_STEP) * PRELOAD_PROGRESS_STEP,
+      95,
+    );
+
+    if (progress <= lastReportedProgress) {
+      return;
+    }
+
+    lastReportedProgress = progress;
     onProgress?.({
-      currentAsset: label,
       errorMessage: null,
-      failedAsset: null,
-      loaded,
       phase: "loading",
-      total: INITIAL_PRELOAD_STATUS.total,
+      progress,
     });
   };
-
-  const runTrackedTask = async (
-    label: string,
-    load: () => Promise<unknown>,
-  ) => {
-    reportStarted(label);
-
-    try {
-      await load();
-    } catch (error) {
-      const errorMessage = getErrorMessage(error);
-
-      if (!hasFailed) {
-        hasFailed = true;
-        onProgress?.({
-          currentAsset: "",
-          errorMessage,
-          failedAsset: label,
-          loaded,
-          phase: "failed",
-          total: INITIAL_PRELOAD_STATUS.total,
-        });
-      }
-
-      throw error;
-    }
-
-    loaded += 1;
-    if (!hasFailed) {
-      onProgress?.({
-        currentAsset: label,
-        errorMessage: null,
-        failedAsset: null,
-        loaded,
-        phase: "loading",
-        total: INITIAL_PRELOAD_STATUS.total,
-      });
-    }
-  };
-
   const workerCount = Math.min(
     PRELOAD_CONCURRENCY,
     GENERAL_PRELOAD_ASSETS.length,
   );
   const assetWorkers = Array.from({ length: workerCount }, (_, workerIndex) => {
     const loadWorkerAssets = async (assetIndex: number): Promise<void> => {
-      if (hasFailed) {
-        return;
-      }
-
       const assetPath = GENERAL_PRELOAD_ASSETS[assetIndex];
 
       if (!assetPath) {
         return;
       }
 
-      await runTrackedTask(assetPath, () => preloadAsset(assetPath));
+      await preloadAsset(assetPath);
+      reportTaskComplete();
       await loadWorkerAssets(assetIndex + workerCount);
     };
 
     return loadWorkerAssets(workerIndex);
   });
-
-  await Promise.all([
-    ...assetWorkers,
-    runTrackedTask("오디오 버퍼 준비", () => bgmLibrary.preloadAll()),
-    runTrackedTask("로딩 화면 준비", waitForMinimumLoadingTime),
-  ]);
-
-  onProgress?.({
-    currentAsset: "",
-    errorMessage: null,
-    failedAsset: null,
-    loaded,
-    phase: "complete",
-    total: INITIAL_PRELOAD_STATUS.total,
+  const audioPreload = bgmLibrary.preloadAll().then(() => {
+    reportTaskComplete();
   });
+
+  try {
+    await Promise.all([...assetWorkers, audioPreload]);
+  } catch (error) {
+    hasFailed = true;
+    onProgress?.({
+      errorMessage: getErrorMessage(error),
+      phase: "failed",
+      progress: lastReportedProgress,
+    });
+    throw error;
+  }
+
+  onProgress?.(COMPLETE_PRELOAD_STATUS);
 }
 
 function preloadAllGameAssets(onProgress?: PreloadProgressHandler) {

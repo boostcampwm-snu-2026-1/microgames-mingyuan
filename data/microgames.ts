@@ -20,6 +20,7 @@ export type MicrogameCanvas =
   | "brainAcademyBlocks"
   | "chromeDinoSpace"
   | "cookieRun"
+  | "cookieRunKingdom"
   | "courseRegistrationNumber"
   | "crazyArcade"
   | "default"
@@ -47,6 +48,7 @@ export type MicrogameCanvas =
   | "superMarioGalaxyStarBits"
   | "superMarioCoins"
   | "submitAssignment"
+  | "sudokuMissingNumber"
   | "tetrisLineClear"
   | "twoThousandFortyEightBoss"
   | "undertaleMouse"
@@ -340,6 +342,21 @@ export const MICROGAMES = [
   },
 
   {
+    beatCount: 12,
+    canvas: "sudokuMissingNumber",
+    microscope: {
+      description:
+        "3×3 칸에는 1부터 9까지의 숫자가 하나씩 들어갑니다. 비어 있는 칸에 들어갈 숫자를 찾아 숫자키로 입력하세요.",
+      imageAlt: "빈칸이 있는 3×3 숫자 퍼즐",
+      imageSrc: "/games/sudoku/images/thumbnail.svg",
+    },
+    control: "numberKeys",
+    id: "sudoku-missing-number",
+    startPrompt: "빈칸을 채워라!",
+    title: "스도쿠",
+    type: "normal",
+  },
+  {
     beatCount: 8,
     canvas: "flickingGame",
     microscope: {
@@ -462,7 +479,23 @@ export const MICROGAMES = [
     control: "arrowAndSpace",
     id: "cookie-run-obstacle-dodge",
     startPrompt: "달려라!",
-    title: "쿠키런",
+    title: "쿠키런: 오븐브레이크",
+    type: "normal",
+  },
+
+  {
+    beatCount: 8,
+    canvas: "cookieRunKingdom",
+    microscope: {
+      description:
+        "쿠키런: 킹덤 전투에서는 타이밍에 맞는 쿠키의 스킬을 골라야 합니다. 목표 쿠키를 확인하고 1~5 숫자키를 눌러 스킬을 발동하세요.",
+      imageAlt: "쿠키런 킹덤 전투 화면",
+      imageSrc: "/games/cookie-run-kingdom/images/background.png",
+    },
+    control: "numberKeys",
+    id: "cookie-run-kingdom-skill",
+    startPrompt: "스킬을 발동해라!",
+    title: "쿠키런: 킹덤",
     type: "normal",
   },
 

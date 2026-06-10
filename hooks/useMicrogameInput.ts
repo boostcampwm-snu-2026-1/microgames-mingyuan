@@ -60,6 +60,7 @@ export function useMicrogameInput({
         microgame.canvas === "animalFarmReverseTyping" ||
         microgame.canvas === "brainAcademyBlocks" ||
         microgame.canvas === "cookieRun" ||
+        microgame.canvas === "cookieRunKingdom" ||
         microgame.canvas === "crazyArcade" ||
         microgame.canvas === "fireAndIceDance" ||
         microgame.canvas === "fireBoyWaterGirl" ||
@@ -76,6 +77,7 @@ export function useMicrogameInput({
         microgame.canvas === "pongSurvival" ||
         microgame.canvas === "pokemonTyping" ||
         microgame.canvas === "superMarioCoins" ||
+        microgame.canvas === "sudokuMissingNumber" ||
         microgame.canvas === "tetrisLineClear" ||
         microgame.canvas === "twoThousandFortyEightBoss" ||
         microgame.canvas === "undertaleMouse" ||

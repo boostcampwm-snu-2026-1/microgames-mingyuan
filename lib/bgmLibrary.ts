@@ -9,6 +9,7 @@ export type BgmTrack =
   | "bossStage"
   | "brainAcademy"
   | "cookieRun"
+  | "cookieRunKingdom"
   | "crazyArcade"
   | "fail"
   | "fireAndIce"
@@ -31,6 +32,7 @@ export type BgmTrack =
   | "resultsAndMain"
   | "setup"
   | "speedUp"
+  | "sudoku"
   | "superMarioGalaxy"
   | "superMario"
   | "success"
@@ -66,6 +68,8 @@ const BGM_TRACK_PATHS = {
   bossStage: "/games/game-flow/sounds/boss-stage.mp3",
   brainAcademy: "/games/brain-academy/sounds/brain-academy-bgm.mp3",
   cookieRun: "/games/cookie-run/sounds/cookie-run-bgm.mp3",
+  cookieRunKingdom:
+    "/games/cookie-run-kingdom/sounds/cookie-run-kingdom-bgm.mp3",
   crazyArcade: "/games/crazy-arcade/sounds/crazy-arcade-bgm.mp3",
   fail: "/games/game-flow/sounds/fail.mp3",
   fireAndIce: "/games/a-dance-of-fire-and-ice/sounds/fire-and-ice-bgm.mp3",
@@ -88,6 +92,7 @@ const BGM_TRACK_PATHS = {
   resultsAndMain: "/games/game-flow/sounds/results-and-main.mp3",
   setup: "/games/game-flow/sounds/setup.mp3",
   speedUp: "/games/game-flow/sounds/speed-up.mp3",
+  sudoku: "/games/sudoku/sounds/sudoku-bgm.mp3",
   superMarioGalaxy:
     "/games/super-mario-galaxy/sounds/super-mario-galaxy-bgm.mp3",
   superMario: "/games/supermario/sounds/overworld-theme.mp3",
@@ -150,6 +155,7 @@ const BGM_TRACK_BEATS = {
   bossStage: 8,
   brainAcademy: 12,
   cookieRun: 12,
+  cookieRunKingdom: 8,
   crazyArcade: 12,
   fail: 4,
   fireAndIce: 8,
@@ -171,6 +177,7 @@ const BGM_TRACK_BEATS = {
   resultsAndMain: 83,
   setup: 4,
   speedUp: 8,
+  sudoku: 12,
   superMarioGalaxy: 12,
   superMario: 8,
   success: 4,
@@ -235,8 +242,8 @@ class BgmLibrary {
     }
   }
 
-  preloadAll() {
-    return Promise.all(
+  async preloadAll() {
+    await Promise.all(
       Object.keys(AUDIO_TRACK_PATHS).map((track) =>
         this.loadTrack(track as BgmTrack | SoundEffectTrack),
       ),

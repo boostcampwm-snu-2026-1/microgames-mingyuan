@@ -252,6 +252,10 @@ export function GameScreen({
   const recordSuccessWithClearSound = useCallback(() => {
     recordSuccess();
 
+    if (microgame.canvas === "sudokuMissingNumber") {
+      return;
+    }
+
     if (clearSoundPlayedRoundRef.current === roundNumber) {
       return;
     }
@@ -262,7 +266,7 @@ export function GameScreen({
       .catch((error: unknown) => {
         console.error(error);
       });
-  }, [recordSuccess, roundNumber]);
+  }, [microgame.canvas, recordSuccess, roundNumber]);
 
   useMicrogameInput({
     isActive: phase === "game",
@@ -411,6 +415,15 @@ export function GameScreen({
         return;
       }
 
+      if (microgame.canvas === "cookieRunKingdom") {
+        bgmLibrary
+          .play("cookieRunKingdom", "once", "now")
+          .catch((error: unknown) => {
+            console.error(error);
+          });
+        return;
+      }
+
       if (microgame.canvas === "crazyArcade") {
         bgmLibrary
           .play("crazyArcade", "once", "now")
@@ -487,6 +500,13 @@ export function GameScreen({
 
       if (microgame.canvas === "kirbyInhale") {
         bgmLibrary.play("kirby", "once", "now").catch((error: unknown) => {
+          console.error(error);
+        });
+        return;
+      }
+
+      if (microgame.canvas === "sudokuMissingNumber") {
+        bgmLibrary.play("sudoku", "once", "now").catch((error: unknown) => {
           console.error(error);
         });
         return;

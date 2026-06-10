@@ -17,8 +17,8 @@ const JUMP_SOUND_SRCS = {
   water: "/games/fire-boy-and-water-girl/sounds/watergirl-jump.mp3",
 } as const;
 const DEFAULT_BEAT_DURATION_MS = 500;
-const GRAVITY_HEIGHTS_PER_SECOND = 1.8;
-const JUMP_VELOCITY_HEIGHTS_PER_SECOND = -0.75;
+const DEFAULT_GRAVITY_HEIGHTS_PER_SECOND = 1.8;
+const DEFAULT_JUMP_VELOCITY_HEIGHTS_PER_SECOND = -0.75;
 const MAX_DELTA_SECONDS = 1 / 30;
 const MIN_CANVAS_HEIGHT = 360;
 const MIN_CANVAS_WIDTH = 640;
@@ -87,6 +87,10 @@ function getBeatDurationMs(canvas: HTMLCanvasElement) {
   return Number.isFinite(parsedDuration) && parsedDuration > 0
     ? parsedDuration
     : DEFAULT_BEAT_DURATION_MS;
+}
+
+function getTempoScale(beatDurationMs: number) {
+  return DEFAULT_BEAT_DURATION_MS / beatDurationMs;
 }
 
 function getCoverImageLayout(
@@ -327,9 +331,11 @@ export function useFireBoyWaterGirlGameCanvas(gameBeatCount: number) {
         const layoutHeight = background
           ? getCoverImageLayout(background, canvasWidth, canvasHeight).height
           : canvasHeight;
+        const tempoScale = getTempoScale(beatDurationMs);
 
         state.isJumping = true;
-        state.velocityY = JUMP_VELOCITY_HEIGHTS_PER_SECOND * layoutHeight;
+        state.velocityY =
+          DEFAULT_JUMP_VELOCITY_HEIGHTS_PER_SECOND * tempoScale * layoutHeight;
         playSound(jumpAudios[state.character]);
       }
     };
@@ -377,9 +383,14 @@ export function useFireBoyWaterGirlGameCanvas(gameBeatCount: number) {
           const layoutHeight = background
             ? getCoverImageLayout(background, canvasWidth, canvasHeight).height
             : canvasHeight;
+          const tempoScale = getTempoScale(beatDurationMs);
 
           state.velocityY +=
-            GRAVITY_HEIGHTS_PER_SECOND * layoutHeight * deltaSeconds;
+            DEFAULT_GRAVITY_HEIGHTS_PER_SECOND *
+            tempoScale *
+            tempoScale *
+            layoutHeight *
+            deltaSeconds;
           state.yOffset += state.velocityY * deltaSeconds;
 
           if (state.yOffset >= 0) {
