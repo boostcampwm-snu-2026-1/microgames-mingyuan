@@ -10,7 +10,7 @@ const BACKGROUND_IMAGE_SRC =
   "/games/a-dance-of-fire-and-ice/images/background.png";
 const COUNTDOWN_BEATS = 2;
 const DEFAULT_BEAT_DURATION_MS = 500;
-const REQUIRED_STEPS = 3;
+const REQUIRED_STEPS = 1;
 const HIT_WINDOW_BEATS = 0.2;
 const PIVOT_TRANSITION_BEATS = 0.18;
 const MAX_DELTA_MS = 50;
@@ -109,7 +109,8 @@ function drawCoverImage(
 }
 
 function getTrackPoints(width: number, height: number) {
-  const trackWidth = Math.min(width * 0.62, 680);
+  const stepWidth = Math.min(width * 0.22, 240);
+  const trackWidth = stepWidth * REQUIRED_STEPS;
   const startX = (width - trackWidth) / 2;
   const centerY = height * 0.6;
 

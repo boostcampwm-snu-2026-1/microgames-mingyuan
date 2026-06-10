@@ -11,6 +11,7 @@ import { CourseRegistrationNumberGame } from "@/games/CourseRegistrationNumberGa
 import { CrazyArcadeGame } from "@/games/CrazyArcadeGame";
 import { DefaultMicrogameCanvas } from "@/games/DefaultMicrogameCanvas";
 import { FireAndIceDanceGame } from "@/games/FireAndIceDanceGame";
+import { FireBoyWaterGirlGame } from "@/games/FireBoyWaterGirlGame";
 import { FlickingGame } from "@/games/FlickingGame";
 import { FlappyBirdGame } from "@/games/FlappyBirdGame";
 import { GeometryDashGame } from "@/games/GeometryDashGame";
@@ -30,6 +31,7 @@ import type { Microgame } from "@/data/microgames";
 import { PianoMelodyGame } from "@/games/PianoMelodyGame";
 import { PongGame } from "@/games/PongGame";
 import { PokemonTypingGame } from "@/games/PokemonTypingGame";
+import { RhythmHeavenChorusGame } from "@/games/RhythmHeavenChorusGame";
 import { SubmitAssignmentGame } from "@/games/SubmitAssignmentGame";
 import { SuperMarioGalaxyGame } from "@/games/SuperMarioGalaxyGame";
 import { SuperMarioCoinGame } from "@/games/SuperMarioCoinGame";
@@ -83,6 +85,10 @@ function renderGameCanvas(microgame: Microgame) {
 
   if (microgame.canvas === "pokemonTyping") {
     return <PokemonTypingGame microgame={microgame} />;
+  }
+
+  if (microgame.canvas === "rhythmHeavenChorus") {
+    return <RhythmHeavenChorusGame microgame={microgame} />;
   }
 
   if (microgame.canvas === "minecraftMining") {
@@ -147,6 +153,10 @@ function renderGameCanvas(microgame: Microgame) {
 
   if (microgame.canvas === "fireAndIceDance") {
     return <FireAndIceDanceGame microgame={microgame} />;
+  }
+
+  if (microgame.canvas === "fireBoyWaterGirl") {
+    return <FireBoyWaterGirlGame microgame={microgame} />;
   }
 
   if (microgame.canvas === "gomokuWhiteStone") {
