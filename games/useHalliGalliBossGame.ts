@@ -592,10 +592,7 @@ export function useHalliGalliBossGameCanvas(gameBeatCount: number) {
     const beatDurationMs = getBeatDurationMs(canvas);
     const turnDurationMs = getTurnDurationMs(beatDurationMs);
     const roundDurationMs = gameBeatCount * beatDurationMs;
-    const turnCount = Math.max(
-      1,
-      Math.ceil(roundDurationMs / turnDurationMs),
-    );
+    const turnCount = Math.max(1, Math.ceil(roundDurationMs / turnDurationMs));
 
     stateRef.current = {
       ...stateRef.current,

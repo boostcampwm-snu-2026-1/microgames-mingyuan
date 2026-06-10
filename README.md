@@ -134,6 +134,20 @@
 | Assets   | 정적 image/sound files under `public/`      |
 | State    | 라운드 진행 hook, 입력 hook, 기록 저장 hook |
 
+## Supabase 랭킹 설정
+
+익명 랭킹은 브라우저에서 `submit_score` RPC를 호출하고, `/ranking` 서버
+페이지에서 60초 캐시된 Top 10을 조회합니다. 다음 환경 변수를 설정하세요.
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+```
+
+Supabase의 anonymous role은 `rankings` 조회와 `submit_score` 실행만 허용해야
+합니다. 테이블 직접 쓰기는 차단하고, RPC에서 `(game_id, player_id)`별 최고
+점수만 갱신하도록 구성해야 합니다.
+
 ## 프로젝트 구조
 
 ```txt

@@ -196,7 +196,7 @@ export function GameScreen({
 }: Readonly<{
   lives: number;
   maxLives: number;
-  onFinish: () => void;
+  onFinish: (reachedRound: number) => void;
   onGainLife: () => void;
   onLoseLife: () => void;
   onReachRound: (roundNumber: number) => void;
@@ -334,6 +334,13 @@ export function GameScreen({
           .catch((error: unknown) => {
             console.error(error);
           });
+        return;
+      }
+
+      if (microgame.canvas === "fireAndIceDance") {
+        bgmLibrary.play("fireAndIce", "once", "now").catch((error: unknown) => {
+          console.error(error);
+        });
         return;
       }
 

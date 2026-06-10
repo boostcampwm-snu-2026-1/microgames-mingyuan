@@ -23,6 +23,8 @@ export type MicrogameCanvas =
   | "courseRegistrationNumber"
   | "crazyArcade"
   | "default"
+  | "fireAndIceDance"
+  | "fireBoyWaterGirl"
   | "flickingGame"
   | "flappyBird"
   | "geometryDashSpikes"
@@ -41,6 +43,7 @@ export type MicrogameCanvas =
   | "pianoMelody"
   | "pongSurvival"
   | "pokemonTyping"
+  | "rhythmHeavenChorus"
   | "superMarioGalaxyStarBits"
   | "superMarioCoins"
   | "submitAssignment"
@@ -125,6 +128,22 @@ export const MICROGAMES = [
     id: "league-of-legend-champion-ban",
     startPrompt: "챔피언을 밴해라!",
     title: "리그 오브 레전드",
+    type: "normal",
+  },
+
+  {
+    beatCount: 8,
+    canvas: "rhythmHeavenChorus",
+    microscope: {
+      description:
+        "리듬 세상의 코러스맨은 앞사람의 노래를 듣고 정확한 순간에 입을 다무는 게임입니다. 두 번째 코러스맨이 멈춘 뒤 마우스를 누르세요.",
+      imageAlt: "노래하는 코러스맨",
+      imageSrc: "/games/rhythm-heaven/images/chorus-man-singing.png",
+    },
+    control: "mouseHold",
+    id: "rhythm-heaven-chorus",
+    startPrompt: "제때 멈춰라!",
+    title: "리듬 세상",
     type: "normal",
   },
 
@@ -253,6 +272,22 @@ export const MICROGAMES = [
     id: "kirby-inhale",
     startPrompt: "빨아들여라!",
     title: "별의 커비: 울트라 슈퍼 디럭스",
+    type: "normal",
+  },
+
+  {
+    beatCount: 8,
+    canvas: "fireAndIceDance",
+    microscope: {
+      description:
+        "불과 얼음의 춤은 두 행성이 박자마다 다음 칸으로 회전하는 리듬 게임입니다. 박자를 한 번 맞춰 목표 타일로 이동하세요.",
+      imageAlt: "불과 얼음의 춤 별빛 배경",
+      imageSrc: "/games/a-dance-of-fire-and-ice/images/background.png",
+    },
+    control: "space",
+    id: "a-dance-of-fire-and-ice",
+    startPrompt: "박자에 맞춰 눌러라!",
+    title: "불과 얼음의 춤",
     type: "normal",
   },
 
@@ -561,6 +596,22 @@ export const MICROGAMES = [
 
   {
     beatCount: 8,
+    canvas: "fireBoyWaterGirl",
+    microscope: {
+      description:
+        "파이어보이와 워터걸 중 한 명이 무작위로 등장합니다. 자신의 속성 웅덩이는 건널 수 있지만 반대 속성에 닿으면 쓰러집니다.",
+      imageAlt: "파이어보이와 워터걸 캐릭터",
+      imageSrc: "/games/fire-boy-and-water-girl/images/fire-boy-idle.png",
+    },
+    control: "arrowKeys",
+    id: "fire-boy-water-girl-escape",
+    startPrompt: "건너가라!",
+    title: "Fire Boy and Water Girl",
+    type: "normal",
+  },
+
+  {
+    beatCount: 8,
     canvas: "wiiSportsDualPress",
     microscope: {
       description:
@@ -576,7 +627,7 @@ export const MICROGAMES = [
   },
 
   {
-    beatCount: 42,
+    beatCount: 36,
     canvas: "twoThousandFortyEightBoss",
     microscope: {
       description:

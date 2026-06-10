@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { ScoreSubmissionPanel } from "@/components/ranking/ScoreSubmissionPanel";
 import { MICROGAMES, getMicrogameFormInstruction } from "@/data/microgames";
 import type { PreloadStatus } from "@/hooks/useGameScreenFlow";
 import { useBgmTrack } from "@/hooks/useBgmTrack";
@@ -16,6 +17,7 @@ import {
 } from "@/lib/bgmLibrary";
 import { FixedLivesOverlay } from "./FixedLivesOverlay";
 import { MAIN_SCREEN_EXIT_MS } from "./gameFlowConstants";
+import { HomeHeader, type HomeView } from "./HomeHeader";
 import { NeonButton, NeonShell } from "./NeonShell";
 
 const LOADING_MESSAGES = [
@@ -77,69 +79,6 @@ const LOADING_GAMEPLAY_TIPS = [
     title: "명령 확인",
   },
 ] as const;
-
-export type HomeView = "home" | "howToPlay" | "microscope";
-
-const HOME_NAV_ITEMS = [
-  { href: "/", label: "홈", view: "home" },
-  { href: "/how-to-play", label: "게임 방법", view: "howToPlay" },
-  { href: "/microscope", label: "도감", view: "microscope" },
-] as const;
-
-function HomeHeader({
-  homeView,
-  isStarting,
-}: Readonly<{
-  homeView: HomeView;
-  isStarting: boolean;
-}>) {
-  return (
-    <header
-      className={`fixed inset-x-0 top-0 z-30 ${
-        isStarting ? "main-screen-exit-up" : ""
-      }`}
-    >
-      <nav className="w-full bg-white/10 px-4 py-3 shadow-[0_0_28px_rgba(103,232,249,0.18)] backdrop-blur-xl sm:px-6">
-        <div className="flex items-center justify-between gap-3">
-          <Link
-            className="flex shrink-0 items-center gap-2 px-2 text-sm font-black tracking-normal text-cyan-50 drop-shadow-[0_0_12px_rgba(103,232,249,0.72)] sm:px-3 sm:text-base"
-            href="/"
-          >
-            <Image
-              alt=""
-              aria-hidden="true"
-              className="size-7 object-contain drop-shadow-[0_0_10px_rgba(103,232,249,0.5)]"
-              height={28}
-              src="/games/game-flow/images/timer.png"
-              unoptimized
-              width={28}
-            />
-            <span>캣타워 오르기</span>
-          </Link>
-          <div className="grid grid-cols-3 gap-1 rounded-md border border-white/10 bg-black/20 p-1">
-            {HOME_NAV_ITEMS.map((item) => {
-              const isActive = homeView === item.view;
-
-              return (
-                <Link
-                  className={`rounded px-3 py-2 text-center text-xs font-black transition sm:min-w-24 sm:text-sm ${
-                    isActive
-                      ? "bg-cyan-100 text-black shadow-[0_0_18px_rgba(103,232,249,0.38)]"
-                      : "text-cyan-50/78 hover:bg-white/10 hover:text-white"
-                  }`}
-                  href={item.href}
-                  key={item.view}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      </nav>
-    </header>
-  );
-}
 
 function HomePanel({
   highestReachedRound,
@@ -282,12 +221,13 @@ function MicroscopePanel({
             ? microgame.microscope.description
             : maskMicroscopeText(microgame.microscope.description);
 
-          return (
+          const card = (
             <article
-              className={`grid min-h-24 grid-cols-[72px_1fr] gap-3 border-b border-white/10 p-3 last:border-b-0 sm:grid-cols-[84px_1fr_auto] sm:items-center sm:gap-4 ${
-                isSeen ? "bg-white/[0.03]" : "bg-black/24 text-white/62"
+              className={`grid min-h-24 grid-cols-[72px_1fr] gap-3 p-3 sm:grid-cols-[84px_1fr_auto] sm:items-center sm:gap-4 ${
+                isSeen
+                  ? "bg-white/[0.03] transition hover:bg-cyan-100/[0.08]"
+                  : "bg-black/24 text-white/62"
               }`}
-              key={microgame.id}
             >
               <div className="relative size-[72px] overflow-hidden rounded border border-white/12 bg-slate-950 sm:size-[84px]">
                 <Image
@@ -335,6 +275,24 @@ function MicroscopePanel({
                 </div>
               ) : null}
             </article>
+          );
+
+          return isSeen ? (
+            <Link
+              aria-label={`${microgame.title} 연습하기`}
+              className="block border-b border-white/10 last:border-b-0"
+              href={`/microscope/${microgame.id}`}
+              key={microgame.id}
+            >
+              {card}
+            </Link>
+          ) : (
+            <div
+              className="border-b border-white/10 last:border-b-0"
+              key={microgame.id}
+            >
+              {card}
+            </div>
           );
         })}
       </div>
@@ -420,7 +378,7 @@ export function MainScreen({
       animateBackdrop={homeView !== "microscope"}
       rhythmStyle={rhythmStyle}
     >
-      <HomeHeader homeView={homeView} isStarting={isStarting} />
+      <HomeHeader currentView={homeView} isStarting={isStarting} />
       <div
         className={`mt-16 rounded-lg border border-cyan-100/70 bg-black/55 p-6 shadow-[0_0_32px_rgba(103,232,249,0.18)] sm:p-8 ${
           homeView === "microscope"
@@ -675,6 +633,7 @@ export function GameOverScreen({
             </p>
           </div>
         </div>
+        <ScoreSubmissionPanel score={finalReachedRound} />
         <div className="flex justify-center">
           <NeonButton onClick={returnToMain}>메인으로</NeonButton>
         </div>

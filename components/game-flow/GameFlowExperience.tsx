@@ -3,8 +3,8 @@
 import { useGameScreenFlow } from "@/hooks/useGameScreenFlow";
 import { useSeenMicrogames } from "@/hooks/useSeenMicrogames";
 import { GameScreen } from "./GameScreen";
+import type { HomeView } from "./HomeHeader";
 import {
-  type HomeView,
   GameOverScreen,
   LoadingScreen,
   MainScreen,

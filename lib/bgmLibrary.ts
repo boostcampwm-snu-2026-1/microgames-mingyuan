@@ -11,6 +11,7 @@ export type BgmTrack =
   | "cookieRun"
   | "crazyArcade"
   | "fail"
+  | "fireAndIce"
   | "gameOver"
   | "geometryDash"
   | "halliGalli"
@@ -67,6 +68,7 @@ const BGM_TRACK_PATHS = {
   cookieRun: "/games/cookie-run/sounds/cookie-run-bgm.mp3",
   crazyArcade: "/games/crazy-arcade/sounds/crazy-arcade-bgm.mp3",
   fail: "/games/game-flow/sounds/fail.mp3",
+  fireAndIce: "/games/a-dance-of-fire-and-ice/sounds/fire-and-ice-bgm.mp3",
   gameOver: "/games/game-flow/sounds/game-over.mp3",
   geometryDash: "/games/geometry-dash/sounds/geometry-dash-bgm.mp3",
   halliGalli: "/games/halli-galli/sounds/halli-galli-bgm.mp3",
@@ -123,6 +125,10 @@ const AUDIO_TRACK_PATHS = {
   ...SOUND_EFFECT_TRACK_PATHS,
 };
 
+export const BGM_LIBRARY_PRELOAD_ASSET_PATHS: ReadonlySet<string> = new Set(
+  Object.values(AUDIO_TRACK_PATHS),
+);
+
 const DEFAULT_BEAT_DURATION_SECONDS = RHYTHM_DURATION_MS / 1000;
 const BGM_GAIN = 0.72;
 const BGM_TRACK_GAINS: Partial<Record<BgmTrack, number>> = {
@@ -146,6 +152,7 @@ const BGM_TRACK_BEATS = {
   cookieRun: 12,
   crazyArcade: 12,
   fail: 4,
+  fireAndIce: 8,
   geometryDash: 12,
   halliGalli: 36,
   hancom: 12,
@@ -486,6 +493,10 @@ class BgmLibrary {
         this.loadingBuffers.delete(track);
 
         return audioBuffer;
+      })
+      .catch((error: unknown) => {
+        this.loadingBuffers.delete(track);
+        throw error;
       });
 
     this.loadingBuffers.set(track, nextLoadingBuffer);
