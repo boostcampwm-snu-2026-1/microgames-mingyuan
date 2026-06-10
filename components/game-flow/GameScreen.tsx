@@ -365,6 +365,15 @@ export function GameScreen({
         return;
       }
 
+      if (microgame.canvas === "pokemonTcgPocket") {
+        bgmLibrary
+          .play("pokemonTcgPocket", "once", "now")
+          .catch((error: unknown) => {
+            console.error(error);
+          });
+        return;
+      }
+
       if (microgame.canvas === "undertaleMouse") {
         bgmLibrary.play("undertale", "once", "now").catch((error: unknown) => {
           console.error(error);

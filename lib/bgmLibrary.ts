@@ -30,6 +30,7 @@ export type BgmTrack =
   | "modooMarble"
   | "oneUp"
   | "pokemon"
+  | "pokemonTcgPocket"
   | "resultsAndMain"
   | "setup"
   | "speedUp"
@@ -92,6 +93,8 @@ const BGM_TRACK_PATHS = {
   modooMarble: "/games/modoo-marble/sounds/modoo-bgm.mp3",
   oneUp: "/games/game-flow/sounds/1-up.mp3",
   pokemon: "/games/pokemon/sounds/pokemon-bgm.mp3",
+  pokemonTcgPocket:
+    "/games/pokemon-tcg-pocket/sounds/pokemon-card-pocket-bgm.mp3",
   resultsAndMain: "/games/game-flow/sounds/results-and-main.mp3",
   setup: "/games/game-flow/sounds/setup.mp3",
   speedUp: "/games/game-flow/sounds/speed-up.mp3",
@@ -179,6 +182,7 @@ const BGM_TRACK_BEATS = {
   modooMarble: 8,
   oneUp: 8,
   pokemon: 12,
+  pokemonTcgPocket: 12,
   resultsAndMain: 83,
   setup: 4,
   speedUp: 8,

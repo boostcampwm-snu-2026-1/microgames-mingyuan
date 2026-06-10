@@ -32,6 +32,7 @@ import { ModooMarbleGame } from "@/games/ModooMarbleGame";
 import type { Microgame } from "@/data/microgames";
 import { PianoMelodyGame } from "@/games/PianoMelodyGame";
 import { PongGame } from "@/games/PongGame";
+import { PokemonTcgPocketGame } from "@/games/PokemonTcgPocketGame";
 import { PokemonTypingGame } from "@/games/PokemonTypingGame";
 import { RhythmHeavenChorusGame } from "@/games/RhythmHeavenChorusGame";
 import { SubmitAssignmentGame } from "@/games/SubmitAssignmentGame";
@@ -93,6 +94,10 @@ function renderGameCanvas(microgame: Microgame) {
 
   if (microgame.canvas === "pokemonTyping") {
     return <PokemonTypingGame microgame={microgame} />;
+  }
+
+  if (microgame.canvas === "pokemonTcgPocket") {
+    return <PokemonTcgPocketGame microgame={microgame} />;
   }
 
   if (microgame.canvas === "rhythmHeavenChorus") {

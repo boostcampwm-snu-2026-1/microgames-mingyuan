@@ -44,6 +44,7 @@ export type MicrogameCanvas =
   | "modooMarble"
   | "pianoMelody"
   | "pongSurvival"
+  | "pokemonTcgPocket"
   | "pokemonTyping"
   | "rhythmHeavenChorus"
   | "superMarioGalaxyStarBits"
@@ -578,6 +579,22 @@ export const MICROGAMES = [
     id: "pokemon-name-typing",
     startPrompt: "이 포켓몬의 이름은?",
     title: "포켓몬",
+    type: "normal",
+  },
+
+  {
+    beatCount: 12,
+    canvas: "pokemonTcgPocket",
+    microscope: {
+      description:
+        "포켓몬 카드 게임 Pocket에서는 상대와 상황에 맞는 타입의 카드를 골라 내야 합니다. 손패에서 목표 타입을 찾아 전장에 놓아보세요.",
+      imageAlt: "포켓몬 카드 게임 Pocket의 파이리 카드",
+      imageSrc: "/games/pokemon-tcg-pocket/images/fire-card.png",
+    },
+    control: "mouseDrag",
+    id: "pokemon-tcg-pocket-type-card",
+    startPrompt: "맞는 타입 카드를 내라!",
+    title: "포켓몬 카드 게임 Pocket",
     type: "normal",
   },
 

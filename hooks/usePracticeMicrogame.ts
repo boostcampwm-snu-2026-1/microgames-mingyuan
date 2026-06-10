@@ -45,6 +45,7 @@ const PRACTICE_BGM_BY_CANVAS: Partial<Record<MicrogameCanvas, BgmTrack>> = {
   minigameExBearMeat: "minigameEx",
   minecraftMining: "minecraft",
   modooMarble: "modooMarble",
+  pokemonTcgPocket: "pokemonTcgPocket",
   pokemonTyping: "pokemon",
   sudokuMissingNumber: "sudoku",
   superMarioCoins: "superMario",
