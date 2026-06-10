@@ -49,6 +49,7 @@ export type MicrogameCanvas =
   | "superMarioCoins"
   | "submitAssignment"
   | "sudokuMissingNumber"
+  | "suikaGame"
   | "tetrisLineClear"
   | "twoThousandFortyEightBoss"
   | "undertaleMouse"
@@ -306,6 +307,22 @@ export const MICROGAMES = [
     id: "apple-game-number-sum",
     startPrompt: "10을 만들어라!",
     title: "사과게임",
+    type: "normal",
+  },
+
+  {
+    beatCount: 8,
+    canvas: "suikaGame",
+    microscope: {
+      description:
+        "수박게임은 같은 과일끼리 부딪히면 더 큰 과일로 합쳐집니다. 멜론을 움직여 상자 안의 멜론과 합치고 수박을 만들어보세요.",
+      imageAlt: "수박게임 수박",
+      imageSrc: "/games/suika-game/images/watermelon.png",
+    },
+    control: "arrowAndSpace",
+    id: "suika-game-watermelon",
+    startPrompt: "수박을 만들어라!",
+    title: "수박게임",
     type: "normal",
   },
 

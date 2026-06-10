@@ -48,6 +48,7 @@ const PRACTICE_BGM_BY_CANVAS: Partial<Record<MicrogameCanvas, BgmTrack>> = {
   sudokuMissingNumber: "sudoku",
   superMarioCoins: "superMario",
   superMarioGalaxyStarBits: "superMarioGalaxy",
+  suikaGame: "suikaGame",
   tetrisLineClear: "tetris",
   undertaleMouse: "undertale",
   wiiSportsDualPress: "wiiSports",

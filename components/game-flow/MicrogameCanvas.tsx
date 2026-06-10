@@ -37,6 +37,7 @@ import { SubmitAssignmentGame } from "@/games/SubmitAssignmentGame";
 import { SudokuGame } from "@/games/SudokuGame";
 import { SuperMarioGalaxyGame } from "@/games/SuperMarioGalaxyGame";
 import { SuperMarioCoinGame } from "@/games/SuperMarioCoinGame";
+import { SuikaGame } from "@/games/SuikaGame";
 import { TetrisLineClearGame } from "@/games/TetrisLineClearGame";
 import { TwoThousandFortyEightBossGame } from "@/games/TwoThousandFortyEightBossGame";
 import { UndertaleMouseGame } from "@/games/UndertaleMouseGame";
@@ -191,6 +192,10 @@ function renderGameCanvas(microgame: Microgame) {
 
   if (microgame.canvas === "sudokuMissingNumber") {
     return <SudokuGame microgame={microgame} />;
+  }
+
+  if (microgame.canvas === "suikaGame") {
+    return <SuikaGame microgame={microgame} />;
   }
 
   if (microgame.canvas === "tetrisLineClear") {

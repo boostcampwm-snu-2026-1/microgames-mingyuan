@@ -385,6 +385,13 @@ export function GameScreen({
         return;
       }
 
+      if (microgame.canvas === "suikaGame") {
+        bgmLibrary.play("suikaGame", "once", "now").catch((error: unknown) => {
+          console.error(error);
+        });
+        return;
+      }
+
       if (microgame.canvas === "tetrisLineClear") {
         bgmLibrary.play("tetris", "once", "now").catch((error: unknown) => {
           console.error(error);

@@ -36,6 +36,7 @@ export type BgmTrack =
   | "superMarioGalaxy"
   | "superMario"
   | "success"
+  | "suikaGame"
   | "tetris"
   | "undertale"
   | "wiiSports"
@@ -97,6 +98,7 @@ const BGM_TRACK_PATHS = {
     "/games/super-mario-galaxy/sounds/super-mario-galaxy-bgm.mp3",
   superMario: "/games/supermario/sounds/overworld-theme.mp3",
   success: "/games/game-flow/sounds/success.mp3",
+  suikaGame: "/games/suika-game/sounds/suika-game-bgm.mp3",
   tetris: "/games/tetris/sounds/tetris-bgm.mp3",
   undertale: "/games/undertale/sounds/undertale-bgm.mp3",
   wiiSports: "/games/wii-sports/sounds/wii-sports-bgm.mp3",
@@ -181,6 +183,7 @@ const BGM_TRACK_BEATS = {
   superMarioGalaxy: 12,
   superMario: 8,
   success: 4,
+  suikaGame: 8,
   tetris: 12,
   undertale: 8,
   wiiSports: 8,
