@@ -27,6 +27,7 @@ const PRACTICE_BGM_BY_CANVAS: Partial<Record<MicrogameCanvas, BgmTrack>> = {
   animalCrossingStamps: "animalCrossing",
   animalFarmReverseTyping: "animalFarm",
   appleNumberSum: "appleGame",
+  babaIsYou: "babaIsYou",
   brainAcademyBlocks: "brainAcademy",
   cookieRun: "cookieRun",
   cookieRunKingdom: "cookieRunKingdom",
@@ -91,7 +92,10 @@ export function usePracticeMicrogame(microgame: Microgame) {
 
     hasClearedRef.current = true;
 
-    if (microgame.canvas === "sudokuMissingNumber") {
+    if (
+      microgame.canvas === "babaIsYou" ||
+      microgame.canvas === "sudokuMissingNumber"
+    ) {
       return;
     }
 

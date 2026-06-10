@@ -17,6 +17,7 @@ export type MicrogameCanvas =
   | "animalFarmReverseTyping"
   | "appleNumberSum"
   | "amongUsWires"
+  | "babaIsYou"
   | "brainAcademyBlocks"
   | "chromeDinoSpace"
   | "cookieRun"
@@ -641,6 +642,22 @@ export const MICROGAMES = [
     id: "hancom-word-typing",
     startPrompt: "단어를 입력해라!",
     title: "한컴 타자연습",
+    type: "normal",
+  },
+
+  {
+    beatCount: 8,
+    canvas: "babaIsYou",
+    microscope: {
+      description:
+        "Baba Is You에서는 규칙과 물체를 직접 밀어 퍼즐을 풉니다. 세로로 길을 막은 바위 하나를 밀어 깃대까지 가는 길을 만들어보세요.",
+      imageAlt: "Baba Is You의 Baba 캐릭터",
+      imageSrc: "/games/baba-is-you/images/baba.png",
+    },
+    control: "arrowKeys",
+    id: "baba-is-you-reach-flag",
+    startPrompt: "깃대에 도달해라!",
+    title: "Baba Is You",
     type: "normal",
   },
 

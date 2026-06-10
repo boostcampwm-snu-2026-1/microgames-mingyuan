@@ -58,6 +58,7 @@ export function useMicrogameInput({
     const recordKeyboardClear = (event: KeyboardEvent) => {
       if (
         microgame.canvas === "animalFarmReverseTyping" ||
+        microgame.canvas === "babaIsYou" ||
         microgame.canvas === "brainAcademyBlocks" ||
         microgame.canvas === "cookieRun" ||
         microgame.canvas === "cookieRunKingdom" ||

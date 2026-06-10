@@ -6,6 +6,7 @@ export type BgmTrack =
   | "animalCrossing"
   | "animalFarm"
   | "appleGame"
+  | "babaIsYou"
   | "bossStage"
   | "brainAcademy"
   | "cookieRun"
@@ -66,6 +67,7 @@ const BGM_TRACK_PATHS = {
   animalCrossing: "/games/animal-crossing/sounds/animal-crossing-bgm.mp3",
   animalFarm: "/games/animal-farm/sounds/animal-farm-bgm.mp3",
   appleGame: "/games/apple-game/sounds/apple-game-bgm.mp3",
+  babaIsYou: "/games/baba-is-you/sounds/baba-is-you.mp3",
   bossStage: "/games/game-flow/sounds/boss-stage.mp3",
   brainAcademy: "/games/brain-academy/sounds/brain-academy-bgm.mp3",
   cookieRun: "/games/cookie-run/sounds/cookie-run-bgm.mp3",
@@ -154,6 +156,7 @@ const BGM_TRACK_BEATS = {
   animalCrossing: 8,
   animalFarm: 36,
   appleGame: 12,
+  babaIsYou: 8,
   bossStage: 8,
   brainAcademy: 12,
   cookieRun: 12,

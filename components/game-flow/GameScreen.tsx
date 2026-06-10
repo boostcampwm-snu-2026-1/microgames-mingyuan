@@ -252,7 +252,10 @@ export function GameScreen({
   const recordSuccessWithClearSound = useCallback(() => {
     recordSuccess();
 
-    if (microgame.canvas === "sudokuMissingNumber") {
+    if (
+      microgame.canvas === "babaIsYou" ||
+      microgame.canvas === "sudokuMissingNumber"
+    ) {
       return;
     }
 
@@ -327,6 +330,13 @@ export function GameScreen({
 
       if (microgame.canvas === "appleNumberSum") {
         bgmLibrary.play("appleGame", "once", "now").catch((error: unknown) => {
+          console.error(error);
+        });
+        return;
+      }
+
+      if (microgame.canvas === "babaIsYou") {
+        bgmLibrary.play("babaIsYou", "once", "now").catch((error: unknown) => {
           console.error(error);
         });
         return;
