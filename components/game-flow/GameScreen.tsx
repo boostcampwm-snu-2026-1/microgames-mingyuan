@@ -337,6 +337,13 @@ export function GameScreen({
         return;
       }
 
+      if (microgame.canvas === "fireAndIceDance") {
+        bgmLibrary.play("fireAndIce", "once", "now").catch((error: unknown) => {
+          console.error(error);
+        });
+        return;
+      }
+
       if (microgame.canvas === "pokemonTyping") {
         bgmLibrary.play("pokemon", "once", "now").catch((error: unknown) => {
           console.error(error);

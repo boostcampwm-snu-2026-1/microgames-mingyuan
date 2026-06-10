@@ -12,6 +12,7 @@ const COURT_HEIGHT = 360;
 const COURT_WIDTH = 640;
 const DEFAULT_BEAT_DURATION_MS = 500;
 const MAX_DELTA_MS = 48;
+const MAX_PHYSICS_STEP_MS = 8;
 const MIN_CANVAS_HEIGHT = 360;
 const MIN_CANVAS_WIDTH = 640;
 const OPPONENT_X = 28;
@@ -77,6 +78,10 @@ function getBeatDurationMs(canvas: HTMLCanvasElement) {
     : DEFAULT_BEAT_DURATION_MS;
 }
 
+function getBeatSpeedScale(beatDurationMs: number) {
+  return DEFAULT_BEAT_DURATION_MS / beatDurationMs;
+}
+
 function playHitSound() {
   bgmLibrary.playSoundEffect("pongHit").catch((error: unknown) => {
     console.error(error);
@@ -91,10 +96,12 @@ function movePaddles(
   state: GameState,
   keyState: KeyState,
   deltaSeconds: number,
+  speedScale: number,
 ) {
   const playerDirection = Number(keyState.down) - Number(keyState.up);
   const targetOpponentY = state.ballY - PADDLE_HEIGHT / 2;
-  const opponentStep = PADDLE_SPEED * 0.84 * deltaSeconds;
+  const paddleSpeed = PADDLE_SPEED * speedScale;
+  const opponentStep = paddleSpeed * 0.84 * deltaSeconds;
   const opponentDelta = clamp(
     targetOpponentY - state.opponentY,
     -opponentStep,
@@ -102,7 +109,7 @@ function movePaddles(
   );
 
   state.playerY = clamp(
-    state.playerY + playerDirection * PADDLE_SPEED * deltaSeconds,
+    state.playerY + playerDirection * paddleSpeed * deltaSeconds,
     0,
     COURT_HEIGHT - PADDLE_HEIGHT,
   );
@@ -131,13 +138,18 @@ function bounceFromPaddle(
   playHitSound();
 }
 
-function stepState(state: GameState, keyState: KeyState, deltaMs: number) {
+function stepPhysics(
+  state: GameState,
+  keyState: KeyState,
+  deltaMs: number,
+  speedScale: number,
+) {
   const deltaSeconds = deltaMs / 1000;
 
-  movePaddles(state, keyState, deltaSeconds);
+  movePaddles(state, keyState, deltaSeconds, speedScale);
 
-  state.ballX += state.ballVX * deltaSeconds;
-  state.ballY += state.ballVY * deltaSeconds;
+  state.ballX += state.ballVX * speedScale * deltaSeconds;
+  state.ballY += state.ballVY * speedScale * deltaSeconds;
 
   if (state.ballY <= 0) {
     state.ballY = 0;
@@ -179,6 +191,28 @@ function stepState(state: GameState, keyState: KeyState, deltaMs: number) {
   if (state.ballX > COURT_WIDTH) {
     state.hasFailed = true;
     dispatchFailure();
+  }
+}
+
+function stepState(
+  state: GameState,
+  keyState: KeyState,
+  deltaMs: number,
+  beatDurationMs: number,
+) {
+  const speedScale = getBeatSpeedScale(beatDurationMs);
+  const stepCount = Math.max(
+    1,
+    Math.ceil((deltaMs * speedScale) / MAX_PHYSICS_STEP_MS),
+  );
+  const stepDeltaMs = deltaMs / stepCount;
+
+  for (let stepIndex = 0; stepIndex < stepCount; stepIndex += 1) {
+    stepPhysics(state, keyState, stepDeltaMs, speedScale);
+
+    if (state.hasFailed) {
+      return;
+    }
   }
 }
 
@@ -344,7 +378,7 @@ export function usePongGameCanvas(gameBeatCount: number) {
 
       if (!state.hasCleared && !state.hasFailed) {
         state.elapsedMs += deltaMs;
-        stepState(state, keyStateRef.current, deltaMs);
+        stepState(state, keyStateRef.current, deltaMs, beatDurationMs);
 
         if (!state.hasFailed && state.elapsedMs >= phaseDurationMs) {
           state.hasCleared = true;
