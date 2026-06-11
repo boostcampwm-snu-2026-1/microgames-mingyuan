@@ -58,6 +58,7 @@ export function useMicrogameInput({
     const recordKeyboardClear = (event: KeyboardEvent) => {
       if (
         microgame.canvas === "animalFarmReverseTyping" ||
+        microgame.canvas === "babaIsYou" ||
         microgame.canvas === "brainAcademyBlocks" ||
         microgame.canvas === "cookieRun" ||
         microgame.canvas === "cookieRunKingdom" ||
@@ -78,6 +79,7 @@ export function useMicrogameInput({
         microgame.canvas === "pokemonTyping" ||
         microgame.canvas === "superMarioCoins" ||
         microgame.canvas === "sudokuMissingNumber" ||
+        microgame.canvas === "suikaGame" ||
         microgame.canvas === "tetrisLineClear" ||
         microgame.canvas === "twoThousandFortyEightBoss" ||
         microgame.canvas === "undertaleMouse" ||

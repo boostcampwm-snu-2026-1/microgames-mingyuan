@@ -17,6 +17,7 @@ export type MicrogameCanvas =
   | "animalFarmReverseTyping"
   | "appleNumberSum"
   | "amongUsWires"
+  | "babaIsYou"
   | "brainAcademyBlocks"
   | "chromeDinoSpace"
   | "cookieRun"
@@ -43,12 +44,14 @@ export type MicrogameCanvas =
   | "modooMarble"
   | "pianoMelody"
   | "pongSurvival"
+  | "pokemonTcgPocket"
   | "pokemonTyping"
   | "rhythmHeavenChorus"
   | "superMarioGalaxyStarBits"
   | "superMarioCoins"
   | "submitAssignment"
   | "sudokuMissingNumber"
+  | "suikaGame"
   | "tetrisLineClear"
   | "twoThousandFortyEightBoss"
   | "undertaleMouse"
@@ -311,6 +314,22 @@ export const MICROGAMES = [
 
   {
     beatCount: 8,
+    canvas: "suikaGame",
+    microscope: {
+      description:
+        "수박게임은 같은 과일끼리 부딪히면 더 큰 과일로 합쳐집니다. 멜론을 움직여 상자 안의 멜론과 합치고 수박을 만들어보세요.",
+      imageAlt: "수박게임 수박",
+      imageSrc: "/games/suika-game/images/watermelon.png",
+    },
+    control: "arrowAndSpace",
+    id: "suika-game-watermelon",
+    startPrompt: "수박을 만들어라!",
+    title: "수박게임",
+    type: "normal",
+  },
+
+  {
+    beatCount: 8,
     canvas: "superMarioCoins",
     microscope: {
       description:
@@ -559,7 +578,23 @@ export const MICROGAMES = [
     control: "koreanKeyboard",
     id: "pokemon-name-typing",
     startPrompt: "이 포켓몬의 이름은?",
-    title: "포켓몬",
+    title: "포켓몬스터",
+    type: "normal",
+  },
+
+  {
+    beatCount: 12,
+    canvas: "pokemonTcgPocket",
+    microscope: {
+      description:
+        "포켓몬 카드 게임 Pocket에서는 상대와 상황에 맞는 타입의 카드를 골라 내야 합니다. 손패에서 목표 타입을 찾아 전장에 놓아보세요.",
+      imageAlt: "포켓몬 카드 게임 Pocket의 파이리 카드",
+      imageSrc: "/games/pokemon-tcg-pocket/images/fire-card.png",
+    },
+    control: "mouseDrag",
+    id: "pokemon-tcg-pocket-type-card",
+    startPrompt: "맞는 타입 카드를 내라!",
+    title: "포켓몬 카드 게임 Pocket",
     type: "normal",
   },
 
@@ -624,6 +659,22 @@ export const MICROGAMES = [
     id: "hancom-word-typing",
     startPrompt: "단어를 입력해라!",
     title: "한컴 타자연습",
+    type: "normal",
+  },
+
+  {
+    beatCount: 8,
+    canvas: "babaIsYou",
+    microscope: {
+      description:
+        "Baba Is You에서는 규칙과 물체를 직접 밀어 퍼즐을 풉니다. 세로로 길을 막은 바위 하나를 밀어 깃대까지 가는 길을 만들어보세요.",
+      imageAlt: "Baba Is You의 Baba 캐릭터",
+      imageSrc: "/games/baba-is-you/images/baba.png",
+    },
+    control: "arrowKeys",
+    id: "baba-is-you-reach-flag",
+    startPrompt: "깃대에 도달해라!",
+    title: "Baba Is You",
     type: "normal",
   },
 

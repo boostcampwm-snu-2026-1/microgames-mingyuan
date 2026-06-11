@@ -4,6 +4,7 @@ import { AnimalCrossingStampGame } from "@/games/AnimalCrossingStampGame";
 import { AnimalFarmBossGame } from "@/games/AnimalFarmBossGame";
 import { AppleGame } from "@/games/AppleGame";
 import { AmongUsWireGame } from "@/games/AmongUsWireGame";
+import { BabaIsYouGame } from "@/games/BabaIsYouGame";
 import { BrainAcademyBlockGame } from "@/games/BrainAcademyBlockGame";
 import { ChromeDinoSpaceGame } from "@/games/ChromeDinoSpaceGame";
 import { CookieRunGame } from "@/games/CookieRunGame";
@@ -31,12 +32,14 @@ import { ModooMarbleGame } from "@/games/ModooMarbleGame";
 import type { Microgame } from "@/data/microgames";
 import { PianoMelodyGame } from "@/games/PianoMelodyGame";
 import { PongGame } from "@/games/PongGame";
+import { PokemonTcgPocketGame } from "@/games/PokemonTcgPocketGame";
 import { PokemonTypingGame } from "@/games/PokemonTypingGame";
 import { RhythmHeavenChorusGame } from "@/games/RhythmHeavenChorusGame";
 import { SubmitAssignmentGame } from "@/games/SubmitAssignmentGame";
 import { SudokuGame } from "@/games/SudokuGame";
 import { SuperMarioGalaxyGame } from "@/games/SuperMarioGalaxyGame";
 import { SuperMarioCoinGame } from "@/games/SuperMarioCoinGame";
+import { SuikaGame } from "@/games/SuikaGame";
 import { TetrisLineClearGame } from "@/games/TetrisLineClearGame";
 import { TwoThousandFortyEightBossGame } from "@/games/TwoThousandFortyEightBossGame";
 import { UndertaleMouseGame } from "@/games/UndertaleMouseGame";
@@ -65,6 +68,10 @@ function renderGameCanvas(microgame: Microgame) {
     return <AmongUsWireGame microgame={microgame} />;
   }
 
+  if (microgame.canvas === "babaIsYou") {
+    return <BabaIsYouGame microgame={microgame} />;
+  }
+
   if (microgame.canvas === "brainAcademyBlocks") {
     return <BrainAcademyBlockGame microgame={microgame} />;
   }
@@ -87,6 +94,10 @@ function renderGameCanvas(microgame: Microgame) {
 
   if (microgame.canvas === "pokemonTyping") {
     return <PokemonTypingGame microgame={microgame} />;
+  }
+
+  if (microgame.canvas === "pokemonTcgPocket") {
+    return <PokemonTcgPocketGame microgame={microgame} />;
   }
 
   if (microgame.canvas === "rhythmHeavenChorus") {
@@ -191,6 +202,10 @@ function renderGameCanvas(microgame: Microgame) {
 
   if (microgame.canvas === "sudokuMissingNumber") {
     return <SudokuGame microgame={microgame} />;
+  }
+
+  if (microgame.canvas === "suikaGame") {
+    return <SuikaGame microgame={microgame} />;
   }
 
   if (microgame.canvas === "tetrisLineClear") {
