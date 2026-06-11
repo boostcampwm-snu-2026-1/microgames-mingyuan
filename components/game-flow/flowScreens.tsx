@@ -207,7 +207,7 @@ function MicroscopePanel({
           발견 {discoveredMicrogameCount}/{MICROGAMES.length}
         </p>
       </div>
-      <div className="overflow-hidden rounded-md border border-cyan-100/25 bg-black/32">
+      <div className="grid gap-px overflow-hidden rounded-md border border-cyan-100/25 bg-white/10 sm:grid-cols-2 lg:grid-cols-3">
         {MICROGAMES.map((microgame) => {
           const formInstruction = getMicrogameFormInstruction(microgame);
           const isSeen = seenMicrogameIds.includes(microgame.id);
@@ -223,23 +223,23 @@ function MicroscopePanel({
 
           const card = (
             <article
-              className={`grid min-h-24 grid-cols-[72px_1fr] gap-3 p-3 sm:grid-cols-[84px_1fr_auto] sm:items-center sm:gap-4 ${
+              className={`grid h-full min-h-24 grid-cols-[64px_1fr] gap-3 p-3 ${
                 isSeen
-                  ? "bg-white/[0.03] transition hover:bg-cyan-100/[0.08]"
-                  : "bg-black/24 text-white/62"
+                  ? "bg-slate-950/90 transition hover:bg-cyan-950/90"
+                  : "bg-black/90 text-white/62"
               }`}
             >
-              <div className="relative size-[72px] overflow-hidden rounded border border-white/12 bg-slate-950 sm:size-[84px]">
+              <div className="relative size-16 overflow-hidden rounded border border-white/12 bg-slate-950">
                 <Image
                   alt={microgame.microscope.imageAlt}
                   className={`size-full object-cover ${
                     isSeen ? "opacity-100" : "opacity-20"
                   }`}
                   decoding="async"
-                  height={84}
-                  sizes="84px"
+                  height={64}
+                  sizes="64px"
                   src={microgame.microscope.imageSrc}
-                  width={84}
+                  width={64}
                 />
                 {isSeen ? null : (
                   <div className="absolute inset-0 grid place-items-center bg-black/45">
@@ -249,11 +249,16 @@ function MicroscopePanel({
                   </div>
                 )}
               </div>
-              <div className="min-w-0">
+              <div className="min-w-0 pr-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h2 className="min-w-0 text-lg font-black leading-tight text-white">
+                  <h2 className="min-w-0 truncate text-base font-black leading-tight text-white">
                     {displayTitle}
                   </h2>
+                  {microgame.type === "boss" ? (
+                    <span className="rounded border border-amber-200/45 px-1.5 py-0.5 text-[0.62rem] font-black uppercase tracking-[0.1em] text-amber-50">
+                      Boss
+                    </span>
+                  ) : null}
                   {isSeen ? null : (
                     <span className="rounded border border-white/20 px-2 py-0.5 text-[0.68rem] font-black text-white/50">
                       미발견
@@ -267,32 +272,20 @@ function MicroscopePanel({
                   {displayDescription}
                 </p>
               </div>
-              {microgame.type === "boss" ? (
-                <div className="col-start-2 flex items-center justify-end sm:col-start-auto sm:items-start">
-                  <span className="rounded border border-amber-200/45 px-2 py-1 text-[0.68rem] font-black uppercase tracking-[0.12em] text-amber-50">
-                    Boss
-                  </span>
-                </div>
-              ) : null}
             </article>
           );
 
           return isSeen ? (
             <Link
               aria-label={`${microgame.title} 연습하기`}
-              className="block border-b border-white/10 last:border-b-0"
+              className="block"
               href={`/microscope/${microgame.id}`}
               key={microgame.id}
             >
               {card}
             </Link>
           ) : (
-            <div
-              className="border-b border-white/10 last:border-b-0"
-              key={microgame.id}
-            >
-              {card}
-            </div>
+            <div key={microgame.id}>{card}</div>
           );
         })}
       </div>
