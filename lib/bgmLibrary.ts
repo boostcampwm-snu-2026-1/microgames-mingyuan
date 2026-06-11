@@ -6,11 +6,13 @@ export type BgmTrack =
   | "animalCrossing"
   | "animalFarm"
   | "appleGame"
+  | "babaIsYou"
   | "bossStage"
   | "brainAcademy"
   | "cookieRun"
   | "cookieRunKingdom"
   | "crazyArcade"
+  | "dobble"
   | "fail"
   | "fireAndIce"
   | "gameOver"
@@ -29,6 +31,7 @@ export type BgmTrack =
   | "modooMarble"
   | "oneUp"
   | "pokemon"
+  | "pokemonTcgPocket"
   | "resultsAndMain"
   | "setup"
   | "speedUp"
@@ -36,6 +39,7 @@ export type BgmTrack =
   | "superMarioGalaxy"
   | "superMario"
   | "success"
+  | "suikaGame"
   | "tetris"
   | "undertale"
   | "wiiSports"
@@ -65,12 +69,14 @@ const BGM_TRACK_PATHS = {
   animalCrossing: "/games/animal-crossing/sounds/animal-crossing-bgm.mp3",
   animalFarm: "/games/animal-farm/sounds/animal-farm-bgm.mp3",
   appleGame: "/games/apple-game/sounds/apple-game-bgm.mp3",
+  babaIsYou: "/games/baba-is-you/sounds/baba-is-you.mp3",
   bossStage: "/games/game-flow/sounds/boss-stage.mp3",
   brainAcademy: "/games/brain-academy/sounds/brain-academy-bgm.mp3",
   cookieRun: "/games/cookie-run/sounds/cookie-run-bgm.mp3",
   cookieRunKingdom:
     "/games/cookie-run-kingdom/sounds/cookie-run-kingdom-bgm.mp3",
   crazyArcade: "/games/crazy-arcade/sounds/crazy-arcade-bgm.mp3",
+  dobble: "/games/dobble/sounds/dobble-bgm.mp3",
   fail: "/games/game-flow/sounds/fail.mp3",
   fireAndIce: "/games/a-dance-of-fire-and-ice/sounds/fire-and-ice-bgm.mp3",
   gameOver: "/games/game-flow/sounds/game-over.mp3",
@@ -89,6 +95,8 @@ const BGM_TRACK_PATHS = {
   modooMarble: "/games/modoo-marble/sounds/modoo-bgm.mp3",
   oneUp: "/games/game-flow/sounds/1-up.mp3",
   pokemon: "/games/pokemon/sounds/pokemon-bgm.mp3",
+  pokemonTcgPocket:
+    "/games/pokemon-tcg-pocket/sounds/pokemon-card-pocket-bgm.mp3",
   resultsAndMain: "/games/game-flow/sounds/results-and-main.mp3",
   setup: "/games/game-flow/sounds/setup.mp3",
   speedUp: "/games/game-flow/sounds/speed-up.mp3",
@@ -97,6 +105,7 @@ const BGM_TRACK_PATHS = {
     "/games/super-mario-galaxy/sounds/super-mario-galaxy-bgm.mp3",
   superMario: "/games/supermario/sounds/overworld-theme.mp3",
   success: "/games/game-flow/sounds/success.mp3",
+  suikaGame: "/games/suika-game/sounds/suika-game-bgm.mp3",
   tetris: "/games/tetris/sounds/tetris-bgm.mp3",
   undertale: "/games/undertale/sounds/undertale-bgm.mp3",
   wiiSports: "/games/wii-sports/sounds/wii-sports-bgm.mp3",
@@ -152,11 +161,13 @@ const BGM_TRACK_BEATS = {
   animalCrossing: 8,
   animalFarm: 36,
   appleGame: 12,
+  babaIsYou: 8,
   bossStage: 8,
   brainAcademy: 12,
   cookieRun: 12,
   cookieRunKingdom: 8,
   crazyArcade: 12,
+  dobble: 12,
   fail: 4,
   fireAndIce: 8,
   geometryDash: 12,
@@ -174,6 +185,7 @@ const BGM_TRACK_BEATS = {
   modooMarble: 8,
   oneUp: 8,
   pokemon: 12,
+  pokemonTcgPocket: 12,
   resultsAndMain: 83,
   setup: 4,
   speedUp: 8,
@@ -181,6 +193,7 @@ const BGM_TRACK_BEATS = {
   superMarioGalaxy: 12,
   superMario: 8,
   success: 4,
+  suikaGame: 8,
   tetris: 12,
   undertale: 8,
   wiiSports: 8,

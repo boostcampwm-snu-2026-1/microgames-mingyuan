@@ -27,10 +27,12 @@ const PRACTICE_BGM_BY_CANVAS: Partial<Record<MicrogameCanvas, BgmTrack>> = {
   animalCrossingStamps: "animalCrossing",
   animalFarmReverseTyping: "animalFarm",
   appleNumberSum: "appleGame",
+  babaIsYou: "babaIsYou",
   brainAcademyBlocks: "brainAcademy",
   cookieRun: "cookieRun",
   cookieRunKingdom: "cookieRunKingdom",
   crazyArcade: "crazyArcade",
+  dobble: "dobble",
   fireAndIceDance: "fireAndIce",
   geometryDashSpikes: "geometryDash",
   halliGalliBoss: "halliGalli",
@@ -44,10 +46,12 @@ const PRACTICE_BGM_BY_CANVAS: Partial<Record<MicrogameCanvas, BgmTrack>> = {
   minigameExBearMeat: "minigameEx",
   minecraftMining: "minecraft",
   modooMarble: "modooMarble",
+  pokemonTcgPocket: "pokemonTcgPocket",
   pokemonTyping: "pokemon",
   sudokuMissingNumber: "sudoku",
   superMarioCoins: "superMario",
   superMarioGalaxyStarBits: "superMarioGalaxy",
+  suikaGame: "suikaGame",
   tetrisLineClear: "tetris",
   undertaleMouse: "undertale",
   wiiSportsDualPress: "wiiSports",
@@ -90,7 +94,10 @@ export function usePracticeMicrogame(microgame: Microgame) {
 
     hasClearedRef.current = true;
 
-    if (microgame.canvas === "sudokuMissingNumber") {
+    if (
+      microgame.canvas === "babaIsYou" ||
+      microgame.canvas === "sudokuMissingNumber"
+    ) {
       return;
     }
 

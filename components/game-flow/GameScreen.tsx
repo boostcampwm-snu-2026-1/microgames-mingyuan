@@ -252,7 +252,10 @@ export function GameScreen({
   const recordSuccessWithClearSound = useCallback(() => {
     recordSuccess();
 
-    if (microgame.canvas === "sudokuMissingNumber") {
+    if (
+      microgame.canvas === "babaIsYou" ||
+      microgame.canvas === "sudokuMissingNumber"
+    ) {
       return;
     }
 
@@ -332,6 +335,13 @@ export function GameScreen({
         return;
       }
 
+      if (microgame.canvas === "babaIsYou") {
+        bgmLibrary.play("babaIsYou", "once", "now").catch((error: unknown) => {
+          console.error(error);
+        });
+        return;
+      }
+
       if (microgame.canvas === "geometryDashSpikes") {
         bgmLibrary
           .play("geometryDash", "once", "now")
@@ -352,6 +362,15 @@ export function GameScreen({
         bgmLibrary.play("pokemon", "once", "now").catch((error: unknown) => {
           console.error(error);
         });
+        return;
+      }
+
+      if (microgame.canvas === "pokemonTcgPocket") {
+        bgmLibrary
+          .play("pokemonTcgPocket", "once", "now")
+          .catch((error: unknown) => {
+            console.error(error);
+          });
         return;
       }
 
@@ -382,6 +401,13 @@ export function GameScreen({
           .catch((error: unknown) => {
             console.error(error);
           });
+        return;
+      }
+
+      if (microgame.canvas === "suikaGame") {
+        bgmLibrary.play("suikaGame", "once", "now").catch((error: unknown) => {
+          console.error(error);
+        });
         return;
       }
 
@@ -430,6 +456,13 @@ export function GameScreen({
           .catch((error: unknown) => {
             console.error(error);
           });
+        return;
+      }
+
+      if (microgame.canvas === "dobble") {
+        bgmLibrary.play("dobble", "once", "now").catch((error: unknown) => {
+          console.error(error);
+        });
         return;
       }
 
@@ -608,6 +641,7 @@ export function GameScreen({
       </div>
       {phase === "game" || shouldShowCanvasTransition ? (
         <MicrogameRoundScreen
+          beatDurationMs={beatDurationMs}
           beatsLeft={beatsLeft}
           isTransitioning={shouldShowCanvasTransition}
           microgame={microgame}

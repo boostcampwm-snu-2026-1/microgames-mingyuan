@@ -17,6 +17,7 @@ export type MicrogameCanvas =
   | "animalFarmReverseTyping"
   | "appleNumberSum"
   | "amongUsWires"
+  | "babaIsYou"
   | "brainAcademyBlocks"
   | "chromeDinoSpace"
   | "cookieRun"
@@ -24,6 +25,7 @@ export type MicrogameCanvas =
   | "courseRegistrationNumber"
   | "crazyArcade"
   | "default"
+  | "dobble"
   | "fireAndIceDance"
   | "fireBoyWaterGirl"
   | "flickingGame"
@@ -43,12 +45,15 @@ export type MicrogameCanvas =
   | "modooMarble"
   | "pianoMelody"
   | "pongSurvival"
+  | "pokemonTcgPocket"
   | "pokemonTyping"
   | "rhythmHeavenChorus"
   | "superMarioGalaxyStarBits"
   | "superMarioCoins"
   | "submitAssignment"
   | "sudokuMissingNumber"
+  | "squidGameRedLight"
+  | "suikaGame"
   | "tetrisLineClear"
   | "twoThousandFortyEightBoss"
   | "undertaleMouse"
@@ -98,6 +103,22 @@ export const MICROGAMES = [
     id: "submit-assignment",
     startPrompt: "과제를 제출해라!",
     title: "과제 제출",
+    type: "normal",
+  },
+
+  {
+    beatCount: 12,
+    canvas: "dobble",
+    microscope: {
+      description:
+        "도블은 두 카드에서 똑같은 그림 하나를 누구보다 빨리 찾는 게임입니다. 무조건 하나만 존재해요.",
+      imageAlt: "도블 물음표 아이콘",
+      imageSrc: "/games/dobble/images/question_mark.png",
+    },
+    control: "mouseClick",
+    id: "dobble-symbol-match",
+    startPrompt: "같은 그림을 찾아라!",
+    title: "도블",
     type: "normal",
   },
 
@@ -224,7 +245,7 @@ export const MICROGAMES = [
     },
     control: "mouseHold",
     id: "modoo-marble-big-number",
-    startPrompt: "큰 수를 굴려라!",
+    startPrompt: "12를 굴려라!",
     title: "모두의 마블",
     type: "normal",
   },
@@ -256,7 +277,7 @@ export const MICROGAMES = [
     },
     control: "numberKeys",
     id: "minigame-ex-bear-meat",
-    startPrompt: "곰을 잘봐라!",
+    startPrompt: "곰을 잘 봐라!",
     title: "미니게임EX",
     type: "normal",
   },
@@ -306,6 +327,22 @@ export const MICROGAMES = [
     id: "apple-game-number-sum",
     startPrompt: "10을 만들어라!",
     title: "사과게임",
+    type: "normal",
+  },
+
+  {
+    beatCount: 8,
+    canvas: "suikaGame",
+    microscope: {
+      description:
+        "수박게임은 같은 과일끼리 부딪히면 더 큰 과일로 합쳐집니다. 멜론을 움직여 상자 안의 멜론과 합치고 수박을 만들어보세요.",
+      imageAlt: "수박게임 수박",
+      imageSrc: "/games/suika-game/images/watermelon.png",
+    },
+    control: "arrowAndSpace",
+    id: "suika-game-watermelon",
+    startPrompt: "수박을 만들어라!",
+    title: "수박게임",
     type: "normal",
   },
 
@@ -367,7 +404,7 @@ export const MICROGAMES = [
     },
     control: "mouseDrag",
     id: "flicking-game",
-    startPrompt: "적 돌을 밀어내라!",
+    startPrompt: "밀어내라!",
     title: "알까기",
     type: "normal",
   },
@@ -559,7 +596,23 @@ export const MICROGAMES = [
     control: "koreanKeyboard",
     id: "pokemon-name-typing",
     startPrompt: "이 포켓몬의 이름은?",
-    title: "포켓몬",
+    title: "포켓몬스터",
+    type: "normal",
+  },
+
+  {
+    beatCount: 12,
+    canvas: "pokemonTcgPocket",
+    microscope: {
+      description:
+        "포켓몬 카드 게임 Pocket에서는 상대와 상황에 맞는 타입의 카드를 골라 내야 합니다. 손패에서 목표 타입을 찾아 전장에 놓아보세요.",
+      imageAlt: "포켓몬 카드 게임 Pocket의 파이리 카드",
+      imageSrc: "/games/pokemon-tcg-pocket/images/fire-card.png",
+    },
+    control: "mouseDrag",
+    id: "pokemon-tcg-pocket-type-card",
+    startPrompt: "맞는 타입 카드를 내라!",
+    title: "포켓몬 카드 게임 Pocket",
     type: "normal",
   },
 
@@ -590,7 +643,7 @@ export const MICROGAMES = [
     },
     control: "space",
     id: "flappy-bird-pipe-dodge",
-    startPrompt: "파이프를 피해라!",
+    startPrompt: "피해라!",
     title: "플래피버드",
     type: "normal",
   },
@@ -622,8 +675,24 @@ export const MICROGAMES = [
     },
     control: "koreanKeyboard",
     id: "hancom-word-typing",
-    startPrompt: "단어를 입력해라!",
+    startPrompt: "입력해라!",
     title: "한컴 타자연습",
+    type: "normal",
+  },
+
+  {
+    beatCount: 8,
+    canvas: "babaIsYou",
+    microscope: {
+      description:
+        "Baba Is You에서는 규칙과 물체를 직접 밀어 퍼즐을 풉니다. 세로로 길을 막은 바위 하나를 밀어 깃대까지 가는 길을 만들어보세요.",
+      imageAlt: "Baba Is You의 Baba 캐릭터",
+      imageSrc: "/games/baba-is-you/images/baba.png",
+    },
+    control: "arrowKeys",
+    id: "baba-is-you-reach-flag",
+    startPrompt: "깃대에 도달해라!",
+    title: "Baba Is You",
     type: "normal",
   },
 
@@ -688,6 +757,22 @@ export const MICROGAMES = [
     id: "animal-farm-reverse-typing",
     startPrompt: "단어를 거꾸로 써라!",
     title: "동물농장",
+    type: "boss",
+  },
+
+  {
+    beatCount: 36,
+    canvas: "squidGameRedLight",
+    microscope: {
+      description:
+        "무궁화 꽃이 피었습니다! 인형이 뒤를 볼 때는 마우스를 꾹 눌러 달리고, 인형이 돌아보면 즉시 손을 떼야 합니다.",
+      imageAlt: "무궁화 꽃이 피었습니다 인형",
+      imageSrc: "/games/squid-game/images/doll-red-light.png",
+    },
+    control: "mouseHold",
+    id: "squid-game-red-light-green-light",
+    startPrompt: "결승선을 통과해라!",
+    title: "오징어 게임",
     type: "boss",
   },
 

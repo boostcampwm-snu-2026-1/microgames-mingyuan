@@ -58,6 +58,7 @@ export function useMicrogameInput({
     const recordKeyboardClear = (event: KeyboardEvent) => {
       if (
         microgame.canvas === "animalFarmReverseTyping" ||
+        microgame.canvas === "babaIsYou" ||
         microgame.canvas === "brainAcademyBlocks" ||
         microgame.canvas === "cookieRun" ||
         microgame.canvas === "cookieRunKingdom" ||
@@ -76,8 +77,10 @@ export function useMicrogameInput({
         microgame.canvas === "pianoMelody" ||
         microgame.canvas === "pongSurvival" ||
         microgame.canvas === "pokemonTyping" ||
+        microgame.canvas === "squidGameRedLight" ||
         microgame.canvas === "superMarioCoins" ||
         microgame.canvas === "sudokuMissingNumber" ||
+        microgame.canvas === "suikaGame" ||
         microgame.canvas === "tetrisLineClear" ||
         microgame.canvas === "twoThousandFortyEightBoss" ||
         microgame.canvas === "undertaleMouse" ||
@@ -100,6 +103,7 @@ export function useMicrogameInput({
         microgame.control === "mouseClick" &&
         microgame.canvas !== "animalCrossingStamps" &&
         microgame.canvas !== "amongUsWires" &&
+        microgame.canvas !== "dobble" &&
         microgame.canvas !== "gomokuWhiteStone" &&
         microgame.canvas !== "halliGalliBoss" &&
         microgame.canvas !== "leagueChampionBan" &&
