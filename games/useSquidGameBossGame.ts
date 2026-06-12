@@ -18,9 +18,7 @@ const AUDIO_NATURAL_DURATION_MS = 8228;
 const GREEN_LIGHT_BEATS = 9;
 const RED_LIGHT_BEATS = 7;
 const CYCLE_BEATS = GREEN_LIGHT_BEATS + RED_LIGHT_BEATS;
-const MOVE_DURATION_BEATS = 20;
-const REQUIRED_RED_LIGHTS = 3;
-const PRE_FINISH_PROGRESS = 0.97;
+const MOVE_DURATION_BEATS = 16;
 const MIN_GAP_BEATS = 0;
 const MAX_GAP_BEATS = 0.25;
 const JINGLE_PATH = "/games/squid-game/sounds/squid-game-doll-jingle.mp3";
@@ -60,7 +58,6 @@ export function useSquidGameBossGame({
   progress: number;
 }> {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const completedRedLightsRef = useRef(0);
   const cycleIndexRef = useRef(0);
   const cycleTimerRef = useRef<number | null>(null);
   const frameRef = useRef<number | null>(null);
@@ -138,7 +135,6 @@ export function useSquidGameBossGame({
           return;
         }
 
-        completedRedLightsRef.current += 1;
         cycleTimerRef.current = window.setTimeout(() => {
           if (resolvedRef.current) {
             return;
@@ -212,13 +208,9 @@ export function useSquidGameBossGame({
         isHoldingRef.current &&
         phaseRef.current === "green"
       ) {
-        const progressLimit =
-          completedRedLightsRef.current >= REQUIRED_RED_LIGHTS
-            ? 1
-            : PRE_FINISH_PROGRESS;
         const nextProgress = Math.min(
           progressRef.current + deltaMs / moveDurationMs,
-          progressLimit,
+          1,
         );
 
         progressRef.current = nextProgress;

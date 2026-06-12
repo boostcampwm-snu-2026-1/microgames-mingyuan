@@ -101,7 +101,7 @@ export const MICROGAMES = [
     },
     control: "mouseClick",
     id: "submit-assignment",
-    startPrompt: "과제를 제출해라!",
+    startPrompt: "제출해라!",
     title: "과제 제출",
     type: "normal",
   },
