@@ -12,6 +12,7 @@ const BOSS_STAGE_BEATS = 8;
 const ONE_UP_BEATS = 8;
 const SPEED_UP_INTERVAL_ROUNDS = 4;
 const BOSS_STAGE_INTERVAL_ROUNDS = 12;
+const BOSS_EARLY_RESULT_BEAT_INTERVAL = 4;
 const SPEED_UP_BEAT_DURATION_MULTIPLIER = 0.94;
 const BEAT_PROGRESS_INTERVAL_MS = 50;
 
@@ -121,6 +122,9 @@ export function useBeatGameRound({
   });
   const [speedLevel, setSpeedLevel] = useState(0);
   const hasClearedCurrentGameRef = useRef(false);
+  const [successFeedbackRound, setSuccessFeedbackRound] = useState<
+    number | null
+  >(null);
   const [shouldOneUpAfterResult, setShouldOneUpAfterResult] = useState(false);
   const currentGameBeatCount = getGameBeatCount?.(roundNumber) ?? gameBeatCount;
   const phaseBeatCount = getPhaseBeatCount(phase, currentGameBeatCount);
@@ -133,6 +137,7 @@ export function useBeatGameRound({
     setPhase("instruction");
     setRoundResult("idle");
     hasClearedCurrentGameRef.current = false;
+    setSuccessFeedbackRound(null);
     onResetResult();
   }, [onResetResult]);
 
@@ -328,10 +333,27 @@ export function useBeatGameRound({
       ? gameBeatProgress.beatsLeft
       : phaseBeatCount;
 
+  useEffect(() => {
+    const canFinishSuccessfulBossEarly =
+      phase === "game" &&
+      isBossGameRound(roundNumber) &&
+      hasClearedCurrentGameRef.current &&
+      successFeedbackRound === roundNumber &&
+      beatsLeft > 0 &&
+      beatsLeft % BOSS_EARLY_RESULT_BEAT_INTERVAL === 0;
+
+    if (canFinishSuccessfulBossEarly) {
+      showResult("success");
+    }
+  }, [beatsLeft, phase, roundNumber, showResult, successFeedbackRound]);
+
   return useMemo(
     () => ({
       beatDurationMs,
       beatsLeft,
+      confirmSuccessFeedback: () => {
+        setSuccessFeedbackRound(roundNumber);
+      },
       gameBeatCount: currentGameBeatCount,
       instructionStep,
       phase,

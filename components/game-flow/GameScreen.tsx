@@ -218,6 +218,7 @@ export function GameScreen({
   const {
     beatDurationMs,
     beatsLeft,
+    confirmSuccessFeedback,
     gameBeatCount,
     instructionStep,
     phase,
@@ -266,10 +267,16 @@ export function GameScreen({
     clearSoundPlayedRoundRef.current = roundNumber;
     bgmLibrary
       .playSoundEffect(getRandomClearSoundEffect())
+      .then(confirmSuccessFeedback)
       .catch((error: unknown) => {
         console.error(error);
       });
-  }, [microgame.canvas, recordSuccess, roundNumber]);
+  }, [
+    confirmSuccessFeedback,
+    microgame.canvas,
+    recordSuccess,
+    roundNumber,
+  ]);
 
   useMicrogameInput({
     isActive: phase === "game",
